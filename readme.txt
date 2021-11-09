@@ -19,7 +19,7 @@ Fleet management tools for all sizes with rentals via direct, Turo, Getaround, T
 
 This plugin connects your WordPress website to your Fleetwire account, so you can add online booking functionality to your website and start renting out your vehicles online.
 
-**Note:** You need a Fleetwire subscription to use this plugin. Learn more about Fleetwire and its pricing at <a href="https://fleetwire.io/">fleetwire.io</a>.
+**Note:** You need a Fleetwire subscription to use this plugin. Learn more about Fleetwire and our pricing at <a href="https://fleetwire.io/">fleetwire.io</a>.
 
 ### Add your listings
 Use shortcodes to show your rental listings on any WordPress page. Fleetwire supports categories, variations, bundles, multiple images, and flexible pricing settings.
@@ -50,14 +50,14 @@ Then, in WordPress:
 4. Click **Settings > Fleetwire**
 5. Paste your company ID in the corresponding field
 
-To embed products:
-- In Fleetwire: make sure you have at least one rental product
-- In WordPress: Embed a product, product button, or product list on any **page** or **post** using shortcodes
+To embed listings:
+- In Fleetwire: make sure you have at least one rental listing
+- In WordPress: Embed a listing, listing button, or vehicle list on any **page** or **post** using shortcodes
 
 == Screenshots ==
 
 1. Allow people to browse and book your inventory online
-2. Quickly add your products by copy-pasting shortcodes
+2. Quickly add your listings by copy-pasting shortcodes
 3. Show when items are available to rent (optional)
 4. Let your customers pay online or request a quote
 

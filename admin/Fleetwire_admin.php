@@ -1,16 +1,3 @@
-<?php
-  if($_POST['fleetwire_hidden'] == 'Y') {
-    //Form data sent
-    $company = sanitize_text_field($_POST['fleetwire_company_name']);
-    update_option('fleetwire_company_name', $company);
-
-    ?>
-    <div class="updated"><p><strong><?php _e('Options saved.' ); ?></strong></p></div>
-    <?php
-  } else {
-    $company = get_option('fleetwire_company_name');
-  }
-?>
 
 <div class="wrap fw-admin-wrap">
   <div class="card fw-admin-header">
@@ -22,30 +9,30 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card fleetwire-card">
     <h2><?php _e("1. Connect to your Fleetwire account"); ?></h2>
     <p class="fw-admin-subtitle"><?php _e("Don't have a Fleetwire account? <a href=\"https://fleetwire.io/register\" target=\"_blank\" rel=\"noopener\">Get started for free</a>."); ?></p>
     <hr />
-    <form name="fleetwire_form" method="post" action="<?php echo esc_url(str_replace( '%7E', '~', $_SERVER['REQUEST_URI'])); ?>">
-      <input type="hidden" name="fleetwire_hidden" value="Y">
+    <form id="fleetwire_form" name="fleetwire_form">
+      <input type="hidden" name="action" value="fleetwire_company_name_form_process"/>
       <table class="form-table">
         <tbody>
           <tr>
             <th scope="row">
-              <label for="fleetwire_company_name"><?php _e("Company ID"); ?></label>
+              <label id for="fleetwire_company_name"><?php _e("Company ID"); ?></label>
             </th>
             <td>
-              <input type="text" name="fleetwire_company_name" value="<?php echo esc_attr($company); ?>" size="20" class="regular-text">
+              <input type="text" name="fleetwire_company_name" id="fleetwire_company_name" value="<?php echo esc_attr(get_option('fleetwire_company_name')); ?>" size="20" class="regular-text fleetwire-company-uuid">
               <p class="description"><?php _e("Find your <b>Company ID</b> in your Fleetwire account under <b>Settings > Online reservations > Installation > WordPress plugin</b>" ); ?></p>
             </td>
           </tr>
         </tbody>
       </table>
-
       <p class="submit">
-        <input type="submit" name="Submit" value="<?php _e('Update Options', 'fleetwire_trdom') ?>" class="button button-primary" />
+          <input type="submit" name="Submit" value="<?php _e('Update Options') ?>" class="button button-primary fleetwire-update-company-uuid" />
       </p>
     </form>
+    <div class="updated fleetwire-d-none"><p><strong><?php _e('Options saved.' ); ?></strong></p></div>
   </div>
 
   <div class="card">

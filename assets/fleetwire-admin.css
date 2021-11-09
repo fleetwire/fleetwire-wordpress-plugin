@@ -25,3 +25,12 @@
 .fw-admin-wrap .fw-admin-subtitle {
   margin-top: 5px;
 }
+
+
+.fleetwire-d-none {
+  display: none;
+}
+
+.fleetwire-d-block {
+  display: block;
+}
