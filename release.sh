@@ -32,10 +32,10 @@ GITHUB_ACCESS_TOKEN=$(read_var GITHUB_ACCESS_TOKEN .env)
 PLUGIN_SLUG=$(read_var PLUGIN_SLUG .env)
 
 # GITHUB user who owns the repo
-GITHUB_REPO_OWNER=$(read_var GITHUB_REPO_OWNER .env)
+BITBUCKET_REPO_OWNER=$(read_var BITBUCKET_REPO_OWNER .env)
 
 # GITHUB Repository name
-GITHUB_REPO_NAME=$(read_var GITHUB_REPO_NAME .env)
+BITBUCKET_REPO_NAME=$(read_var BITBUCKET_REPO_NAME .env)
 
 # SVN user who owns the wordpress repo
 SVN_USERNAME=$(read_var SVN_USERNAME .env)
@@ -50,18 +50,21 @@ clear
 
 # ASK INFO
 echo "--------------------------------------------"
-echo "      Github to WordPress.org RELEASER      "
+echo "      BITBUCKET to WordPress.org RELEASER      "
 echo "--------------------------------------------"
 read -p "TAG AND RELEASE VERSION: " VERSION
 echo "--------------------------------------------"
 echo ""
+echo "PLUGIN_SLUG: ""${PLUGIN_SLUG}"
+echo "PLUGIN_SLUG: ""${BITBUCKET_REPO_OWNER}"
+echo "PLUGIN_SLUG: ""${BITBUCKET_REPO_NAME}"
 echo "Before continuing, confirm that you have done the following :)"
 echo ""
 read -p " - Added a changelog for "${VERSION}"?"
 read -p " - Set version in the readme.txt and main file to "${VERSION}"?"
 read -p " - Set stable tag in the readme.txt file to "${VERSION}"?"
 read -p " - Updated the POT file?"
-read -p " - Committed all changes up to GITHUB?"
+read -p " - Committed all changes up to BITBUCKET?"
 echo ""
 read -p "PRESS [ENTER] TO BEGIN RELEASING "${VERSION}
 clear
@@ -71,7 +74,7 @@ ROOT_PATH=$(pwd)"/"
 TEMP_GITHUB_REPO=${PLUGIN_SLUG}"-git"
 TEMP_SVN_REPO=${PLUGIN_SLUG}"-svn"
 SVN_REPO="http://plugins.svn.wordpress.org/"${PLUGIN_SLUG}"/"
-GIT_REPO="git@github.com:"${GITHUB_REPO_OWNER}"/"${GITHUB_REPO_NAME}".git"
+GIT_REPO="git@bitbucket.org:"${BITBUCKET_REPO_OWNER}"/"${BITBUCKET_REPO_NAME}".git"
 
 # DELETE OLD TEMP DIRS
 rm -Rf $ROOT_PATH$TEMP_GITHUB_REPO
@@ -84,7 +87,7 @@ then
 fi
 
 # CLONE GIT DIR
-echo "Cloning GIT repository from GITHUB"
+echo "Cloning GIT repository from BITBUCKET: "${GIT_REPO}""
 git clone --progress $GIT_REPO $TEMP_GITHUB_REPO || { echo "Unable to clone repo."; exit 1; }
 
 # MOVE INTO GIT DIR
@@ -174,13 +177,13 @@ svn status
 
 # PROMPT USER
 echo ""
-read -p "PRESS [ENTER] TO COMMIT RELEASE "${VERSION}" TO WORDPRESS.ORG AND GITHUB"
+read -p "PRESS [ENTER] TO COMMIT RELEASE "${VERSION}" TO WORDPRESS.ORG AND BITBUCKET"
 echo ""
 
-# CREATE THE GITHUB RELEASE
-echo "Creating GITHUB release"
+# CREATE THE BITBUCKET RELEASE
+echo "Creating BITBUCKET release"
 API_JSON=$(printf '{ "tag_name": "%s","target_commitish": "%s","name": "%s", "body": "Release of version %s", "draft": false, "prerelease": false }' $VERSION $BRANCH $VERSION $VERSION)
-RESULT=$(curl --data "${API_JSON}" https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases?access_token=${GITHUB_ACCESS_TOKEN})
+RESULT=$(curl --data "${API_JSON}" https://api.github.com/repos/${GITHUB_REPO_OWNER}/${BITBUCKET_REPO_NAME}/releases?access_token=${GITHUB_ACCESS_TOKEN})
 
 # DEPLOY
 echo ""
