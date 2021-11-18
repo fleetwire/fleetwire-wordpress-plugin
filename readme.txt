@@ -3,7 +3,7 @@ Contributors: fleetwire-fleet-management
 Tags: rental, vehicle rentals, direct rentals, booking system, booking calendar, car-share sync, fleet management
 Requires at least: 2.0
 Tested up to: 5.8.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,7 +64,7 @@ To embed listings:
 == Changelog ==
 
 
-= 1.0.3 =
+= 1.0.4 =
 * Corrected filename capitalization
 * Put changelog in reverse chronological order
 
