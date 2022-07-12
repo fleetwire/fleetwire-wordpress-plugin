@@ -5,7 +5,7 @@
       <img style="max-height: 55px" src="<?php echo esc_url( plugins_url( '../assets/FleetWire_Logo-B.png', __FILE__ ) ); ?>" alt="Fleetwire logo" />
     </div>
     <div class="fw-admin-pull-right">
-      <a href="https://fleetwire.freshdesk.com/support/solutions" target="_blank" rel="noopener" class="button fw-admin-help">Help</a>
+      <a href="https://help.fleetwire.io/en/" target="_blank" rel="noopener" class="button fw-admin-help">Help</a>
     </div>
   </div>
 
@@ -51,7 +51,7 @@
           </tr>
         </tbody>
       </table>
-      <a href="https://fleetwire.freshdesk.com/support/solutions/articles/61000298645-how-to-embed-listings-on-your-wordpress-website-" target="_blank" rel="noopener"><?php _e("More embed options"); ?></a>
+      <a href="https://help.fleetwire.io/en/article/how-to-embed-listings-on-your-wordpress-website-u975ix/?bust=1657639589869" target="_blank" rel="noopener"><?php _e("More embed options"); ?></a>
   </div>
 
   <div class="card">
