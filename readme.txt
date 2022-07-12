@@ -3,7 +3,7 @@ Contributors: fleetwire-fleet-management
 Tags: rental, vehicle rentals, direct rentals, booking system, booking calendar, car-share sync, fleet management
 Requires at least: 2.0
 Tested up to: 6.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,10 @@ To embed listings:
 4. Let your customers pay online or request a quote
 
 == Changelog ==
+
+= 1.0.6 =
+* Added shortcode for single listing description paragraph
+* Added more shortcode examples on the settings page
 
 = 1.0.5 =
 * Update help article links

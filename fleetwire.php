@@ -4,7 +4,7 @@
    * Plugin Name: Fleetwire Fleet Management Plugin
    * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
    * Author: Fleetwire, LLC
-   * Version: 1.0.5
+   * Version: 1.0.6
    * Author URI: https://fleetwire.io
    * Copyright: 2022 Fleetwire, LLC
    */
@@ -167,12 +167,14 @@ function fleetwire_detail_bb($params) {
 // [fleetwire_list tags="tablets"]
 // [fleetwire_list categories="apple"]
 function fleetwire_list_bb($params) {
+
   $options = shortcode_atts(array(
     'tags'        => NULL,
     'categories'  => NULL,
     'per'         => NULL,
     'limit'       => NULL,
     'show-search' => NULL,
+    'showprice'   => NULL,
     'search-key'  => NULL
   ), $params);
 
@@ -275,6 +277,18 @@ function fleetwire_categories_bb($params) {
   return '<div class="fleetwire-categories" ' . fleetwire_shortcode_options_to_data($options) . '></div>';
 }
 
+// fleetwire code for embedding a listing description
+// [fleetwire_categories]
+// [fleetwire_categories search-key="only-tablets"]
+function fleetwire_description_bb($params) {
+  $options = shortcode_atts(array(
+    'id'     => NULL,
+    'length' => NULL,
+  ), $params);
+
+  return '<div class="fleetwire-listing-description" ' . fleetwire_shortcode_options_to_data($options) . '></div>';
+}
+
 function fleetwire_initialize() {
   add_action('admin_menu', 'fleetwire_admin_actions');
   add_action('admin_notices', 'fleetwire_admin_notice');
@@ -304,6 +318,7 @@ function fleetwire_initialize() {
   add_shortcode('fleetwire_sort', 'fleetwire_sort_bb');
   add_shortcode('fleetwire_bar', 'fleetwire_bar_bb');
   add_shortcode('fleetwire_categories', 'fleetwire_categories_bb');
+  add_shortcode('fleetwire_description', 'fleetwire_description_bb');
 }
 fleetwire_initialize();
 
