@@ -4,7 +4,7 @@
    * Plugin Name: Fleetwire Fleet Management Plugin
    * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
    * Author: Fleetwire, LLC
-   * Version: 1.0.7
+   * Version: 1.0.8
    * Author URI: https://fleetwire.io
    * Copyright: 2022 Fleetwire, LLC
    */
@@ -160,6 +160,58 @@ function fleetwire_detail_bb($params) {
   ), $params);
 
   return '<div class="fleetwire-product-detail" ' . fleetwire_shortcode_options_to_data($options) . '></div>';
+}
+
+// fleetwire shortcode for embedding a vehicles number of doors
+// [fleetwire_listing_doors id="l_PP4QD3PM"]
+function fleetwire_vehicle_doors_bb($params) {
+  $options = shortcode_atts(array(
+    'id' => NULL
+  ), $params);
+
+  return '<span class="fleetwire-listing-doors" ' . fleetwire_shortcode_options_to_data($options) . '></span>';
+}
+
+// fleetwire shortcode for embedding a vehicles number of seats
+// [fleetwire_listing_seats id="l_PP4QD3PM"]
+function fleetwire_vehicle_seats_bb($params) {
+  $options = shortcode_atts(array(
+    'id' => NULL
+  ), $params);
+
+  return '<span class="fleetwire-listing-seats" ' . fleetwire_shortcode_options_to_data($options) . '></span>';
+}
+
+
+// fleetwire shortcode for embedding a vehicles feature list
+// [fleetwire_listing_features id="l_PP4QD3PM"]
+function fleetwire_vehicle_features_bb($params) {
+  $options = shortcode_atts(array(
+    'id' => NULL
+  ), $params);
+
+  return '<span class="fleetwire-listing-features" ' . fleetwire_shortcode_options_to_data($options) . '></span>';
+}
+
+// fleetwire shortcode for embedding a vehicles reviews
+// [fleetwire_listing_reviews id="l_PP4QD3PM"]
+function fleetwire_vehicle_reviews_bb($params) {
+  $options = shortcode_atts(array(
+    'id' => NULL,
+    'showsource' => NULL,
+  ), $params);
+
+  return '<span class="fleetwire-listing-reviews" ' . fleetwire_shortcode_options_to_data($options) . '></span>';
+}
+
+// fleetwire shortcode for embedding a vehicles image gallery
+// [fleetwire_listing_image_gallery id="l_PP4QD3PM"]
+function fleetwire_vehicle_image_gallery_bb($params) {
+  $options = shortcode_atts(array(
+    'id' => NULL,
+  ), $params);
+
+  return '<span class="fleetwire-listing-image-gallery" ' . fleetwire_shortcode_options_to_data($options) . '></span>';
 }
 
 // fleetwire code for embedding a product list
@@ -319,6 +371,11 @@ function fleetwire_initialize() {
   add_shortcode('fleetwire_bar', 'fleetwire_bar_bb');
   add_shortcode('fleetwire_categories', 'fleetwire_categories_bb');
   add_shortcode('fleetwire_listing_description', 'fleetwire_description_bb');
+  add_shortcode('fleetwire_listing_doors', 'fleetwire_vehicle_doors_bb');
+  add_shortcode('fleetwire_listing_seats', 'fleetwire_vehicle_seats_bb');
+  add_shortcode('fleetwire_listing_reviews', 'fleetwire_vehicle_reviews_bb');
+  add_shortcode('fleetwire_listing_image_gallery', 'fleetwire_vehicle_image_gallery_bb');
+  add_shortcode('fleetwire_listing_features', 'fleetwire_vehicle_features_bb');
 }
 fleetwire_initialize();
 
