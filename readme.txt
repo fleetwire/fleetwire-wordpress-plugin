@@ -2,8 +2,8 @@
 Contributors: fleetwire-fleet-management
 Tags: rental, vehicle rentals, direct rentals, booking system, booking calendar, car-share sync, fleet management
 Requires at least: 2.0
-Tested up to: 6.0
-Stable tag: 1.0.9
+Tested up to: 6.1.1
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ To embed listings:
 4. Let your customers pay online or request a quote
 
 == Changelog ==
+= 1.0.10 =
+* Verified compatibility with WordPress 6.1.1
+
 = 1.0.9 =
 * Added fleet availability shortcode to search for available vehicles
 * Code styling
