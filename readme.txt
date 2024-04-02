@@ -3,65 +3,55 @@ Contributors: fleetwire-fleet-management
 Tags: rental, vehicle rentals, direct rentals, booking system, booking calendar, car-share sync, fleet management
 Requires at least: 2.0
 Tested up to: 6.5
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-**Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire account to WordPress.**
+**Elevate your WordPress site into a fully-fledged online rental business. Seamlessly integrate your Fleetwire account to offer online booking, manage rentals, and sync your inventory with ease.**
+
+## Key Features:
+
+- **Direct & Car-Sharing Rentals Sync:** Automatically synchronize your rental calendar with platforms like Turo and Getaround.
+- **Comprehensive Fleet Management:** Manage orders, inventory, documents, and payments all from one place. Includes tools for auto messaging, eSigning, vehicle research, mileage tracking, and more.
+- **Online Booking System:** Enable your customers to book rentals directly from your website using shortcodes to display listings.
+- **Real-Time Availability & Hosted Checkout:** Offer a booking calendar that updates in real time to prevent overbooking and provide a smooth checkout experience.
+- **Online Payments Integration:** Securely process payments with Stripe integration, supporting various payment methods, security deposits, and coupon codes.
+
+## Getting Started:
+
+1. **Install the Plugin:** Download and activate the plugin on your WordPress site.
+2. **Connect Your Fleetwire Account:** Enter your company ID in the plugin settings to link your Fleetwire account.
+3. **Add Your Listings:** Use shortcodes to display your vehicle rentals on your site.
 
 
-Fleetwire is the all-in-one rental software for your orders, inventory, documents, and payments. It’s the complete toolkit for running your online vehicle rental business.
-Sync direct rentals with car-sharing platforms (ie Turo, Getaround, etc.).
+> **Note:** A Fleetwire subscription is required. Visit [fleetwire.io](https://fleetwire.io/) to learn more or start your **free 14-day trial**.
 
-Fleet management tools for all sizes with rentals via direct, Turo, Getaround, Tesla and more. Auto sync calendars, auto messaging, eSign, vehicle research, mileage tracking & expensing and more all with FleetWire.io
 
-This plugin connects your WordPress website to your Fleetwire account, so you can add online booking functionality to your website and start renting out your vehicles online.
+## Installation Guide:
 
-**Note:** You need a Fleetwire subscription to use this plugin. Learn more about Fleetwire and our pricing at <a href="https://fleetwire.io/">fleetwire.io</a>.
+1. **Fleetwire Setup:**
+   - Navigate to **Settings > Online Reservations > Installation** in your Fleetwire dashboard.
+   - Select **WordPress Plugin** and copy your Company ID.
+2. **WordPress Configuration:**
+   - In your WordPress admin panel, go to **Settings > Fleetwire**.
+   - Paste your Company ID in the provided field.
+   - To embed listings, ensure you have active rental listings in Fleetwire. Use provided shortcodes on any page or post.
 
-### Add your listings
-Use shortcodes to show your rental listings on any WordPress page. Fleetwire supports categories, variations, bundles, multiple images, and flexible pricing settings.
-
-### Real-time availability
-Get a booking calendar with real-time inventory availability. Whether you receive orders online or in-person, Fleetwire keeps your inventory in sync to avoid overbooking.
-
-### Hosted checkout
-Wake up to an inbox full of paid orders or let your customers request a quote. Provide a fast checkout experience, collect customer information, and automatically send booking confirmations.
-
-### Online payments
-Integrate with Stripe to accept credit cards and many local payment methods. Choose exactly what’s due at checkout, charge security deposits, and accept coupon codes.
-
-### Get started
-Install the plugin, connect to your Fleetwire account, and add your listings. Don’t have a Fleetwire account? You’ll get a <a href="https://fleetwire.io/register">free 14-day trial</a> and can upgrade your account at any time.
-
-== Installation ==
-Sign up for a Fleetwire account <a href="https://fleetwire.io/register">here</a> if you haven’t already.
-
-To connect the plugin to your Fleetwire account, you’ll need to enter your company ID.
-
-In Fleetwire:
-1. Go to **Settings > Online reservations > Installation**
-2. Click **WordPress Plugin**
-3. Copy your Company ID
-
-Then, in WordPress:
-4. Click **Settings > Fleetwire**
-5. Paste your company ID in the corresponding field
-
-To embed listings:
-- In Fleetwire: make sure you have at least one rental listing
-- In WordPress: Embed a listing, listing button, or vehicle list on any **page** or **post** using shortcodes
 
 == Screenshots ==
 
-1. Allow people to browse and book your inventory online
-2. Quickly add your listings by copy-pasting shortcodes
-3. Show when items are available to rent (optional)
-4. Let your customers pay online or request a quote
+1. Browse and book inventory online.
+2. Add listings easily with shortcodes.
+3. Display rental availability.
+4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.13 =
+* Code tweaks
+* Updated readme.txt
+
 = 1.0.12 =
 * Verified compatibility with WordPress 6.5
 * Updated Fleetwire Logos

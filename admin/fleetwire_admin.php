@@ -20,7 +20,7 @@
                 <tbody>
                 <tr>
                     <th scope="row">
-                        <label id for="fleetwire_company_name"><?php _e( "Company ID" ); ?></label>
+                        <label for="fleetwire_company_name"><?php _e( "Company ID" ); ?></label>
                     </th>
                     <td>
                         <input type="text" name="fleetwire_company_name" id="fleetwire_company_name"
