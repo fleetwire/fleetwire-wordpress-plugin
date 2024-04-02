@@ -4,9 +4,9 @@
  * Plugin Name: Fleetwire Fleet Management Plugin
  * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
  * Author: Fleetwire, LLC
- * Version: 1.0.9
+ * Version: 1.0.11
  * Author URI: https://fleetwire.io
- * Copyright: 2022 Fleetwire, LLC
+ * Copyright: 2024 Fleetwire, LLC
  */
 
 // If this file is called directly, abort.
