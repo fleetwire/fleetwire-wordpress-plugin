@@ -4,7 +4,7 @@
  * Plugin Name: Fleetwire Fleet Management Plugin
  * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
  * Author: Fleetwire, LLC
- * Version: 1.0.18
+ * Version: 1.0.19
  * Author URI: https://fleetwire.io
  * Copyright: 2025 Fleetwire, LLC
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'FLEETWIRE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-
+define( 'FLEETWIRE_TEXT_DOMAIN', 'fleetwire');
 
 //
 // Admin
@@ -46,9 +46,21 @@ function fleetwire_admin_actions() {
 	add_options_page( "Fleetwire", "Fleetwire", 'manage_options', "Fleetwire", "fleetwire_admin" );
 }
 
+function fleetwire_add_admin_menu_page() {
+	add_menu_page(
+		'Fleetwire',                       // Page title
+		'Fleetwire',                       // Menu title
+		'manage_options',                  // Capability
+		'fleetwire',                       // Menu slug
+		'fleetwire_admin',                 // Callback function
+		plugin_dir_url(__FILE__) . 'assets/favicon-16x16.png', // Icon URL
+		99                                // Position
+	);
+}
+
 function fleetwire_admin_resources( $hook ) {
 	// Load only on ?page=Fleetwire
-	if ( $hook != 'settings_page_Fleetwire' ) {
+	if ( $hook !== 'settings_page_Fleetwire' && $hook !== 'toplevel_page_fleetwire') {
 		return;
 	}
 	wp_enqueue_style( 'fleetwire-admin', plugins_url( 'assets/fleetwire-admin.css', __FILE__ ) );
@@ -428,6 +440,7 @@ function fleetwire_register_admin_hooks() {
 	add_action( 'admin_enqueue_scripts', 'fleetwire_admin_resources' );
 	add_action( 'admin_footer', 'fleetwire_admin_js' );
 	add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'fleetwire_admin_settings_link' );
+	add_action( 'admin_menu', 'fleetwire_add_admin_menu_page' );
 }
 
 function fleetwire_register_frontend_hooks() {

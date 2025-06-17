@@ -146,10 +146,11 @@ cd $ROOT_PATH$TEMP_GITHUB_REPO
 # LIST BRANCHES
 clear
 git fetch origin
-echo "WHICH BRANCH DO YOU WISH TO DEPLOY?"
+echo "WHICH BRANCH DO YOU WISH TO DEPLOY? [default: main]"
 git branch -r | less -FRX || { echo "Unable to list branches."; exit 1; }
 echo ""
-read -p "origin/" BRANCH
+read -p "origin/ (press Enter for 'main'): " BRANCH
+BRANCH=${BRANCH:-main}
 
 # Switch Branch
 echo "Switching to branch"
@@ -190,16 +191,6 @@ rm -f CODE_OF_CONDUCT.md
 
 # MOVE INTO SVN DIR
 cd $ROOT_PATH$TEMP_SVN_REPO
-
-# Add banner assets (safely)
-if [[ -f "assets/banner-772x250.png" ]]; then
-    echo "Adding assets/banner-772x250.png"
-    svn add --force assets/banner-772x250.png
-fi
-if [[ -f "assets/banner-1544x500.png" ]]; then
-    echo "Adding assets/banner-1544x500.png"
-    svn add --force assets/banner-1544x500.png
-fi
 
 # UPDATE SVN
 echo "Updating SVN"
@@ -248,7 +239,7 @@ extract_changelog() {
     $0 ~ ver {flag=1; next}
     /^= [0-9]+\.[0-9]+\.[0-9]+ =/ && flag {exit}
     flag {print}
-  ' readme.txt | sed '/^$/d')
+  ' ../readme.txt | sed '/^$/d')
   if [ -z "$changelog" ]; then
     echo "Release of version $version"
   else
