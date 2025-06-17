@@ -2,10 +2,13 @@
 Contributors: fleetwire
 Tags: rental, booking, vehicle rentals, fleet management, calendar
 Requires at least: 2.0
-Tested up to: 6.5
-Stable tag: 1.0.14
+Tested up to: 6.8.1
+Stable tag: 1.0.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+Elevate your WordPress site into a fully-fledged online rental business. Seamlessly integrate your Fleetwire account to offer online booking, manage rentals, and sync your inventory with ease.
+
 
 == Description ==
 
@@ -49,6 +52,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.15 =
+* Verified compatibility with WordPress 6.8.1
+* Updated readme.txt
+
 = 1.0.14 =
 * Updated readme.txt
 
