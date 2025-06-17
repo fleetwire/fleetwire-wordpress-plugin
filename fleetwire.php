@@ -4,7 +4,7 @@
  * Plugin Name: Fleetwire Fleet Management Plugin
  * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
  * Author: Fleetwire, LLC
- * Version: 1.0.17
+ * Version: 1.0.18
  * Author URI: https://fleetwire.io
  * Copyright: 2025 Fleetwire, LLC
  */
@@ -97,7 +97,7 @@ function fleetwire_admin_notice() {
 		return;
 	}
 
-	if ( $hook_suffix == 'plugins.php' && trim( get_option( 'fleetwire_company_name' ) ) == false ) {
+	if ( $hook_suffix == 'plugins.php' && ! trim( get_option( 'fleetwire_company_name' ) ) ) {
 		include( 'admin/fleetwire_notice.php' );
 	}
 }
@@ -111,7 +111,7 @@ function add_fleetwire_js() {
 	$company = trim( get_option( 'fleetwire_company_name' ) );
 
 	if ( $company ) {
-		$asset_url = "https://{$company}.fleetwire.io/tenant/v2/fleetwire.js";
+		$asset_url = "https://$company.fleetwire.io/tenant/v2/fleetwire.js";
 		//    $asset_url = 'http://fleetwire.test/tenant/v2/fleetwire.js';
 		wp_enqueue_script( 'fleetwire_v1', $asset_url, array(), '1.0.8', true );
 	}
@@ -146,6 +146,7 @@ function fleetwire_shortcode_options_to_data( $options ) {
 
 // fleetwire code for embedding a product
 // [fleetwire_card id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_card_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id'        => null,
@@ -158,6 +159,7 @@ function fleetwire_card_bb( $params ) {
 
 // fleetwire code for embedding a product button
 // [fleetwire_button id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_button_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id' => null
@@ -168,6 +170,7 @@ function fleetwire_button_bb( $params ) {
 
 // fleetwire code for embedding a product detail view
 // [fleetwire_detail id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_detail_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id' => null
@@ -176,8 +179,9 @@ function fleetwire_detail_bb( $params ) {
 	return '<div class="fleetwire-product-detail" ' . fleetwire_shortcode_options_to_data( $options ) . '></div>';
 }
 
-// fleetwire shortcode for embedding a vehicles number of doors
+// fleetwire shortcode for embedding a vehicle door count
 // [fleetwire_listing_doors id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_vehicle_doors_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id' => null
@@ -186,8 +190,9 @@ function fleetwire_vehicle_doors_bb( $params ) {
 	return '<span class="fleetwire-listing-doors" ' . fleetwire_shortcode_options_to_data( $options ) . '></span>';
 }
 
-// fleetwire shortcode for embedding a vehicles number of seats
+// fleetwire shortcode for embedding a vehicle seat count
 // [fleetwire_listing_seats id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_vehicle_seats_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id' => null
@@ -199,6 +204,7 @@ function fleetwire_vehicle_seats_bb( $params ) {
 
 // fleetwire shortcode for embedding a vehicles feature list
 // [fleetwire_listing_features id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_vehicle_features_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id' => null
@@ -207,8 +213,9 @@ function fleetwire_vehicle_features_bb( $params ) {
 	return '<span class="fleetwire-listing-features" ' . fleetwire_shortcode_options_to_data( $options ) . '></span>';
 }
 
-// fleetwire shortcode for embedding a vehicles reviews
+// fleetwire shortcode for embedding a vehicle review
 // [fleetwire_listing_reviews id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_vehicle_reviews_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id'         => null,
@@ -220,6 +227,7 @@ function fleetwire_vehicle_reviews_bb( $params ) {
 
 // fleetwire shortcode for embedding a vehicles image gallery
 // [fleetwire_listing_image_gallery id="l_PP4QD3PM"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_vehicle_image_gallery_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id' => null,
@@ -232,6 +240,7 @@ function fleetwire_vehicle_image_gallery_bb( $params ) {
 // [fleetwire_list]
 // [fleetwire_list tags="tablets"]
 // [fleetwire_list categories="apple"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_list_bb( $params ) {
 
 	$options = shortcode_atts( array(
@@ -250,6 +259,7 @@ function fleetwire_list_bb( $params ) {
 // fleetwire code for embedding a product search
 // [fleetwire_search]
 // [fleetwire_search search-key="only-tablets"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_search_bb( $params ) {
 	$options = shortcode_atts( array(
 		'search-key' => null
@@ -261,6 +271,7 @@ function fleetwire_search_bb( $params ) {
 // fleetwire code for embedding an availability checker
 // [fleetwire_availability]
 // [fleetwire_availability data-show-location-picker="false"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_availability( $params ) {
 	$options = shortcode_atts( array(
 		'data-show-location-picker' => null
@@ -271,6 +282,7 @@ function fleetwire_availability( $params ) {
 
 // fleetwire code for datepicker
 // [fleetwire_datepicker]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_datepicker_bb( $params ) {
 	$options = shortcode_atts( array(), $params );
 
@@ -279,6 +291,7 @@ function fleetwire_datepicker_bb( $params ) {
 
 // fleetwire code for embedding a cart button
 // [fleetwire_cart_button]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_cart_button_bb( $params ) {
 	$options = shortcode_atts( array(
 		'href' => null
@@ -289,12 +302,14 @@ function fleetwire_cart_button_bb( $params ) {
 
 // fleetwire code for embedding the embeddable cart
 // [fleetwire_embeddable_cart]
-function fleetwire_embeddable_cart_bb( $params ) {
+/** @used-by fleetwire_register_shortcodes */
+function fleetwire_embeddable_cart_bb( ) {
 	return '<div class="fleetwire-embeddable-cart"></div>';
 }
 
 // fleetwire code for embedding the embeddable cart lines
 // [fleetwire_embeddable_cart_lines]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_embeddable_cart_lines_bb( $params ) {
 	$options = shortcode_atts( array(
 		'compact' => null
@@ -305,6 +320,7 @@ function fleetwire_embeddable_cart_lines_bb( $params ) {
 
 // fleetwire code for embedding the embeddable cart sidebar
 // [fleetwire_embeddable_cart_sidebar]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_embeddable_cart_sidebar_bb( $params ) {
 	$options = shortcode_atts( array(
 		'continue-shopping' => null,
@@ -316,13 +332,19 @@ function fleetwire_embeddable_cart_sidebar_bb( $params ) {
 
 // fleetwire code for embedding a sidebar with datepicker and categories
 // [fleetwire_sidebar]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_sidebar_bb( $params ) {
-	return '<div class="fleetwire-sidebar"></div>';
+	$options = shortcode_atts( array(
+		'search-key' => null
+	), $params );
+
+	return '<div class="fleetwire-sidebar" ' . fleetwire_shortcode_options_to_data( $options ) . '></div>';
 }
 
-// fleetwire code for embedding a sorting select
+// fleetwire code for embedding sorting select
 // [fleetwire_sort]
 // [fleetwire_sort search-key="only-tablets"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_sort_bb( $params ) {
 	$options = shortcode_atts( array(
 		'search-key' => null
@@ -334,6 +356,7 @@ function fleetwire_sort_bb( $params ) {
 // fleetwire code for embedding a bar with search and sorting select
 // [fleetwire_bar]
 // [fleetwire_bar search-key="only-tablets"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_bar_bb( $params ) {
 	$options = shortcode_atts( array(
 		'search-key' => null,
@@ -345,6 +368,7 @@ function fleetwire_bar_bb( $params ) {
 // fleetwire code for embedding a category list
 // [fleetwire_categories]
 // [fleetwire_categories search-key="only-tablets"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_categories_bb( $params ) {
 	$options = shortcode_atts( array(
 		'search-key' => null
@@ -357,6 +381,7 @@ function fleetwire_categories_bb( $params ) {
 // [fleetwire_listing_description]
 // [fleetwire_listing_description id="l_PP4QD3PM"]
 // [fleetwire_listing_description id="l_PP4QD3PM" length="100"]
+/** @used-by fleetwire_register_shortcodes */
 function fleetwire_description_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id'     => null,

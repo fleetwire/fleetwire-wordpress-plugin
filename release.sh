@@ -1,21 +1,53 @@
 #!/bin/sh
 
-# By Mike Jolley, based on work by Barry Kooij ;)
-# Modified by Calvin Walzel to use env variables
 # License: GPL v3
-
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+# WARNING: Never echo or print secret variables (e.g., GITHUB_ACCESS_TOKEN, SVN_PASSWORD) in logs or output.
+# If you must display a secret for debugging, always mask it (e.g., show only the first/last 2 characters).
+#
+# Example (do not use in production):
+# echo "GITHUB_ACCESS_TOKEN: ${GITHUB_ACCESS_TOKEN:0:2}****${GITHUB_ACCESS_TOKEN: -2}"
+#
+# Review all echo/read statements below to ensure no secrets are ever displayed.
+
+# Strict error handling
+set -euo pipefail
+
+# Parse --dry-run flag
+DRY_RUN=0
+if [ "${1-}" = "--dry-run" ]; then
+  DRY_RUN=1
+  echo "[DRY RUN MODE ENABLED] No changes will be made."
+fi
+
+# Usage/help message
+if [ "${1-}" = "--help" ] || [ "${1-}" = "-h" ]; then
+  echo "\nUsage: ./release.sh\n"
+  echo "This script releases a WordPress plugin from GitHub to WordPress.org SVN."
+  echo "\nRequirements:"
+  echo "  - .env file with required variables (see script comments)"
+  echo "  - git, svn, curl, grep, sed, xargs installed"
+  echo "\nFlags:"
+  echo "  --help, -h   Show this help message and exit."
+  exit 0
+fi
+
+# Check for required tools
+for cmd in git svn curl grep sed xargs; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Error: $cmd is not installed." >&2
+    exit 1
+  fi
+done
+
+# Check for .env file
+if [ ! -f .env ]; then
+  echo "Error: .env file not found. Please create one with the required variables." >&2
+  exit 1
+fi
 
 read_var() {
     VAR=$(grep $1 $2 | xargs)
@@ -27,6 +59,14 @@ set -a
 source .env
 set +a
 
+# Check for required variables in .env
+REQUIRED_VARS=(GITHUB_ACCESS_TOKEN PLUGIN_SLUG GITHUB_REPO_OWNER GITHUB_REPO_NAME SVN_USERNAME SVN_PASSWORD)
+for var in "${REQUIRED_VARS[@]}"; do
+  if [ -z "${!var-}" ]; then
+    echo "Error: Required variable $var is not set in .env or is empty." >&2
+    exit 1
+  fi
+done
 
 # ----- ADD THESE TO A '.env' FILE -----
 
@@ -94,7 +134,11 @@ fi
 
 # CLONE GIT DIR
 echo "Cloning GIT repository from GITHUB: "${GIT_REPO}""
-git clone --progress $GIT_REPO $TEMP_GITHUB_REPO || { echo "Unable to clone repo."; exit 1; }
+if [ "$DRY_RUN" -eq 1 ]; then
+  echo "DRY RUN: Would run: git clone --progress $GIT_REPO $TEMP_GITHUB_REPO"
+else
+  git clone --progress $GIT_REPO $TEMP_GITHUB_REPO || { echo "Unable to clone repo."; exit 1; }
+fi
 
 # MOVE INTO GIT DIR
 cd $ROOT_PATH$TEMP_GITHUB_REPO
@@ -196,9 +240,25 @@ echo ""
 read -p "PRESS [ENTER] TO COMMIT RELEASE "${VERSION}" TO WORDPRESS.ORG AND GITHUB"
 echo ""
 
+# Extract changelog for a given version from readme.txt
+extract_changelog() {
+  local version="$1"
+  local changelog
+  changelog=$(awk -v ver="= ${version} =" '
+    $0 ~ ver {flag=1; next}
+    /^= [0-9]+\.[0-9]+\.[0-9]+ =/ && flag {exit}
+    flag {print}
+  ' readme.txt | sed '/^$/d')
+  if [ -z "$changelog" ]; then
+    echo "Release of version $version"
+  else
+    echo "$changelog"
+  fi
+}
+
 # CREATE THE GITHUB RELEASE
-echo "Creating GITHUB release"
-API_JSON=$(printf '{ "tag_name": "%s","target_commitish": "%s","name": "%s", "body": "Release of version %s", "draft": false, "prerelease": false }' $VERSION $BRANCH $VERSION $VERSION)
+CHANGELOG_BODY=$(extract_changelog "$VERSION")
+API_JSON=$(printf '{ "tag_name": "%s","target_commitish": "%s","name": "%s", "body": "%s", "draft": false, "prerelease": false }' "$VERSION" "$BRANCH" "$VERSION" "$CHANGELOG_BODY")
 RESULT=$(curl --data "${API_JSON}" https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases?access_token=${GITHUB_ACCESS_TOKEN})
 
 # DEPLOY
