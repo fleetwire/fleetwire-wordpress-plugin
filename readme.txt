@@ -1,13 +1,15 @@
 === Fleetwire Fleet Management ===
 Contributors: fleetwire
+Donate Link: https://coff.ee/fleetwire
 Tags: rental, booking, vehicle rentals, fleet management, calendar
-Requires at least: 2.0
+Requires at least: 5.0
+Requires PHP: 7.4
 Tested up to: 6.8.1
-Stable tag: 1.0.15
+Stable tag: 1.0.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Elevate your WordPress site into a fully-fledged online rental business. Seamlessly integrate your Fleetwire account to offer online booking, manage rentals, and sync your inventory with ease.
+Seamlessly embed Fleetwire to offer online bookings, manage rentals, and sync your car-sharing fleet directly from your WordPress site.
 
 
 == Description ==
@@ -16,17 +18,17 @@ Elevate your WordPress site into a fully-fledged online rental business. Seamles
 
 ## Key Features:
 
-- **Direct & Car-Sharing Rentals Sync:** Automatically synchronize your rental calendar with platforms like Turo and Getaround.
-- **Comprehensive Fleet Management:** Manage orders, inventory, documents, and payments all from one place. Includes tools for auto messaging, eSigning, vehicle research, mileage tracking, and more.
-- **Online Booking System:** Enable your customers to book rentals directly from your website using shortcodes to display listings.
-- **Real-Time Availability & Hosted Checkout:** Offer a booking calendar that updates in real time to prevent overbooking and provide a smooth checkout experience.
-- **Online Payments Integration:** Securely process payments with Stripe integration, supporting various payment methods, security deposits, and coupon codes.
+- **Direct & Car-Sharing Rentals Sync: ** Automatically synchronize your rental calendar with platforms like Turo and Getaround.
+- **Comprehensive Fleet Management: ** Manage orders, inventory, documents, and payments all from one place. Includes tools for auto messaging, eSigning, vehicle research, mileage tracking, and more.
+- **Online Booking System: ** Enable your customers to book rentals directly from your website using shortcodes to display listings.
+- **Real-Time Availability & Hosted Checkout: ** Offer a booking calendar that updates in real time to prevent overbooking and provide a smooth checkout experience.
+- **Online Payments Integration: ** Securely process payments with Stripe integration, supporting various payment methods, security deposits, and coupon codes.
 
 ## Getting Started:
 
-1. **Install the Plugin:** Download and activate the plugin on your WordPress site.
-2. **Connect Your Fleetwire Account:** Enter your company ID in the plugin settings to link your Fleetwire account.
-3. **Add Your Listings:** Use shortcodes to display your vehicle rentals on your site.
+1. **Install the Plugin: ** Download and activate the plugin on your WordPress site.
+2. **Connect Your Fleetwire Account: ** Enter your company ID in the plugin settings to link your Fleetwire account.
+3. **Add Your Listings: ** Use shortcodes to display your vehicle rentals on your site.
 
 
 > **Note:** A Fleetwire subscription is required. Visit [fleetwire.io](https://fleetwire.io/) to learn more or start your **free 14-day trial**.
@@ -43,6 +45,13 @@ Elevate your WordPress site into a fully-fledged online rental business. Seamles
    - Paste your Company ID in the provided field.
    - To embed listings, ensure you have active rental listings in Fleetwire. Use provided shortcodes on any page or post.
 
+== Frequently Asked Questions ==
+
+= Does this plugin require a Fleetwire subscription? =
+Yes. Visit [fleetwire.io](https://fleetwire.io) to create an account or start a 14-day trial.
+
+= Can I embed listings with a shortcode? =
+Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
 
 == Screenshots ==
 
@@ -52,6 +61,9 @@ Elevate your WordPress site into a fully-fledged online rental business. Seamles
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.16 =
+* Tweaked Fleetwire Logos and readme.txt
+
 = 1.0.15 =
 * Verified compatibility with WordPress 6.8.1
 * Updated readme.txt
@@ -105,3 +117,11 @@ Elevate your WordPress site into a fully-fledged online rental business. Seamles
 * First release
 
 
+== Upgrade Notice ==
+
+= 1.0.15 =
+Verified compatibility with WordPress 6.8.1. No functionality changes.
+Readme.txt improvements and metadata updates. No breaking changes.
+
+= 1.0.12 =
+Verified compatibility with WordPress 6.5. No functionality changes.

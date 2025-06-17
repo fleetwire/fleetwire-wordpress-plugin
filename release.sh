@@ -142,6 +142,14 @@ rm -f CODE_OF_CONDUCT.md
 # MOVE INTO SVN DIR
 cd $ROOT_PATH$TEMP_SVN_REPO
 
+# Add banner assets (safely)
+if [[ -f "assets/banner-772x250.png" ]]; then
+    svn add --force assets/banner-772x250.png
+fi
+if [[ -f "assets/banner-1544x500.png" ]]; then
+    svn add --force assets/banner-1544x500.png
+fi
+
 # UPDATE SVN
 echo "Updating SVN"
 svn update || { echo "Unable to update SVN."; exit 1; }
