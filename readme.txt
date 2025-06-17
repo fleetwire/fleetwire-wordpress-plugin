@@ -1,9 +1,9 @@
-=== Plugin Name ===
-Contributors: fleetwire-fleet-management
-Tags: rental, vehicle rentals, direct rentals, booking system, booking calendar, car-share sync, fleet management
+=== Fleetwire Fleet Management ===
+Contributors: fleetwire
+Tags: rental, booking, vehicle rentals, fleet management, calendar
 Requires at least: 2.0
 Tested up to: 6.5
-Stable tag: 1.0.13
+Stable tag: 1.0.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 > **Note:** A Fleetwire subscription is required. Visit [fleetwire.io](https://fleetwire.io/) to learn more or start your **free 14-day trial**.
 
+== Installation ==
 
 ## Installation Guide:
 
@@ -48,6 +49,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.14 =
+* Updated readme.txt
+
 = 1.0.13 =
 * Code tweaks
 * Updated readme.txt
