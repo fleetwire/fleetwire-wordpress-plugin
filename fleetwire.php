@@ -4,7 +4,7 @@
  * Plugin Name: Fleetwire Fleet Management Plugin
  * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
  * Author: Fleetwire, LLC
- * Version: 1.0.16
+ * Version: 1.0.17
  * Author URI: https://fleetwire.io
  * Copyright: 2025 Fleetwire, LLC
  */
@@ -14,30 +14,36 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+define( 'FLEETWIRE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+
+
 //
 // Admin
 //
 
 // Include admin settings page
 function fleetwire_admin() {
-	include( 'admin/fleetwire_admin.php' );
+	include FLEETWIRE_PLUGIN_DIR . 'admin/fleetwire_admin.php';
 }
 
 
 function fleetwire_company_name_form_process() {
+	if ( ! isset( $_POST['fleetwire_company_name'], $_POST['fw_nonce'] ) ) {
+		wp_send_json_error( 'Missing fields' );
+	}
+
 	if ( ! wp_verify_nonce( $_POST['fw_nonce'], 'fleetwire_company_name_form_process' ) ) {
-		die( __( 'Security check' ) );
+		wp_send_json_error( 'Security check failed' );
 	}
 
 	$company = sanitize_text_field( $_POST['fleetwire_company_name'] );
 	update_option( 'fleetwire_company_name', $company );
-	$response['message'] = 'Options saved.';
-	wp_send_json( $response );
+	wp_send_json_success( [ 'message' => 'Options saved.' ] );
 }
 
 
 function fleetwire_admin_actions() {
-	add_options_page( "Fleetwire", "Fleetwire", 'administrator', "Fleetwire", "fleetwire_admin" );
+	add_options_page( "Fleetwire", "Fleetwire", 'manage_options', "Fleetwire", "fleetwire_admin" );
 }
 
 function fleetwire_admin_resources( $hook ) {
@@ -102,16 +108,20 @@ function fleetwire_admin_notice() {
 
 // Load client script
 function add_fleetwire_js() {
-	$asset_url = 'https://' . get_option( 'fleetwire_company_name' ) . '.fleetwire.io/tenant/v2/fleetwire.js';
-//    $asset_url = 'http://fleetwire.test/tenant/v2/fleetwire.js';
-	wp_enqueue_script( 'fleetwire_v1', $asset_url, array(), '1.0.8', true );
+	$company = trim( get_option( 'fleetwire_company_name' ) );
+
+	if ( $company ) {
+		$asset_url = "https://{$company}.fleetwire.io/tenant/v2/fleetwire.js";
+		//    $asset_url = 'http://fleetwire.test/tenant/v2/fleetwire.js';
+		wp_enqueue_script( 'fleetwire_v1', $asset_url, array(), '1.0.8', true );
+	}
 }
 
 // Insert client configuration
 function add_fleetwire_client_configuration_js() {
 	?>
     <script>window.fleetwireOptions = {
-            company: '<?php echo get_option( 'fleetwire_company_name' ); ?>',
+            company: '<?php echo esc_js( get_option( 'fleetwire_company_name' ) ); ?>',
             storeProvider: 'wordpress'
         };</script>
 	<?php
@@ -267,8 +277,6 @@ function fleetwire_datepicker_bb( $params ) {
 	return '<div class="fleetwire-datepicker" ' . fleetwire_shortcode_options_to_data( $options ) . '></div>';
 }
 
-add_shortcode( 'fleetwire_datepicker', 'fleetwire_datepicker_bb' );
-
 // fleetwire code for embedding a cart button
 // [fleetwire_cart_button]
 function fleetwire_cart_button_bb( $params ) {
@@ -346,8 +354,9 @@ function fleetwire_categories_bb( $params ) {
 }
 
 // fleetwire code for embedding a listing description
-// [fleetwire_categories]
-// [fleetwire_categories search-key="only-tablets"]
+// [fleetwire_listing_description]
+// [fleetwire_listing_description id="l_PP4QD3PM"]
+// [fleetwire_listing_description id="l_PP4QD3PM" length="100"]
 function fleetwire_description_bb( $params ) {
 	$options = shortcode_atts( array(
 		'id'     => null,
@@ -357,42 +366,55 @@ function fleetwire_description_bb( $params ) {
 	return '<div class="fleetwire-listing-description" ' . fleetwire_shortcode_options_to_data( $options ) . '></div>';
 }
 
-function fleetwire_initialize() {
+function fleetwire_register_shortcodes() {
+	$shortcodes = [
+		'fleetwire_listing_card'            => 'fleetwire_card_bb',
+		'fleetwire_button'                  => 'fleetwire_button_bb',
+		'fleetwire_product'                 => 'fleetwire_button_bb',
+		'fleetwire_detail'                  => 'fleetwire_detail_bb',
+		'fleetwire_list'                    => 'fleetwire_list_bb',
+		'fleetwire_search'                  => 'fleetwire_search_bb',
+		'fleetwire_availability'            => 'fleetwire_availability',
+		'fleetwire_cart_button'             => 'fleetwire_cart_button_bb',
+		'fleetwire_embeddable_cart'         => 'fleetwire_embeddable_cart_bb',
+		'fleetwire_embeddable_cart_sidebar' => 'fleetwire_embeddable_cart_sidebar_bb',
+		'fleetwire_embeddable_cart_lines'   => 'fleetwire_embeddable_cart_lines_bb',
+		'fleetwire_sidebar'                 => 'fleetwire_sidebar_bb',
+		'fleetwire_sort'                    => 'fleetwire_sort_bb',
+		'fleetwire_bar'                     => 'fleetwire_bar_bb',
+		'fleetwire_categories'              => 'fleetwire_categories_bb',
+		'fleetwire_listing_description'     => 'fleetwire_description_bb',
+		'fleetwire_listing_doors'           => 'fleetwire_vehicle_doors_bb',
+		'fleetwire_listing_seats'           => 'fleetwire_vehicle_seats_bb',
+		'fleetwire_listing_reviews'         => 'fleetwire_vehicle_reviews_bb',
+		'fleetwire_listing_image_gallery'   => 'fleetwire_vehicle_image_gallery_bb',
+		'fleetwire_listing_features'        => 'fleetwire_vehicle_features_bb',
+		'fleetwire_datepicker'              => 'fleetwire_datepicker_bb',
+	];
+
+	foreach ( $shortcodes as $tag => $handler ) {
+		add_shortcode( $tag, $handler );
+	}
+}
+
+function fleetwire_register_admin_hooks() {
 	add_action( 'admin_menu', 'fleetwire_admin_actions' );
 	add_action( 'admin_notices', 'fleetwire_admin_notice' );
 	add_action( 'admin_enqueue_scripts', 'fleetwire_admin_resources' );
-	add_action( 'wp_ajax_fleetwire_company_name_form_process', 'fleetwire_company_name_form_process' );
+	add_action( 'admin_footer', 'fleetwire_admin_js' );
+	add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'fleetwire_admin_settings_link' );
+}
 
-
-	$plugin = plugin_basename( __FILE__ );
-	add_filter( "plugin_action_links_$plugin", 'fleetwire_admin_settings_link' );
-
+function fleetwire_register_frontend_hooks() {
 	add_action( 'wp_enqueue_scripts', 'add_fleetwire_js' );
 	add_action( 'wp_head', 'add_fleetwire_client_configuration_js' );
-	add_action( 'admin_footer', 'fleetwire_admin_js' );
+	add_action( 'wp_ajax_fleetwire_company_name_form_process', 'fleetwire_company_name_form_process' );
+}
 
-
-	add_shortcode( 'fleetwire_listing_card', 'fleetwire_card_bb' );
-	add_shortcode( 'fleetwire_button', 'fleetwire_button_bb' );
-	add_shortcode( 'fleetwire_product', 'fleetwire_button_bb' );
-	add_shortcode( 'fleetwire_detail', 'fleetwire_detail_bb' );
-	add_shortcode( 'fleetwire_list', 'fleetwire_list_bb' );
-	add_shortcode( 'fleetwire_search', 'fleetwire_search_bb' );
-	add_shortcode( 'fleetwire_availability', 'fleetwire_availability' );
-	add_shortcode( 'fleetwire_cart_button', 'fleetwire_cart_button_bb' );
-	add_shortcode( 'fleetwire_embeddable_cart', 'fleetwire_embeddable_cart_bb' );
-	add_shortcode( 'fleetwire_embeddable_cart_sidebar', 'fleetwire_embeddable_cart_sidebar_bb' );
-	add_shortcode( 'fleetwire_embeddable_cart_lines', 'fleetwire_embeddable_cart_lines_bb' );
-	add_shortcode( 'fleetwire_sidebar', 'fleetwire_sidebar_bb' );
-	add_shortcode( 'fleetwire_sort', 'fleetwire_sort_bb' );
-	add_shortcode( 'fleetwire_bar', 'fleetwire_bar_bb' );
-	add_shortcode( 'fleetwire_categories', 'fleetwire_categories_bb' );
-	add_shortcode( 'fleetwire_listing_description', 'fleetwire_description_bb' );
-	add_shortcode( 'fleetwire_listing_doors', 'fleetwire_vehicle_doors_bb' );
-	add_shortcode( 'fleetwire_listing_seats', 'fleetwire_vehicle_seats_bb' );
-	add_shortcode( 'fleetwire_listing_reviews', 'fleetwire_vehicle_reviews_bb' );
-	add_shortcode( 'fleetwire_listing_image_gallery', 'fleetwire_vehicle_image_gallery_bb' );
-	add_shortcode( 'fleetwire_listing_features', 'fleetwire_vehicle_features_bb' );
+function fleetwire_initialize() {
+	fleetwire_register_admin_hooks();
+	fleetwire_register_frontend_hooks();
+	fleetwire_register_shortcodes();
 }
 
 fleetwire_initialize();

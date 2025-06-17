@@ -5,7 +5,7 @@ Tags: rental, booking, vehicle rentals, fleet management, calendar
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.8.1
-Stable tag: 1.0.16
+Stable tag: 1.0.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,9 @@ Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.17 =
+* Refactored code to align with WordPress coding standards.
+
 = 1.0.16 =
 * Tweaked Fleetwire Logos and readme.txt
 

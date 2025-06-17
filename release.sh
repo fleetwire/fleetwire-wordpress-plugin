@@ -23,6 +23,11 @@ read_var() {
     echo ${VAR[1]}
 }
 
+set -a
+source .env
+set +a
+
+
 # ----- ADD THESE TO A '.env' FILE -----
 
 # THE GITHUB ACCESS TOKEN, GENERATE ONE AT: https://github.com/settings/tokens
@@ -144,9 +149,11 @@ cd $ROOT_PATH$TEMP_SVN_REPO
 
 # Add banner assets (safely)
 if [[ -f "assets/banner-772x250.png" ]]; then
+    echo "Adding assets/banner-772x250.png"
     svn add --force assets/banner-772x250.png
 fi
 if [[ -f "assets/banner-1544x500.png" ]]; then
+    echo "Adding assets/banner-1544x500.png"
     svn add --force assets/banner-1544x500.png
 fi
 
