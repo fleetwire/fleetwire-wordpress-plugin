@@ -16,91 +16,192 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'FLEETWIRE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FLEETWIRE_TEXT_DOMAIN', 'fleetwire');
+define( 'FLEETWIRE_VERSION', '1.0.20' );
+
+// Constants for configuration
+const FLEETWIRE_MENU_POSITION = 99;
+const FLEETWIRE_SCRIPT_VERSION = '1.0.8';
 
 //
 // Admin
 //
 
-// Include admin settings page
+/**
+ * Include admin settings page
+ * 
+ * @since 1.0.20
+ * @return void
+ */
 function fleetwire_admin() {
 	include FLEETWIRE_PLUGIN_DIR . 'admin/fleetwire_admin.php';
 }
 
 
+/**
+ * Process company name form submission
+ * 
+ * @since 1.0.20
+ * @return void
+ */
 function fleetwire_company_name_form_process() {
-	if ( ! isset( $_POST['fleetwire_company_name'], $_POST['fw_nonce'] ) ) {
-		wp_send_json_error( 'Missing fields' );
-	}
-
-	if ( ! wp_verify_nonce( $_POST['fw_nonce'], 'fleetwire_company_name_form_process' ) ) {
-		wp_send_json_error( 'Security check failed' );
-	}
-
-	$company = sanitize_text_field( $_POST['fleetwire_company_name'] );
-	update_option( 'fleetwire_company_name', $company );
-	wp_send_json_success( [ 'message' => 'Options saved.' ] );
+    // Check user capabilities
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( [
+            'message' => __( 'Insufficient permissions.', 'fleetwire' )
+        ] );
+    }
+    
+    // Verify nonce
+    if ( ! wp_verify_nonce( 
+        $_POST['fw_nonce'] ?? '', 
+        'fleetwire_company_name_form_process' 
+    ) ) {
+        wp_send_json_error( [
+            'message' => __( 'Security check failed.', 'fleetwire' )
+        ] );
+    }
+    
+    // Validate and sanitize input
+    $company = sanitize_text_field( $_POST['fleetwire_company_name'] ?? '' );
+    
+    if ( empty( $company ) ) {
+        wp_send_json_error( [
+            'message' => __( 'Company ID is required.', 'fleetwire' )
+        ] );
+    }
+    
+    // Validate UUID format (basic check)
+    if ( ! preg_match( '/^[a-f0-9\-]{36}$/i', $company ) ) {
+        wp_send_json_error( [
+            'message' => __( 'Invalid Company ID format.', 'fleetwire' )
+        ] );
+    }
+    
+    // Update option
+    $updated = update_option( 'fleetwire_company_name', $company );
+    
+    if ( $updated ) {
+        wp_send_json_success( [
+            'message' => __( 'Options saved.', 'fleetwire' )
+        ] );
+    } else {
+        wp_send_json_error( [
+            'message' => __( 'No changes made.', 'fleetwire' )
+        ] );
+    }
 }
 
 
-function fleetwire_admin_actions() {
-	add_options_page( "Fleetwire", "Fleetwire", 'manage_options', "Fleetwire", "fleetwire_admin" );
+/**
+ * Add Fleetwire options page
+ * 
+ * @since 1.0.20
+ * @return void
+ */
+function fleetwire_add_options_page() {
+	add_options_page( 
+		__( 'Fleetwire', 'fleetwire' ), 
+		__( 'Fleetwire', 'fleetwire' ), 
+		'manage_options', 
+		'Fleetwire', 
+		'fleetwire_admin' 
+	);
 }
 
-function fleetwire_add_admin_menu_page() {
+/**
+ * Add Fleetwire to the main admin menu
+ * 
+ * @since 1.0.20
+ * @return void
+ */
+function fleetwire_add_main_menu_page() {
 	add_menu_page(
-		'Fleetwire',                       // Page title
-		'Fleetwire',                       // Menu title
+		__( 'Fleetwire', 'fleetwire' ),                       // Page title
+		__( 'Fleetwire', 'fleetwire' ),                       // Menu title
 		'manage_options',                  // Capability
 		'fleetwire',                       // Menu slug
 		'fleetwire_admin',                 // Callback function
 		plugin_dir_url(__FILE__) . 'assets/favicon-16x16.png', // Icon URL
-		99                                // Position
+		FLEETWIRE_MENU_POSITION                                // Position
 	);
 }
 
-function fleetwire_admin_resources( $hook ) {
-	// Load only on ?page=Fleetwire
+/**
+ * Enqueue admin styles and scripts
+ * 
+ * @since 1.0.20
+ * @param string $hook Current admin page hook
+ * @return void
+ */
+function fleetwire_enqueue_admin_assets( $hook ) {
+	// Load only on Fleetwire pages
 	if ( $hook !== 'settings_page_Fleetwire' && $hook !== 'toplevel_page_fleetwire') {
 		return;
 	}
-	wp_enqueue_style( 'fleetwire-admin', plugins_url( 'assets/fleetwire-admin.css', __FILE__ ) );
+	
+	// Enqueue styles
+	wp_enqueue_style( 
+		'fleetwire-admin', 
+		plugins_url( 'assets/fleetwire-admins.css', __FILE__ ),
+		[],
+		FLEETWIRE_VERSION
+	);
+	
+	// Enqueue scripts
+	wp_enqueue_script(
+		'fleetwire-admin',
+		plugins_url('assets/fleetwire-admins.js', __FILE__),
+		['jquery'],
+		FLEETWIRE_VERSION,
+		true
+	);
+	
+	// Localize script for AJAX
+	wp_localize_script('fleetwire-admin', 'fleetwireAdmin', [
+		'ajaxUrl' => admin_url('admin-ajax.php'),
+		'nonce' => wp_create_nonce('fleetwire_company_name_form_process'),
+		'strings' => [
+			'error' => __('An error occurred. Please try again.', 'fleetwire'),
+			'success' => __('Options saved.', 'fleetwire')
+		]
+	]);
 }
 
 
-function fleetwire_admin_js() { ?>
-    <script type="text/javascript">
-        jQuery(document).ready(function ($) {
-            $('#fleetwire_form').on('submit', function (e) {
-                e.preventDefault();
-                const companyUuid = $('.fleetwire-company-uuid').val();
-
-                $.ajax({
-                    type: 'POST',
-                    url: "<?php echo admin_url( 'admin-ajax.php' ); ?>",
-                    data: {
-                        'fleetwire_company_name': companyUuid,
-                        'fw_nonce': "<?php echo wp_create_nonce( 'fleetwire_company_name_form_process' ) ?>",
-                        'action': 'fleetwire_company_name_form_process'
-                    }, success: function (result) {
-                        console.dir(result);
-                        $('.fleetwire-card .updated').removeClass('fleetwire-d-none').addClass('fleetwire-d-block')
-                    },
-                    error: function () {
-                        alert("error");
-                    }
-                });
-            });
-        });
-    </script> <?php
+/**
+ * Legacy admin JS function - now handled by fleetwire_enqueue_admin_assets
+ * 
+ * @since 1.0.20
+ * @deprecated Use fleetwire_enqueue_admin_assets instead
+ * @return void
+ */
+function fleetwire_admin_js() {
+	// This function is now deprecated and handled by fleetwire_enqueue_admin_assets
+	// The JavaScript is now in a separate file: assets/fleetwire-admin.js
+    _deprecated_function( __FUNCTION__, '1.0.20', 'fleetwire_enqueue_admin_assets' );
 }
 
+/**
+ * Add a settings link to plugin actions
+ * 
+ * @since 1.0.20
+ * @param array $links Plugin action links
+ * @return array Modified links
+ */
 function fleetwire_admin_settings_link( $links ) {
-	$settings_link = '<a href="options-general.php?page=Fleetwire">' . __( 'Settings' ) . '</a>';
+	$settings_link = '<a href="options-general.php?page=Fleetwire">' . 
+		esc_html__( 'Settings', 'fleetwire' ) . '</a>';
 	array_unshift( $links, $settings_link );
 
 	return $links;
 }
 
+/**
+ * Display admin notices
+ * 
+ * @since 1.0.20
+ * @return void
+ */
 function fleetwire_admin_notice() {
 	global $hook_suffix;
 
@@ -109,7 +210,7 @@ function fleetwire_admin_notice() {
 		return;
 	}
 
-	if ( $hook_suffix == 'plugins.php' && ! trim( get_option( 'fleetwire_company_name' ) ) ) {
+	if ( $hook_suffix === 'plugins.php' && ! trim( get_option( 'fleetwire_company_name' ) ) ) {
 		include( 'admin/fleetwire_notice.php' );
 	}
 }
@@ -118,22 +219,42 @@ function fleetwire_admin_notice() {
 // Assets
 //
 
-// Load client script
-function add_fleetwire_js() {
+/**
+ * Load Fleetwire client script
+ * 
+ * @since 1.0.20
+ * @return void
+ */
+function fleetwire_enqueue_client_script() {
 	$company = trim( get_option( 'fleetwire_company_name' ) );
 
 	if ( $company ) {
 		$asset_url = "https://$company.fleetwire.io/tenant/v2/fleetwire.js";
 		//    $asset_url = 'http://fleetwire.test/tenant/v2/fleetwire.js';
-		wp_enqueue_script( 'fleetwire_v1', $asset_url, array(), '1.0.8', true );
+		wp_enqueue_script( 
+			'fleetwire_client', 
+			$asset_url, 
+			[], 
+			FLEETWIRE_SCRIPT_VERSION, 
+			true 
+		);
 	}
 }
 
-// Insert client configuration
-function add_fleetwire_client_configuration_js() {
+/**
+ * Insert client configuration script
+ * 
+ * @since 1.0.20
+ * @return void
+ */
+function fleetwire_add_client_configuration() {
+	$company = get_option( 'fleetwire_company_name' );
+	if ( ! $company ) {
+		return;
+	}
 	?>
     <script>window.fleetwireOptions = {
-            company: '<?php echo esc_js( get_option( 'fleetwire_company_name' ) ); ?>',
+            company: '<?php echo esc_js( $company ); ?>',
             storeProvider: 'wordpress'
         };</script>
 	<?php
@@ -436,21 +557,38 @@ function fleetwire_register_shortcodes() {
 	}
 }
 
+/**
+ * Register admin hooks
+ * 
+ * @since 1.0.20
+ * @return void
+ */
 function fleetwire_register_admin_hooks() {
-	add_action( 'admin_menu', 'fleetwire_admin_actions' );
+	add_action( 'admin_menu', 'fleetwire_add_options_page' );
 	add_action( 'admin_notices', 'fleetwire_admin_notice' );
-	add_action( 'admin_enqueue_scripts', 'fleetwire_admin_resources' );
-	add_action( 'admin_footer', 'fleetwire_admin_js' );
+	add_action( 'admin_enqueue_scripts', 'fleetwire_enqueue_admin_assets' );
 	add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'fleetwire_admin_settings_link' );
-	add_action( 'admin_menu', 'fleetwire_add_admin_menu_page' );
+	add_action( 'admin_menu', 'fleetwire_add_main_menu_page' );
 }
 
+/**
+ * Register frontend hooks
+ * 
+ * @since 1.0.20
+ * @return void
+ */
 function fleetwire_register_frontend_hooks() {
-	add_action( 'wp_enqueue_scripts', 'add_fleetwire_js' );
-	add_action( 'wp_head', 'add_fleetwire_client_configuration_js' );
+	add_action( 'wp_enqueue_scripts', 'fleetwire_enqueue_client_script' );
+	add_action( 'wp_head', 'fleetwire_add_client_configuration' );
 	add_action( 'wp_ajax_fleetwire_company_name_form_process', 'fleetwire_company_name_form_process' );
 }
 
+/**
+ * Initialize the Fleetwire plugin
+ * 
+ * @since 1.0.20
+ * @return void
+ */
 function fleetwire_initialize() {
 	fleetwire_register_admin_hooks();
 	fleetwire_register_frontend_hooks();
