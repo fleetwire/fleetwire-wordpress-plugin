@@ -18,7 +18,7 @@
             <?php 
             printf(
                 esc_html__( "Don't have a Fleetwire account? %s", 'fleetwire' ),
-                '<a href="https://fleetwire.io/register" target="_blank" rel="noopener">' . 
+                '<a href="https://tenant.fleetwire.io/register" target="_blank" rel="noopener">' .
                 esc_html__( 'Get started for free', 'fleetwire' ) . '</a>'
             );
             ?>
