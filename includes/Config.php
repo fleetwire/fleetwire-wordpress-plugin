@@ -83,23 +83,24 @@ class Config {
      * 
      * @var string
      */
-    private static $plugin_dir;
+    private static string $plugin_dir;
     
     /**
      * Plugin directory URL
      * 
      * @var string
      */
-    private static $plugin_url;
+    private static string $plugin_url;
     
     /**
      * Initialize configuration
      * 
-     * @since 1.0.21
      * @param string $plugin_file Main plugin file path
+     *
      * @return void
+     *@since 1.0.21
      */
-    public static function init( $plugin_file ) {
+    public static function init( string $plugin_file ) {
         self::$plugin_dir = plugin_dir_path( $plugin_file );
         self::$plugin_url = plugin_dir_url( $plugin_file );
     }
@@ -127,68 +128,74 @@ class Config {
     /**
      * Get asset URL
      * 
-     * @since 1.0.21
-     * @param string $asset_path Asset path relative to plugin directory
+     * @param string $asset_path Asset path relative to the plugin directory
+     *
      * @return string
+     *@since 1.0.21
      */
-    public static function get_asset_url( $asset_path ) {
+    public static function get_asset_url( string $asset_path ) {
         return self::$plugin_url . $asset_path;
     }
     
     /**
-     * Get asset path
+     * Get an asset path
      * 
-     * @since 1.0.21
-     * @param string $asset_path Asset path relative to plugin directory
+     * @param string $asset_path Asset path relative to the plugin directory
+     *
      * @return string
+     *@since 1.0.21
      */
-    public static function get_asset_path( $asset_path ) {
+    public static function get_asset_path( string $asset_path ) {
         return self::$plugin_dir . $asset_path;
     }
     
     /**
      * Get company script URL
      * 
-     * @since 1.0.21
      * @param string $company_id Company ID
+     *
      * @return string
+     *@since 1.0.21
      */
-    public static function get_company_script_url( $company_id ) {
+    public static function get_company_script_url( string $company_id ) {
         return sprintf( self::SCRIPT_URL_PATTERN, $company_id );
     }
     
     /**
      * Get plugin option with default
      * 
-     * @since 1.0.21
      * @param string $option_name Option name
      * @param mixed $default Default value
+     *
      * @return mixed
+     *@since 1.0.21
      */
-    public static function get_option( $option_name, $default = null ) {
+    public static function get_option( string $option_name, $default = null ) {
         return get_option( 'fleetwire_' . $option_name, $default );
     }
     
     /**
      * Update plugin option
      * 
-     * @since 1.0.21
      * @param string $option_name Option name
      * @param mixed $value Option value
+     *
      * @return bool
+     *@since 1.0.21
      */
-    public static function update_option( $option_name, $value ) {
+    public static function update_option( string $option_name, $value ) {
         return update_option( 'fleetwire_' . $option_name, $value );
     }
     
     /**
      * Delete plugin option
      * 
-     * @since 1.0.21
      * @param string $option_name Option name
+     *
      * @return bool
+     *@since 1.0.21
      */
-    public static function delete_option( $option_name ) {
+    public static function delete_option( string $option_name ) {
         return delete_option( 'fleetwire_' . $option_name );
     }
     
@@ -216,11 +223,12 @@ class Config {
     /**
      * Validate company ID format
      * 
-     * @since 1.0.21
      * @param string $company_id Company ID to validate
+     *
      * @return bool
+     *@since 1.0.21
      */
-    public static function is_valid_company_id( $company_id ) {
+    public static function is_valid_company_id( string $company_id ) {
         if ( empty( $company_id ) ) {
             return false;
         }

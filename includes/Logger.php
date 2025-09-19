@@ -36,7 +36,7 @@ class Logger {
      * 
      * @var string
      */
-    private static $log_file;
+    private static string $log_file;
     
     /**
      * Initialize logger
@@ -48,7 +48,7 @@ class Logger {
         $upload_dir = wp_upload_dir();
         $log_dir = $upload_dir['basedir'] . '/fleetwire-logs';
         
-        // Create log directory if it doesn't exist
+        // Create a log directory if it doesn't exist
         if ( ! file_exists( $log_dir ) ) {
             wp_mkdir_p( $log_dir );
         }
@@ -59,13 +59,14 @@ class Logger {
     /**
      * Log a message
      * 
-     * @since 1.0.21
      * @param string $level Log level
      * @param string $message Log message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function log( $level, $message, $context = [] ) {
+    public static function log( string $level, string $message, array $context = [] ) {
         if ( ! self::should_log( $level ) ) {
             return;
         }
@@ -74,7 +75,7 @@ class Logger {
         $context_str = ! empty( $context ) ? ' ' . wp_json_encode( $context ) : '';
         $log_entry = sprintf( '[%s] %s: %s%s' . PHP_EOL, $timestamp, strtoupper( $level ), $message, $context_str );
         
-        // Write to log file
+        // Write to a log file
         error_log( $log_entry, 3, self::$log_file );
         
         // Also log to WordPress debug log if enabled
@@ -86,73 +87,79 @@ class Logger {
     /**
      * Log debug message
      * 
-     * @since 1.0.21
      * @param string $message Debug message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function debug( $message, $context = [] ) {
+    public static function debug( string $message, array $context = [] ) {
         self::log( self::LEVEL_DEBUG, $message, $context );
     }
     
     /**
      * Log info message
      * 
-     * @since 1.0.21
      * @param string $message Info message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function info( $message, $context = [] ) {
+    public static function info( string $message, array $context = [] ) {
         self::log( self::LEVEL_INFO, $message, $context );
     }
     
     /**
      * Log warning message
      * 
-     * @since 1.0.21
      * @param string $message Warning message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function warning( $message, $context = [] ) {
+    public static function warning( string $message, array $context = [] ) {
         self::log( self::LEVEL_WARNING, $message, $context );
     }
     
     /**
      * Log error message
      * 
-     * @since 1.0.21
      * @param string $message Error message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function error( $message, $context = [] ) {
+    public static function error( string $message, array $context = [] ) {
         self::log( self::LEVEL_ERROR, $message, $context );
     }
     
     /**
      * Log critical message
      * 
-     * @since 1.0.21
      * @param string $message Critical message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function critical( $message, $context = [] ) {
+    public static function critical( string $message, array $context = [] ) {
         self::log( self::LEVEL_CRITICAL, $message, $context );
     }
     
     /**
      * Log AJAX error
      * 
-     * @since 1.0.21
      * @param string $action AJAX action
-     * @param string $error Error message
+          * @param string $error Error message
      * @param array $context Additional context
+     *
      * @return void
+     * @since 1.0.21
      */
-    public static function log_ajax_error( $action, $error, $context = [] ) {
+    public static function log_ajax_error( string $action, string $error, array $context = [] ) {
         $context['ajax_action'] = $action;
         $context['user_id'] = get_current_user_id();
         $context['ip'] = self::get_client_ip();
@@ -163,13 +170,14 @@ class Logger {
     /**
      * Log API error
      * 
-     * @since 1.0.21
      * @param string $endpoint API endpoint
      * @param string $error Error message
      * @param array $context Additional context
+     *
      * @return void
+     *@since 1.0.21
      */
-    public static function log_api_error( $endpoint, $error, $context = [] ) {
+    public static function log_api_error( string $endpoint, string $error, array $context = [] ) {
         $context['api_endpoint'] = $endpoint;
         $context['company_id'] = Config::get_company_id();
         
@@ -179,11 +187,12 @@ class Logger {
     /**
      * Check if we should log at this level
      * 
-     * @since 1.0.21
      * @param string $level Log level
+     *
      * @return bool
+     *@since 1.0.21
      */
-    private static function should_log( $level ) {
+    private static function should_log( string $level ) {
         // Only log errors and critical messages in production
         if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
             return in_array( $level, [ self::LEVEL_ERROR, self::LEVEL_CRITICAL ], true );
@@ -218,7 +227,7 @@ class Logger {
     }
     
     /**
-     * Get log file path
+     * Get a log file path
      * 
      * @since 1.0.21
      * @return string

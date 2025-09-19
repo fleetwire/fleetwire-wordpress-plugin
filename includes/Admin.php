@@ -93,11 +93,12 @@ class Admin {
     /**
      * Enqueue admin styles and scripts
      * 
-     * @since 1.0.21
      * @param string $hook Current admin page hook
+     *
      * @return void
+     *@since 1.0.21
      */
-    public function enqueue_admin_assets( $hook ) {
+    public function enqueue_admin_assets( string $hook ) {
         // Load only on Fleetwire pages
         if ( $hook !== 'settings_page_Fleetwire' && $hook !== 'toplevel_page_fleetwire') {
             return;
@@ -134,11 +135,12 @@ class Admin {
     /**
      * Add a settings link to plugin actions
      * 
-     * @since 1.0.21
      * @param array $links Plugin action links
+     *
      * @return array Modified links
+     *@since 1.0.21
      */
-    public function add_settings_link( $links ) {
+    public function add_settings_link( array $links ) {
         $settings_link = '<a href="options-general.php?page=Fleetwire">' . 
             esc_html__( 'Settings', 'fleetwire' ) . '</a>';
         array_unshift( $links, $settings_link );

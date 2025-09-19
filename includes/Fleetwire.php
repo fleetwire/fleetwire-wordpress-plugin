@@ -34,21 +34,21 @@ class Fleetwire {
      * 
      * @var Admin
      */
-    public $admin;
+    public Admin $admin;
     
     /**
      * Assets instance
      * 
      * @var Assets
      */
-    public $assets;
+    public Assets $assets;
     
     /**
      * Shortcode instance
      * 
      * @var Shortcodes
      */
-    public $shortcodes;
+    public Shortcodes $shortcodes;
     
     /**
      * Get plugin instance
@@ -96,10 +96,8 @@ class Fleetwire {
      * @return void
      */
     private function load_dependencies() {
-        require_once Config::get_asset_path( 'includes/class-fleetwire-admin.php' );
-        require_once Config::get_asset_path( 'includes/class-fleetwire-assets.php' );
-        require_once Config::get_asset_path( 'includes/class-fleetwire-shortcodes.php' );
-        require_once Config::get_asset_path( 'includes/class-fleetwire-validator.php' );
+        // Dependencies are now loaded automatically via PSR-4 autoloading
+        // No manual require_once statements needed
     }
     
     /**

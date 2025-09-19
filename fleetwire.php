@@ -14,10 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// Load configuration and main plugin class
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-fleetwire-config.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-fleetwire-logger.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-fleetwire.php';
+// Load and initialize autoloader
+require_once plugin_dir_path( __FILE__ ) . 'includes/Autoloader.php';
+\Fleetwire\Autoloader::init( plugin_dir_path( __FILE__ ) . 'includes' );
 
 // Initialize configuration
 \Fleetwire\Config::init( __FILE__ );

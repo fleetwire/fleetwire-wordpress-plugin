@@ -54,9 +54,10 @@ abstract class Shortcode_Base {
      * Handle shortcode
      * 
      * @param array $atts Shortcode attributes
+     *
      * @return string
      */
-    public function handle( $atts ) {
+    public function handle( array $atts ) {
         $options = shortcode_atts( $this->defaults, $atts );
         $data_attrs = $this->options_to_data_attributes( $options );
         
@@ -73,9 +74,10 @@ abstract class Shortcode_Base {
      * Convert options to data attributes
      * 
      * @param array $options
+     *
      * @return string
      */
-    protected function options_to_data_attributes( $options ) {
+    protected function options_to_data_attributes( array $options ) {
         $attributes = [];
         
         foreach ( $options as $key => $value ) {
