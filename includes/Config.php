@@ -4,7 +4,7 @@ namespace Fleetwire;
 /**
  * Fleetwire Configuration Class
  * 
- * Manages all plugin configuration and constants
+ * Manages all plugin configurations and constants
  * 
  * @since 1.0.21
  * @package Fleetwire
@@ -200,7 +200,7 @@ class Config {
     }
     
     /**
-     * Check if plugin is properly configured
+     * Check if the plugin is properly configured
      * 
      * @since 1.0.21
      * @return bool
@@ -226,7 +226,7 @@ class Config {
      * @param string $company_id Company ID to validate
      *
      * @return bool
-     *@since 1.0.21
+     * @since 1.0.21
      */
     public static function is_valid_company_id( string $company_id ) {
         if ( empty( $company_id ) ) {
