@@ -3,6 +3,7 @@
  * 
  * @since 1.0.21
  */
+
 jQuery(document).ready(function ($) {
     'use strict';
     
