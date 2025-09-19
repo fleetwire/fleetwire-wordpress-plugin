@@ -4,8 +4,8 @@ Donate Link: https://coff.ee/fleetwire
 Tags: rental, booking, vehicle rentals, fleet management, calendar
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 6.8.1
-Stable tag: 1.0.19
+Tested up to: 6.8.2
+Stable tag: 1.0.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,10 @@ Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.20 =
+* Improved security by sanitizing shortcode attributes to prevent potential XSS.
+* Updated compatibility with latest WordPress release.
+
 = 1.0.19 =
 * Code refactoring
 
