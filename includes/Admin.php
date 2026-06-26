@@ -44,6 +44,9 @@ class Admin {
         add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
         add_filter( 'plugin_action_links_' . plugin_basename( Config::get_asset_path( 'fleetwire.php' ) ), [ $this, 'add_settings_link' ] );
         add_action( 'wp_ajax_fleetwire_company_name_form_process', [ $this, 'process_company_name_form' ] );
+        add_action( 'wp_ajax_fleetwire_verify_company_connection', [ $this, 'verify_company_connection' ] );
+        add_action( 'wp_ajax_fleetwire_fetch_listings', [ $this, 'fetch_listings' ] );
+        add_action( 'wp_ajax_fleetwire_fetch_dashboard_summary', [ $this, 'fetch_dashboard_summary' ] );
     }
     
     /**
@@ -122,9 +125,21 @@ class Admin {
         );
         
         // Localize script for AJAX
+        $company_id = Config::get_company_id();
+
         wp_localize_script('fleetwire-admin', 'fleetwireAdmin', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('fleetwire_company_name_form_process'),
+            'verifyNonce' => wp_create_nonce('fleetwire_verify_company_connection'),
+            'listingsNonce' => wp_create_nonce('fleetwire_fetch_listings'),
+            'dashboardNonce' => wp_create_nonce('fleetwire_fetch_dashboard_summary'),
+            'companyId' => $company_id,
+            'apiCompanyId' => Config::get_api_company_id(),
+            'storeUrl' => $company_id ? Config::get_company_store_url( $company_id ) : '',
+            'isLocalWordPress' => Config::is_local_wordpress_environment(),
+            'apiEnvironment' => Config::get_api_environment(),
+            'apiBaseUrl' => Config::get_api_base_url(),
+            'hasIntegrationToken' => ! empty( Config::get_integration_token() ),
             'strings' => [
                 'error' => __('An error occurred. Please try again.', 'fleetwire'),
                 'success' => __('Options saved.', 'fleetwire')
@@ -193,23 +208,282 @@ class Admin {
         }
         
         // Update option
-        $updated = Config::update_option( 'company_name', $company_validation['value'] );
-        
-        if ( $updated ) {
-            Logger::info( 'Company ID updated successfully', [
-                'company_id' => $company_validation['value'],
-                'user_id' => get_current_user_id()
-            ] );
-            wp_send_json_success( [
-                'message' => __( 'Options saved.', 'fleetwire' )
-            ] );
-        } else {
-            Logger::warning( 'No changes made to company ID', [
-                'company_id' => $company_validation['value']
-            ] );
+        $api_environment = sanitize_text_field( wp_unslash( $_POST['fleetwire_api_environment'] ?? 'live' ) );
+        $local_company_id = sanitize_text_field( wp_unslash( $_POST['fleetwire_local_company_id'] ?? '' ) );
+        $api_base_url = sanitize_text_field( wp_unslash( $_POST['fleetwire_api_base_url'] ?? '' ) );
+        $integration_token = sanitize_text_field( wp_unslash( $_POST['fleetwire_integration_token'] ?? '' ) );
+
+        if ( ! Config::is_local_wordpress_environment() ) {
+            $api_environment = 'live';
+            $api_base_url = '';
+        } elseif ( ! in_array( $api_environment, [ 'live', 'local' ], true ) ) {
+            $api_environment = 'live';
+        }
+
+        if ( $api_environment === 'local' && empty( $api_base_url ) ) {
             wp_send_json_error( [
-                'message' => __( 'No changes made.', 'fleetwire' )
+                'message' => __( 'Local Fleetwire API URL is required when Local is selected.', 'fleetwire' )
             ] );
         }
+
+        if ( $api_environment === 'local' && ! empty( $local_company_id ) && ! Config::is_valid_company_id( $local_company_id ) ) {
+            wp_send_json_error( [
+                'message' => __( 'Invalid Local Company ID format. Please check your local Fleetwire Company ID.', 'fleetwire' )
+            ] );
+        }
+
+        if ( ! empty( $api_base_url ) && ! Validator::is_valid_url( $api_base_url ) ) {
+            wp_send_json_error( [
+                'message' => __( 'Invalid Fleetwire API Base URL.', 'fleetwire' )
+            ] );
+        }
+
+        $updated_company = Config::update_option( 'company_name', $company_validation['value'] );
+        $updated_local_company = Config::update_option( 'local_company_id', $local_company_id );
+        $updated_environment = Config::update_option( 'api_environment', $api_environment );
+        $updated_api = Config::update_option( 'api_base_url', untrailingslashit( $api_base_url ) );
+        $updated_token = Config::update_option( 'integration_token', $integration_token );
+
+        Logger::info( 'Fleetwire WordPress options saved successfully', [
+            'company_id' => $company_validation['value'],
+            'local_company_id' => $local_company_id,
+            'api_environment' => $api_environment,
+            'changed' => $updated_company || $updated_local_company || $updated_environment || $updated_api || $updated_token,
+            'user_id' => get_current_user_id()
+        ] );
+
+        wp_send_json_success( [
+            'message' => __( 'Options saved.', 'fleetwire' ),
+            'companyId' => $company_validation['value'],
+            'apiCompanyId' => Config::get_api_company_id(),
+            'storeUrl' => Config::get_company_store_url( $company_validation['value'] ),
+            'apiEnvironment' => Config::get_api_environment(),
+            'apiBaseUrl' => Config::get_api_base_url(),
+            'hasIntegrationToken' => ! empty( $integration_token ),
+        ] );
+    }
+
+    /**
+     * Verify Fleetwire company connection.
+     *
+     * @since 1.0.21
+     * @return void
+     */
+    public function verify_company_connection() {
+        $validation = Validator::validate_ajax_request( 'fleetwire_verify_company_connection', 'fw_nonce' );
+        if ( ! $validation['valid'] ) {
+            Logger::log_ajax_error( 'fleetwire_verify_company_connection', $validation['error'] );
+            wp_send_json_error( [ 'message' => $validation['error'] ] );
+        }
+
+        $company_id = Config::get_api_company_id();
+        $company_validation = Validator::validate_company_id( $company_id );
+
+        if ( ! $company_validation['valid'] ) {
+            wp_send_json_error( [
+                'message' => $company_validation['error'],
+                'status' => 'invalid'
+            ] );
+        }
+
+        $company_id = $company_validation['value'];
+        $api_base_url = Config::get_api_base_url( $company_id );
+        $store_url = Config::get_company_store_url( $company_id );
+        $response = wp_remote_get( Config::get_company_api_url( $company_id ), [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'sslverify' => Config::should_verify_api_ssl(),
+            'timeout' => 8,
+        ] );
+
+        if ( is_wp_error( $response ) ) {
+            Logger::log_api_error( 'company_connection', $response->get_error_message(), [
+                'company_id' => $company_id,
+            ] );
+            wp_send_json_error( [
+                'message' => __( 'Could not reach Fleetwire. Check your site connection and try again.', 'fleetwire' ),
+                'status' => 'unreachable'
+            ] );
+        }
+
+        $status_code = wp_remote_retrieve_response_code( $response );
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( $status_code >= 200 && $status_code < 300 && ! empty( $body['company'] ) ) {
+            wp_send_json_success( [
+                'message' => __( 'Connected to Fleetwire.', 'fleetwire' ),
+                'status' => 'connected',
+                'companyId' => $company_id,
+                'companyName' => $body['company']['name'] ?? '',
+                'storeUrl' => $store_url,
+                'apiBaseUrl' => $api_base_url,
+            ] );
+        }
+
+        wp_send_json_error( [
+            'message' => __( 'Fleetwire could not find that Company ID.', 'fleetwire' ),
+            'status' => 'invalid'
+        ] );
+    }
+
+    /**
+     * Fetch public Fleetwire listings for the shortcode picker.
+     *
+     * @since 1.0.21
+     * @return void
+     */
+    public function fetch_listings() {
+        $validation = Validator::validate_ajax_request( 'fleetwire_fetch_listings', 'fw_nonce' );
+        if ( ! $validation['valid'] ) {
+            Logger::log_ajax_error( 'fleetwire_fetch_listings', $validation['error'] );
+            wp_send_json_error( [ 'message' => $validation['error'] ] );
+        }
+
+        $company_id = Config::get_api_company_id();
+        $company_validation = Validator::validate_company_id( $company_id );
+
+        if ( ! $company_validation['valid'] ) {
+            wp_send_json_error( [
+                'message' => $company_validation['error'],
+            ] );
+        }
+
+        $api_base_url = Config::get_api_base_url( $company_validation['value'] );
+        $response = wp_remote_get( add_query_arg( 'perPage', 100, $api_base_url . '/api/v1/products' ), [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'sslverify' => Config::should_verify_api_ssl(),
+            'timeout' => 10,
+        ] );
+
+        if ( is_wp_error( $response ) ) {
+            Logger::log_api_error( 'products', $response->get_error_message(), [
+                'company_id' => $company_validation['value'],
+            ] );
+            wp_send_json_error( [
+                'message' => __( 'Could not load listings from Fleetwire.', 'fleetwire' ),
+            ] );
+        }
+
+        $status_code = wp_remote_retrieve_response_code( $response );
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( $status_code < 200 || $status_code >= 300 || ! is_array( $body ) ) {
+            wp_send_json_error( [
+                'message' => __( 'Fleetwire returned an unexpected listings response.', 'fleetwire' ),
+            ] );
+        }
+
+        $items = is_array( $body['data'] ?? null ) ? $body['data'] : [];
+        $listings = array_values( array_filter( array_map( [ $this, 'normalize_listing_for_picker' ], $items ) ) );
+
+        wp_send_json_success( [
+            'message' => __( 'Listings loaded.', 'fleetwire' ),
+            'listings' => $listings,
+        ] );
+    }
+
+    /**
+     * Fetch private Fleetwire dashboard data for the WordPress admin page.
+     *
+     * @since 1.0.21
+     * @return void
+     */
+    public function fetch_dashboard_summary() {
+        $validation = Validator::validate_ajax_request( 'fleetwire_fetch_dashboard_summary', 'fw_nonce' );
+        if ( ! $validation['valid'] ) {
+            Logger::log_ajax_error( 'fleetwire_fetch_dashboard_summary', $validation['error'] );
+            wp_send_json_error( [ 'message' => $validation['error'] ] );
+        }
+
+        $company_id = Config::get_api_company_id();
+        $company_validation = Validator::validate_company_id( $company_id );
+
+        if ( ! $company_validation['valid'] ) {
+            wp_send_json_error( [
+                'message' => $company_validation['error'],
+            ] );
+        }
+
+        $integration_token = Config::get_integration_token();
+
+        if ( empty( $integration_token ) ) {
+            wp_send_json_error( [
+                'message' => __( 'Add a Fleetwire WordPress integration token before loading host dashboard data.', 'fleetwire' ),
+            ] );
+        }
+
+        $response = wp_remote_get( Config::get_dashboard_api_url(), [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $integration_token,
+            ],
+            'sslverify' => Config::should_verify_api_ssl(),
+            'timeout' => 10,
+        ] );
+
+        if ( is_wp_error( $response ) ) {
+            Logger::log_api_error( 'wordpress_dashboard_summary', $response->get_error_message(), [
+                'company_id' => $company_validation['value'],
+            ] );
+            wp_send_json_error( [
+                'message' => __( 'Could not load host dashboard data from Fleetwire.', 'fleetwire' ),
+            ] );
+        }
+
+        $status_code = wp_remote_retrieve_response_code( $response );
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( $status_code === 401 ) {
+            wp_send_json_error( [
+                'message' => __( 'Fleetwire rejected the WordPress integration token.', 'fleetwire' ),
+            ] );
+        }
+
+        if ( $status_code < 200 || $status_code >= 300 || ! is_array( $body ) ) {
+            wp_send_json_error( [
+                'message' => __( 'Fleetwire returned an unexpected dashboard response.', 'fleetwire' ),
+            ] );
+        }
+
+        wp_send_json_success( [
+            'message' => __( 'Dashboard loaded.', 'fleetwire' ),
+            'dashboard' => $body,
+        ] );
+    }
+
+    /**
+     * Normalize a Fleetwire listing for admin display.
+     *
+     * @param array $listing Listing payload.
+     *
+     * @return array|null
+     */
+    private function normalize_listing_for_picker( array $listing ) {
+        $listing_id = sanitize_text_field( $listing['l_id'] ?? '' );
+        if ( empty( $listing_id ) ) {
+            return null;
+        }
+
+        $image = '';
+        if ( ! empty( $listing['cover_photo'] ) && is_string( $listing['cover_photo'] ) ) {
+            $image = esc_url_raw( $listing['cover_photo'] );
+        } elseif ( ! empty( $listing['listing_images'][0]['optimized_path'] ) && is_string( $listing['listing_images'][0]['optimized_path'] ) ) {
+            $image = esc_url_raw( $listing['listing_images'][0]['optimized_path'] );
+        } elseif ( ! empty( $listing['listing_images'][0]['url'] ) && is_string( $listing['listing_images'][0]['url'] ) ) {
+            $image = esc_url_raw( $listing['listing_images'][0]['url'] );
+        }
+
+        return [
+            'id' => $listing_id,
+            'name' => sanitize_text_field( $listing['name'] ?? $listing['title'] ?? $listing_id ),
+            'active' => (bool) ( $listing['active'] ?? false ),
+            'approved' => (bool) ( $listing['approved'] ?? false ),
+            'paused' => (bool) ( $listing['paused'] ?? false ),
+            'price' => isset( $listing['pricing']['amount'] ) ? floatval( $listing['pricing']['amount'] ) : null,
+            'image' => $image,
+        ];
     }
 }

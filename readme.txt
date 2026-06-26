@@ -4,46 +4,54 @@ Donate Link: https://coff.ee/fleetwire
 Tags: rental, booking, vehicle rentals, fleet management, calendar
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 6.8.2
-Stable tag: 1.0.21
+Tested up to: 7.0.0
+Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Seamlessly embed Fleetwire to offer online bookings, manage rentals, and sync your car-sharing fleet directly from your WordPress site.
+Embed Fleetwire listings, availability search, booking buttons, and host dashboard tools directly inside WordPress.
 
 
 == Description ==
 
-**Elevate your WordPress site into a fully-fledged online rental business. Seamlessly integrate your Fleetwire account to offer online booking, manage rentals, and sync your inventory with ease.**
+Fleetwire Fleet Management connects your WordPress site to your Fleetwire rental business so visitors can browse listings, check availability, and start bookings from your own pages.
+
+Use the plugin settings page to connect your Fleetwire Company ID, verify the connection, load listings, and generate supported shortcodes without manually copying listing IDs. Hosts can also add a scoped Fleetwire WordPress integration token to view private dashboard data, including active listing counts, upcoming pickups, and upcoming returns.
 
 ## Key Features:
 
-- **Direct & Car-Sharing Rentals Sync: ** Automatically synchronize your rental calendar with platforms like Turo and Getaround.
-- **Comprehensive Fleet Management: ** Manage orders, inventory, documents, and payments all from one place. Includes tools for auto messaging, eSigning, vehicle research, mileage tracking, and more.
-- **Online Booking System: ** Enable your customers to book rentals directly from your website using shortcodes to display listings.
-- **Real-Time Availability & Hosted Checkout: ** Offer a booking calendar that updates in real time to prevent overbooking and provide a smooth checkout experience.
-- **Online Payments Integration: ** Securely process payments with Stripe integration, supporting various payment methods, security deposits, and coupon codes.
+- **Fleetwire embeds:** Add all listings, availability search, single listing cards, booking buttons, listing descriptions, titles, prices, and images with shortcodes.
+- **Listing picker:** Load Fleetwire listings in WordPress admin and generate shortcodes for the selected vehicle.
+- **Connection status:** Verify that WordPress can reach the connected Fleetwire Company ID before publishing embeds.
+- **Host dashboard:** View active listings, upcoming pickups, and upcoming returns from WordPress when a scoped Fleetwire integration token is configured.
+- **Fleetwire checkout:** Send visitors into Fleetwire's hosted reservation flow with real-time inventory, availability, payment, and order management handled by Fleetwire.
 
 ## Getting Started:
 
-1. **Install the Plugin: ** Download and activate the plugin on your WordPress site.
-2. **Connect Your Fleetwire Account: ** Enter your company ID in the plugin settings to link your Fleetwire account.
-3. **Add Your Listings: ** Use shortcodes to display your vehicle rentals on your site.
+1. **Install the plugin:** Download, upload, and activate the plugin on your WordPress site.
+2. **Connect Fleetwire:** Paste your Fleetwire Company ID into the plugin settings and check the connection.
+3. **Load listings:** Use the listing picker to choose a vehicle and generate a shortcode.
+4. **Publish embeds:** Paste the generated shortcode into any page, post, or compatible builder block.
+5. **Optional host dashboard:** Add a scoped Fleetwire WordPress integration token to load private host dashboard data.
 
 
-> **Note:** A Fleetwire subscription is required. Visit [fleetwire.io](https://fleetwire.io/) to learn more or start your **free 14-day trial**.
+> **Note:** A Fleetwire account is required. Visit [fleetwire.io](https://fleetwire.io/) to learn more or start your **free 14-day trial**.
 
 == Installation ==
 
 ## Installation Guide:
 
 1. **Fleetwire Setup:**
-   - Navigate to **Settings > Online Reservations > Installation** in your Fleetwire dashboard.
-   - Select **WordPress Plugin** and copy your Company ID.
+   - Open your Fleetwire dashboard.
+   - Navigate to **Settings > Online reservations > Installation > WordPress plugin**.
+   - Copy your Fleetwire Company ID.
+   - If you want private host dashboard data in WordPress, generate a scoped WordPress integration token in Fleetwire.
 2. **WordPress Configuration:**
-   - In your WordPress admin panel, go to **Settings > Fleetwire**.
-   - Paste your Company ID in the provided field.
-   - To embed listings, ensure you have active rental listings in Fleetwire. Use provided shortcodes on any page or post.
+   - In WordPress admin, open **Fleetwire** from the main menu.
+   - Paste your Company ID and save.
+   - Click **Check connection** to verify the Fleetwire API is reachable.
+   - Add your integration token if you want the host dashboard.
+   - Use **Load listings** to build shortcodes for your pages or posts.
 
 == Frequently Asked Questions ==
 
@@ -51,7 +59,7 @@ Seamlessly embed Fleetwire to offer online bookings, manage rentals, and sync yo
 Yes. Visit [fleetwire.io](https://fleetwire.io) to create an account or start a 14-day trial.
 
 = Can I embed listings with a shortcode? =
-Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
+Yes. Use `[fleetwire_list]` for all listings or use the listing picker in WordPress admin to generate shortcodes for a single listing card, booking button, description, title, price, or image.
 
 == Screenshots ==
 
@@ -61,6 +69,11 @@ Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.22 =
+* Added Fleetwire connection status, scoped integration token storage, and a host dashboard for active listings, upcoming pickups, and upcoming returns.
+* Added a listing picker and shortcode builder to load Fleetwire listings and generate supported embed shortcodes from WordPress admin.
+* Updated shortcode examples and aligned supported shortcode classes with Fleetwire's current embed script.
+
 = 1.0.21 =
 * **Major Refactoring**: Complete code restructure with class-based architecture and proper namespaces
 * **Enhanced Security**: Comprehensive input validation, sanitization, and AJAX request validation
@@ -113,7 +126,7 @@ Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
 * Added fleet availability shortcode to search for available vehicles
 * Code styling
 
-= 1.0.7 =
+= 1.0.8 =
 * Added two more shortcodes for vehicle seat and door count.
 * Up next: vehicle photo gallery and feature list.
 
@@ -141,6 +154,9 @@ Yes. Use the provided shortcode `[fleetwire_list]` in your post or page.
 
 
 == Upgrade Notice ==
+
+= 1.0.22 =
+Adds Fleetwire admin connection tools, listing picker, and host dashboard. No shortcode changes are required for existing supported embeds.
 
 = 1.0.15 =
 Verified compatibility with WordPress 6.8.1. No functionality changes.

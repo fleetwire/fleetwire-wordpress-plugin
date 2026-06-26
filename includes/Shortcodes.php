@@ -93,6 +93,28 @@ abstract class Shortcode_Base {
 }
 
 /**
+ * Registered legacy shortcode with no current Fleetwire v2 renderer.
+ *
+ * Keeping these tags registered prevents WordPress from displaying raw shortcode
+ * text on older pages while avoiding stale Fleetwire DOM hooks.
+ *
+ * @since 1.0.21
+ */
+abstract class Unsupported_Shortcode extends Shortcode_Base {
+
+    /**
+     * Handle shortcode
+     *
+     * @param array $atts Shortcode attributes
+     *
+     * @return string
+     */
+    public function handle( array $atts ) {
+        return '';
+    }
+}
+
+/**
  * Fleetwire listing card shortcode
  * 
  * @since 1.0.21
@@ -115,9 +137,11 @@ class Card_Shortcode extends Shortcode_Base {
 class Button_Shortcode extends Shortcode_Base {
     
     protected $tag = 'fleetwire_button';
-    protected $css_class = 'fleetwire-product-button';
+    protected $css_class = 'fleetwire-listing-button';
     protected $defaults = [
-        'id' => null
+        'id' => null,
+        'custom-title' => null,
+        'show-price' => null,
     ];
 }
 
@@ -129,7 +153,7 @@ class Button_Shortcode extends Shortcode_Base {
 class Detail_Shortcode extends Shortcode_Base {
     
     protected $tag = 'fleetwire_detail';
-    protected $css_class = 'fleetwire-product-detail';
+    protected $css_class = 'fleetwire-listing-card';
     protected $defaults = [
         'id' => null
     ];
@@ -170,7 +194,7 @@ class Vehicle_Seats_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Vehicle_Features_Shortcode extends Shortcode_Base {
+class Vehicle_Features_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_listing_features';
     protected $css_class = 'fleetwire-listing-features';
@@ -185,7 +209,7 @@ class Vehicle_Features_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Vehicle_Reviews_Shortcode extends Shortcode_Base {
+class Vehicle_Reviews_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_listing_reviews';
     protected $css_class = 'fleetwire-listing-reviews';
@@ -204,8 +228,21 @@ class Vehicle_Reviews_Shortcode extends Shortcode_Base {
 class Vehicle_Image_Gallery_Shortcode extends Shortcode_Base {
     
     protected $tag = 'fleetwire_listing_image_gallery';
-    protected $css_class = 'fleetwire-listing-image-gallery';
-    protected $wrapper_tag = 'span';
+    protected $css_class = 'fleetwire-listing-image';
+    protected $defaults = [
+        'id' => null,
+    ];
+}
+
+/**
+ * Fleetwire vehicle image shortcode
+ *
+ * @since 1.0.21
+ */
+class Vehicle_Image_Shortcode extends Shortcode_Base {
+
+    protected $tag = 'fleetwire_listing_image';
+    protected $css_class = 'fleetwire-listing-image';
     protected $defaults = [
         'id' => null,
     ];
@@ -239,9 +276,9 @@ class List_Shortcode extends Shortcode_Base {
 class Search_Shortcode extends Shortcode_Base {
     
     protected $tag = 'fleetwire_search';
-    protected $css_class = 'fleetwire-product-search';
+    protected $css_class = 'fleetwire-search';
     protected $defaults = [
-        'search-key' => null
+        'show-location-picker' => null,
     ];
 }
 
@@ -255,7 +292,7 @@ class Availability_Shortcode extends Shortcode_Base {
     protected $tag = 'fleetwire_availability';
     protected $css_class = 'fleetwire-search';
     protected $defaults = [
-        'data-show-location-picker' => null
+        'show-location-picker' => null
     ];
 }
 
@@ -276,7 +313,7 @@ class Datepicker_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Cart_Button_Shortcode extends Shortcode_Base {
+class Cart_Button_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_cart_button';
     protected $css_class = 'fleetwire-cart-button';
@@ -290,7 +327,7 @@ class Cart_Button_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Embeddable_Cart_Shortcode extends Shortcode_Base {
+class Embeddable_Cart_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_embeddable_cart';
     protected $css_class = 'fleetwire-embeddable-cart';
@@ -302,7 +339,7 @@ class Embeddable_Cart_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Embeddable_Cart_Lines_Shortcode extends Shortcode_Base {
+class Embeddable_Cart_Lines_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_embeddable_cart_lines';
     protected $css_class = 'fleetwire-embeddable-cart-lines';
@@ -316,7 +353,7 @@ class Embeddable_Cart_Lines_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Embeddable_Cart_Sidebar_Shortcode extends Shortcode_Base {
+class Embeddable_Cart_Sidebar_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_embeddable_cart_sidebar';
     protected $css_class = 'fleetwire-embeddable-cart-sidebar';
@@ -331,7 +368,7 @@ class Embeddable_Cart_Sidebar_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Sidebar_Shortcode extends Shortcode_Base {
+class Sidebar_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_sidebar';
     protected $css_class = 'fleetwire-sidebar';
@@ -345,7 +382,7 @@ class Sidebar_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Sort_Shortcode extends Shortcode_Base {
+class Sort_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_sort';
     protected $css_class = 'fleetwire-sort';
@@ -359,7 +396,7 @@ class Sort_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Bar_Shortcode extends Shortcode_Base {
+class Bar_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_bar';
     protected $css_class = 'fleetwire-bar';
@@ -373,7 +410,7 @@ class Bar_Shortcode extends Shortcode_Base {
  * 
  * @since 1.0.21
  */
-class Categories_Shortcode extends Shortcode_Base {
+class Categories_Shortcode extends Unsupported_Shortcode {
     
     protected $tag = 'fleetwire_categories';
     protected $css_class = 'fleetwire-categories';
@@ -394,6 +431,38 @@ class Description_Shortcode extends Shortcode_Base {
     protected $defaults = [
         'id' => null,
         'length' => null,
+    ];
+}
+
+/**
+ * Fleetwire title shortcode
+ *
+ * @since 1.0.21
+ */
+class Title_Shortcode extends Shortcode_Base {
+
+    protected $tag = 'fleetwire_listing_title';
+    protected $css_class = 'fleetwire-listing-title';
+    protected $defaults = [
+        'id' => null,
+        'append-label' => null,
+        'prepend-label' => null,
+    ];
+}
+
+/**
+ * Fleetwire price shortcode
+ *
+ * @since 1.0.21
+ */
+class Price_Shortcode extends Shortcode_Base {
+
+    protected $tag = 'fleetwire_listing_price';
+    protected $css_class = 'fleetwire-listing-price';
+    protected $defaults = [
+        'id' => null,
+        'append-label' => null,
+        'prepend-label' => null,
     ];
 }
 
@@ -444,10 +513,13 @@ class Shortcodes {
             'fleetwire_bar' => new Bar_Shortcode(),
             'fleetwire_categories' => new Categories_Shortcode(),
             'fleetwire_listing_description' => new Description_Shortcode(),
+            'fleetwire_listing_title' => new Title_Shortcode(),
+            'fleetwire_listing_price' => new Price_Shortcode(),
             'fleetwire_listing_doors' => new Vehicle_Doors_Shortcode(),
             'fleetwire_listing_seats' => new Vehicle_Seats_Shortcode(),
             'fleetwire_listing_reviews' => new Vehicle_Reviews_Shortcode(),
             'fleetwire_listing_image_gallery' => new Vehicle_Image_Gallery_Shortcode(),
+            'fleetwire_listing_image' => new Vehicle_Image_Shortcode(),
             'fleetwire_listing_features' => new Vehicle_Features_Shortcode(),
             'fleetwire_datepicker' => new Datepicker_Shortcode(),
         ];
@@ -466,7 +538,7 @@ class Shortcodes {
     }
     
     /**
-     * Get shortcode instance
+     * Get a shortcode instance
      * 
      * @since 1.0.21
      * @param string $tag Shortcode tag

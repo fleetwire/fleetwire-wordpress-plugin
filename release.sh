@@ -133,7 +133,7 @@ then
 fi
 
 # CLONE GIT DIR
-echo "Cloning GIT repository from GITHUB: "${GIT_REPO}""
+echo "Cloning GIT repository from GITHUB: https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}.git"
 if [ "$DRY_RUN" -eq 1 ]; then
   echo "DRY RUN: Would run: git clone --progress $GIT_REPO $TEMP_GITHUB_REPO"
 else
