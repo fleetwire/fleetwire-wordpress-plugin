@@ -86,7 +86,8 @@ class Assets {
         ?>
         <script>window.fleetwireOptions = {
                 company: '<?php echo esc_js( $company_id ); ?>',
-                storeProvider: 'wordpress'
+                storeProvider: 'wordpress',
+                storeProviderVersion: '<?php echo esc_js( Config::VERSION ); ?>'
             };</script>
         <?php
         

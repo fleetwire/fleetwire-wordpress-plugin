@@ -1,22 +1,31 @@
-=== Fleetwire Fleet Management ===
+=== Fleetwire – Car Rental Booking & Fleet Management ===
 Contributors: fleetwire
-Donate Link: https://coff.ee/fleetwire
-Tags: rental, booking, vehicle rentals, fleet management, calendar
+Tags: car rental, vehicle rental, rental booking, fleet management, booking calendar
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 7.0.0
-Stable tag: 1.0.22
+Tested up to: 7.0
+Stable tag: 1.0.23
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Embed Fleetwire listings, availability search, booking buttons, and host dashboard tools directly inside WordPress.
+Car rental booking for WordPress. Embed Fleetwire vehicle listings, availability search, and booking buttons so customers rent from your site.
 
 
 == Description ==
 
-Fleetwire Fleet Management connects your WordPress site to your Fleetwire rental business so visitors can browse listings, check availability, and start bookings from your own pages.
+Fleetwire is a car rental booking plugin that connects WordPress to your Fleetwire rental business. Whether you rent cars, trucks, RVs, trailers, or equipment, visitors can browse your vehicle listings, check availability, and book online — right from your own pages.
 
 Use the plugin settings page to connect your Fleetwire Company ID, verify the connection, load listings, and generate supported shortcodes without manually copying listing IDs. Hosts can also add a scoped Fleetwire WordPress integration token to view private dashboard data, including active listing counts, upcoming pickups, and upcoming returns.
+
+## Built for Car Rental and Vehicle Rental Businesses:
+
+Fleetwire powers online reservations for rental operators of every size, including:
+
+- **Car rental companies:** Run a branded car rental website with real-time availability and online booking.
+- **Independent hosts:** Take direct bookings for your rental fleet on your own site instead of relying only on marketplaces.
+- **Truck, van, and trailer rentals:** Rent out box trucks, cargo vans, trailers, and haulers with per-day pricing.
+- **RV and camper rentals:** Let travelers check dates and reserve motorhomes and campers online.
+- **Equipment rentals:** Manage bookings for tools, machines, and other rental inventory.
 
 ## Key Features:
 
@@ -60,6 +69,15 @@ Yes. Visit [fleetwire.io](https://fleetwire.io) to create an account or start a 
 
 = Can I embed listings with a shortcode? =
 Yes. Use `[fleetwire_list]` for all listings or use the listing picker in WordPress admin to generate shortcodes for a single listing card, booking button, description, title, price, or image.
+
+= Can I use this for my car rental business? =
+Yes. Fleetwire is built for car rental businesses. Connect your Fleetwire account and your WordPress site becomes a car rental booking website with live availability, online reservations, and payments handled through Fleetwire's hosted checkout.
+
+= Does it work for RV, trailer, or equipment rentals? =
+Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, trailers, and equipment. The same shortcodes and availability search work for every listing type in your Fleetwire account.
+
+= Do customers book directly on my website? =
+Visitors browse listings and check availability on your WordPress pages, then complete their reservation through Fleetwire's secure hosted checkout with real-time inventory, payment processing, and order management.
 
 == Screenshots ==
 

@@ -1,10 +1,10 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name: Fleetwire Fleet Management Plugin
- * Description: Fleet management plugin for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account to WordPress.
+ * Plugin Name: Fleetwire – Car Rental Booking & Fleet Management
+ * Description: Car rental booking and fleet management for WordPress. Turn your website into a complete online rental store by connecting your Fleetwire.io account.
  * Author: Fleetwire, LLC
- * Version: 1.0.22
+ * Version: 1.0.23
  * Author URI: https://fleetwire.io
  * Copyright: 2026 Fleetwire, LLC
  */
