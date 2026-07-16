@@ -87,6 +87,10 @@ Visitors browse listings and check availability on your WordPress pages, then co
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.23 =
+* Renamed for better clarity and consistency
+* Code refactoring
+
 = 1.0.22 =
 * Added Fleetwire connection status, scoped integration token storage, and a host dashboard for active listings, upcoming pickups, and upcoming returns.
 * Added a listing picker and shortcode builder to load Fleetwire listings and generate supported embed shortcodes from WordPress admin.
