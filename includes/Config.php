@@ -27,7 +27,7 @@ class Config {
      * 
      * @var string
      */
-    const VERSION = '1.0.22';
+    const VERSION = '1.0.24';
     
     /**
      * Plugin text domain
@@ -48,7 +48,7 @@ class Config {
      * 
      * @var string
      */
-    const SCRIPT_VERSION = '1.0.22';
+    const SCRIPT_VERSION = '1.0.24';
     
     /**
      * Minimum WordPress version required

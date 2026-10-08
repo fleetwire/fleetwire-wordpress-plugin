@@ -4,7 +4,7 @@ Tags: car rental, vehicle rental, rental booking, fleet management, booking cale
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.23
+Stable tag: 1.0.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,16 @@ Fleetwire powers online reservations for rental operators of every size, includi
    - Add your integration token if you want the host dashboard.
    - Use **Load listings** to build shortcodes for your pages or posts.
 
+== Diagnostic Logs ==
+
+Fleetwire keeps diagnostic files outside the WordPress web roots in a site-specific system temporary directory. Unix directory/file permissions are restricted to the PHP worker. System cleanup may remove temporary logs. For persistent storage, define FLEETWIRE_LOG_DIR in wp-config.php as an absolute private directory outside all web-served paths, writable only by the PHP worker.
+
+On upgrade, existing uploads/fleetwire-logs/fleetwire.log records are copied to private storage before the public file is emptied and removed. If storage or migration is unavailable, Fleetwire reports the problem through the host-managed PHP error log; remove any remaining legacy upload log from public access and configure private storage. Keep the host's PHP error-log destination private as well. Logging level filters and the log-file, size and clear helpers remain available; the file helper returns an empty string when private storage cannot be used.
+
+== Development Checks ==
+
+Run `python3 tests/security-regressions.py` with PHP, Bash, Subversion 1.9+ and svnadmin installed. The tests use dummy credentials, mock all release publication commands, and use only a local SVN fixture and a temporary localhost HTTP server. They never publish a release or contact GitHub/WordPress.org.
+
 == Frequently Asked Questions ==
 
 = Does this plugin require a Fleetwire subscription? =
@@ -87,6 +97,12 @@ Visitors browse listings and check availability on your WordPress pages, then co
 4. Online payment and quote requests.
 
 == Changelog ==
+= 1.0.24 =
+* Moved diagnostic logs outside public web directories and added migration of existing upload logs to private storage.
+* Required HTTPS and validated SVN working-copy destinations before release updates and commits.
+* Prevented release previews from exposing credentials or changing release files.
+* Added security regression checks and synchronized plugin and asset versions.
+
 = 1.0.23 =
 * Renamed for better clarity and consistency
 * Code refactoring
@@ -176,6 +192,9 @@ Visitors browse listings and check availability on your WordPress pages, then co
 
 
 == Upgrade Notice ==
+
+= 1.0.24 =
+Security update for diagnostic log storage and release tooling. Existing upload logs migrate to private storage when writable. If migration fails, remove the old public log and configure FLEETWIRE_LOG_DIR; see Diagnostic Logs above.
 
 = 1.0.22 =
 Adds Fleetwire admin connection tools, listing picker, and host dashboard. No shortcode changes are required for existing supported embeds.

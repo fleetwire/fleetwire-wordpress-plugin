@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # License: GPL v3
 
@@ -29,7 +29,7 @@ if [ "${1-}" = "--help" ] || [ "${1-}" = "-h" ]; then
   echo "This script releases a WordPress plugin from GitHub to WordPress.org SVN."
   echo "\nRequirements:"
   echo "  - .env file with required variables (see script comments)"
-  echo "  - git, svn, curl, grep, sed, xargs installed"
+  echo "  - git, svn (1.9+), curl, grep, sed, xargs installed"
   echo "\nFlags:"
   echo "  --help, -h   Show this help message and exit."
   exit 0
@@ -118,8 +118,46 @@ clear
 ROOT_PATH=$(pwd)"/"
 TEMP_GITHUB_REPO=${PLUGIN_SLUG}"-git"
 TEMP_SVN_REPO=${PLUGIN_SLUG}"-svn"
-SVN_REPO="http://plugins.svn.wordpress.org/"${PLUGIN_SLUG}"/"
+SVN_REPO="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}/"
+GIT_PUBLIC_REPO="https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}.git"
+
+# Preview exits before changing files or contacting either publication service.
+if [ "$DRY_RUN" -eq 1 ]; then
+  echo "DRY RUN: Would clone $GIT_PUBLIC_REPO"
+  echo "DRY RUN: Would publish to $SVN_REPO"
+  exit 0
+fi
+
 GIT_REPO="https://${GITHUB_ACCESS_TOKEN}@github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}.git"
+
+# Reused and switched working-copy paths must retain the expected HTTPS authority.
+assert_svn_target() {
+  local expected="${SVN_REPO%/}" root_url entries entry url
+  root_url=$(svn info --show-item url "$1") || {
+    echo "Error: Unable to inspect SVN working copy." >&2
+    exit 1
+  }
+  if [ "${root_url%/}" != "$expected" ]; then
+    echo "Error: SVN working copy must use the expected HTTPS repository." >&2
+    exit 1
+  fi
+  entries=$(svn info --recursive --show-item url "$1") || {
+    echo "Error: Unable to inspect SVN working-copy descendants." >&2
+    exit 1
+  }
+  if [ -z "$entries" ]; then
+    echo "Error: SVN working-copy inspection returned no URLs." >&2
+    exit 1
+  fi
+  while IFS= read -r entry; do
+    # Recursive --show-item output appends a local path after the encoded URL.
+    url=${entry%% *}
+    case "$url" in
+      "$expected"|"$expected"/*) ;;
+      *) echo "Error: SVN working-copy descendant uses an unexpected repository." >&2; exit 1 ;;
+    esac
+  done <<< "$entries"
+}
 
 
 # DELETE OLD TEMP DIRS
@@ -129,16 +167,13 @@ rm -Rf $ROOT_PATH$TEMP_GITHUB_REPO
 if [[ ! -d $TEMP_SVN_REPO ]];
 then
     echo "Checking out WordPress.org plugin repository"
-    svn checkout $SVN_REPO $TEMP_SVN_REPO || { echo "Unable to checkout repo."; exit 1; }
+    svn checkout --ignore-externals "$SVN_REPO" "$TEMP_SVN_REPO" || { echo "Unable to checkout repo."; exit 1; }
 fi
+assert_svn_target "$ROOT_PATH$TEMP_SVN_REPO"
 
 # CLONE GIT DIR
 echo "Cloning GIT repository from GITHUB: https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}.git"
-if [ "$DRY_RUN" -eq 1 ]; then
-  echo "DRY RUN: Would run: git clone --progress $GIT_REPO $TEMP_GITHUB_REPO"
-else
-  git clone --progress $GIT_REPO $TEMP_GITHUB_REPO || { echo "Unable to clone repo."; exit 1; }
-fi
+git clone --progress "$GIT_REPO" "$TEMP_GITHUB_REPO" || { echo "Unable to clone repo."; exit 1; }
 
 # MOVE INTO GIT DIR
 cd $ROOT_PATH$TEMP_GITHUB_REPO
@@ -194,7 +229,8 @@ cd $ROOT_PATH$TEMP_SVN_REPO
 
 # UPDATE SVN
 echo "Updating SVN"
-svn update || { echo "Unable to update SVN."; exit 1; }
+assert_svn_target "."
+svn update --ignore-externals || { echo "Unable to update SVN."; exit 1; }
 
 # DELETE TRUNK
 echo "Replacing trunk"
@@ -255,6 +291,7 @@ RESULT=$(curl --data "${API_JSON}" https://api.github.com/repos/${GITHUB_REPO_OW
 # DEPLOY
 echo ""
 echo "Committing to WordPress.org...this may take a while..."
+assert_svn_target "."
 svn commit -m "Release "${VERSION}", see readme.txt for the changelog." --username "$SVN_USERNAME" --password "$SVN_PASSWORD" || { echo "Unable to commit."; exit 1; }
 
 # REMOVE THE TEMP DIRS

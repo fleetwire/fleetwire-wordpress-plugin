@@ -36,7 +36,7 @@ class Logger {
      * 
      * @var string
      */
-    private static string $log_file;
+    private static string $log_file = '';
     
     /**
      * Initialize logger
@@ -45,15 +45,109 @@ class Logger {
      * @return void
      */
     public static function init() {
+        self::$log_file = '';
         $upload_dir = wp_upload_dir();
-        $log_dir = $upload_dir['basedir'] . '/fleetwire-logs';
-        
-        // Create a log directory if it doesn't exist
-        if ( ! file_exists( $log_dir ) ) {
-            wp_mkdir_p( $log_dir );
+        $log_dir = defined( 'FLEETWIRE_LOG_DIR' )
+            ? FLEETWIRE_LOG_DIR
+            : rtrim( sys_get_temp_dir(), '/\\' ) . '/fleetwire-logs-' . hash( 'sha256', ABSPATH . '|' . get_current_blog_id() );
+
+        if ( ! is_string( $log_dir ) || ! self::prepare_private_directory( $log_dir, $upload_dir['basedir'] ) ) {
+            error_log( 'Fleetwire: private log storage unavailable; configure FLEETWIRE_LOG_DIR outside the web root.' );
+            return;
         }
-        
-        self::$log_file = $log_dir . '/fleetwire.log';
+
+        $log_file = realpath( $log_dir ) . '/fleetwire.log';
+        if ( is_link( $log_file ) ) {
+            error_log( 'Fleetwire: refusing a symbolic link as the private log file.' );
+            return;
+        }
+        self::$log_file = $log_file;
+        self::migrate_legacy_log( $upload_dir['basedir'] . '/fleetwire-logs/fleetwire.log' );
+    }
+
+    /**
+     * Resolve storage and refuse directories beneath known public roots.
+     */
+    private static function prepare_private_directory( string $directory, string $uploads ) {
+        if ( is_link( $directory ) || ( ! is_dir( $directory ) && ! wp_mkdir_p( $directory ) ) ) {
+            return false;
+        }
+        $resolved = realpath( $directory );
+        if ( $resolved === false ) {
+            return false;
+        }
+        $roots = [ ABSPATH, $uploads, $_SERVER['DOCUMENT_ROOT'] ?? '' ];
+        if ( defined( 'WP_CONTENT_DIR' ) ) {
+            $roots[] = WP_CONTENT_DIR;
+        }
+        $resolved = str_replace( '\\', '/', $resolved );
+        foreach ( $roots as $root ) {
+            $public_root = $root ? realpath( $root ) : false;
+            if ( $public_root === false ) {
+                continue;
+            }
+            $public_root = rtrim( str_replace( '\\', '/', $public_root ), '/' );
+            $candidate = $resolved;
+            if ( DIRECTORY_SEPARATOR === '\\' ) {
+                $candidate = strtolower( $candidate );
+                $public_root = strtolower( $public_root );
+            }
+            if ( $candidate === $public_root || strpos( $candidate, $public_root . '/' ) === 0 ) {
+                return false;
+            }
+        }
+        // Windows uses the user's temporary-directory ACL rather than Unix modes.
+        return DIRECTORY_SEPARATOR === '\\'
+            ? is_writable( $directory )
+            : @chmod( $directory, 0700 ) && is_writable( $directory );
+    }
+
+    /**
+     * Retain old records privately before removing their public copy.
+     */
+    private static function migrate_legacy_log( string $legacy_file ) {
+        if ( is_link( $legacy_file ) ) {
+            if ( ! @unlink( $legacy_file ) ) {
+                error_log( 'Fleetwire: remove the legacy uploads log symbolic link manually.' );
+            }
+            return;
+        }
+        if ( ! is_file( $legacy_file ) ) {
+            return;
+        }
+        $legacy = @fopen( $legacy_file, 'r+b' );
+        if ( ! $legacy ) {
+            error_log( 'Fleetwire: legacy uploads log migration failed; remove it from public access manually.' );
+            return;
+        }
+        $private = @fopen( self::$log_file, 'ab' );
+        $migrated = false;
+        if ( $private && flock( $legacy, LOCK_EX ) && flock( $private, LOCK_EX ) ) {
+            $size = fstat( $legacy )['size'];
+            $original_size = fstat( $private )['size'];
+            $copied = stream_copy_to_stream( $legacy, $private );
+            if ( $copied === $size && fflush( $private ) ) {
+                // Truncate first so a failed unlink still leaves no public records.
+                $migrated = ftruncate( $legacy, 0 );
+                if ( ! $migrated ) {
+                    $migrated = @unlink( $legacy_file );
+                }
+            } else {
+                ftruncate( $private, $original_size );
+            }
+            flock( $private, LOCK_UN );
+            flock( $legacy, LOCK_UN );
+        }
+        if ( $private ) {
+            fclose( $private );
+            @chmod( self::$log_file, 0600 );
+        }
+        fclose( $legacy );
+        if ( $migrated ) {
+            @unlink( $legacy_file );
+        } else {
+            error_log( 'Fleetwire: legacy uploads log migration failed; remove it from public access manually.' );
+        }
     }
     
     /**
@@ -76,7 +170,12 @@ class Logger {
         $log_entry = sprintf( '[%s] %s: %s%s' . PHP_EOL, $timestamp, strtoupper( $level ), $message, $context_str );
         
         // Write to a log file
-        error_log( $log_entry, 3, self::$log_file );
+        if ( self::$log_file === '' || file_put_contents( self::$log_file, $log_entry, FILE_APPEND | LOCK_EX ) === false ) {
+            // Preserve diagnostics through the host-managed PHP log if private storage fails.
+            error_log( $log_entry );
+        } else {
+            @chmod( self::$log_file, 0600 );
+        }
         
         // Also log to WordPress debug log if enabled
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
