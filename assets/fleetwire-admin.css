@@ -573,3 +573,33 @@ input.fleetwire-loading::after {
     max-width: none;
   }
 }
+
+/* Site builder */
+.fleetwire-site-builder-vehicles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 4px 16px;
+  margin: 8px 0 16px;
+}
+
+.fleetwire-site-builder-existing a {
+  margin-right: 8px;
+}
+
+.fleetwire-site-builder-summary {
+  margin: 12px 0;
+}
+
+.fleetwire-site-builder-summary li {
+  margin-bottom: 6px;
+}
+
+.fleetwire-build-site .dashicons,
+.fleetwire-site-builder-result .dashicons {
+  vertical-align: text-bottom;
+}
+
+.fleetwire-site-builder-pages li .description {
+  display: block;
+  margin: 2px 0 6px 24px;
+}

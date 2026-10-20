@@ -148,6 +148,20 @@ class Config {
     public static function get_asset_path( string $asset_path ) {
         return self::$plugin_dir . $asset_path;
     }
+
+    /**
+     * Plugin version plus the asset's modified time, so edited admin and editor
+     * assets are never served from a stale browser cache.
+     *
+     * @since 1.1.0
+     * @param string $asset_path
+     * @return string
+     */
+    public static function asset_version( string $asset_path ) {
+        $modified = @filemtime( self::get_asset_path( $asset_path ) );
+
+        return $modified ? self::VERSION . '.' . $modified : self::VERSION;
+    }
     
     /**
      * Get company script URL

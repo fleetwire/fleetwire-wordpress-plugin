@@ -111,7 +111,7 @@ class Admin {
             'fleetwire-admin', 
             Config::get_asset_url( 'assets/fleetwire-admin.css' ),
             [],
-            Config::VERSION
+            Config::asset_version( 'assets/fleetwire-admin.css' )
         );
         
         // Enqueue scripts
@@ -119,7 +119,7 @@ class Admin {
             'fleetwire-admin',
             Config::get_asset_url( 'assets/fleetwire-admin.js' ),
             ['jquery'],
-            Config::VERSION,
+            Config::asset_version( 'assets/fleetwire-admin.js' ),
             true
         );
         
@@ -132,6 +132,8 @@ class Admin {
             'verifyNonce' => wp_create_nonce('fleetwire_verify_company_connection'),
             'listingsNonce' => wp_create_nonce('fleetwire_fetch_listings'),
             'dashboardNonce' => wp_create_nonce('fleetwire_fetch_dashboard_summary'),
+            'buildSiteNonce' => wp_create_nonce('fleetwire_build_site'),
+            'publishSiteNonce' => wp_create_nonce('fleetwire_publish_site'),
             'companyId' => $company_id,
             'apiCompanyId' => Config::get_api_company_id(),
             'storeUrl' => $company_id ? Config::get_company_store_url( $company_id ) : '',

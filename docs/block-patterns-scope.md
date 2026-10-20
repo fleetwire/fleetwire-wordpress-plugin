@@ -142,6 +142,19 @@ plugin zip size matters for wordpress.org). Hosts replace them.
 
 ## Phase 3 — Starter pages importer
 
+**Built 2026-10-20 (uncommitted).** `includes/SiteBuilder.php`, admin card "2. Build your rental website" (later
+sections renumbered), `patterns/fleet-page.html`, tests in `tests/site-builder.php` (pass on Hello Elementor and
+Twenty Twenty-Five, restore the site afterwards). Vehicle pages = spotlight + requirements + CTA band. Front page is
+set only when Home is published (pointing the live front page at a draft would break the site). Classic menus show
+links to drafts, so builder menu items are created as draft items and published with their page
+(`_fleetwire_pending_menu_item`); block-theme Navigation links skip drafts on their own. Admin and editor assets are
+versioned by file mtime.
+Taken slugs: `SiteBuilder::plan()` flags core pages whose slug a published site page already uses; Our Fleet, FAQ and
+Contact are then unchecked by default and the site's page is reused for links and the menu (WordPress would otherwise
+publish ours at `/faq-2/`). Home stays checked. "Publish all draft pages" publishes the builder's drafts (Home last) after
+a confirm. Lesson from testing: test cleanup must only delete pages with status `created` — an early version deleted the
+host's own reused FAQ page (restored from the MySQL binlog).
+
 Add a "Build my rental site" card to the plugin admin page, visible once the connection check passes.
 
 - **Creates draft pages** (never published, never overwrites):

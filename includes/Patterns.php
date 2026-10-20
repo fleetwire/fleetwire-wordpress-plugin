@@ -112,15 +112,10 @@ class Patterns {
         ] );
 
         $listings = Listings::bookable();
-        $hero_image = $this->hero_image( $listings );
-        $tokens = [
-            '{{FLEET_URL}}'  => $this->fleet_url(),
-            '{{HERO_IMAGE}}' => $hero_image,
-        ];
+        $tokens = $this->tokens( $listings );
 
         foreach ( $this->fleet_patterns() as $slug => $pattern ) {
-            $file = $slug === 'hero-search' && ! $hero_image ? 'hero-search-gradient' : $slug;
-            $this->register( $slug, $pattern, $file, $tokens );
+            $this->register( $slug, $pattern, $this->file_for( $slug, $tokens ), $tokens );
         }
 
         $this->register_vehicle_patterns( $listings, $tokens );
@@ -189,6 +184,33 @@ class Patterns {
             'viewportWidth' => 1280,
             'content'       => $content,
         ] );
+    }
+
+    /**
+     * Tokens shared by every pattern: the fleet page link and a hero photo.
+     *
+     * @since 1.1.0
+     * @param array       $listings  Bookable listings.
+     * @param string|null $fleet_url Override for the "See all vehicles" link.
+     * @return array<string, string>
+     */
+    public function tokens( array $listings, ?string $fleet_url = null ) {
+        return [
+            '{{FLEET_URL}}'  => $fleet_url ?? $this->fleet_url(),
+            '{{HERO_IMAGE}}' => $this->hero_image( $listings ),
+        ];
+    }
+
+    /**
+     * Pattern file for a slug: the hero needs its gradient variant when there is no photo.
+     *
+     * @since 1.1.0
+     * @param string $slug
+     * @param array  $tokens
+     * @return string
+     */
+    public function file_for( string $slug, array $tokens ) {
+        return $slug === 'hero-search' && empty( $tokens['{{HERO_IMAGE}}'] ) ? 'hero-search-gradient' : $slug;
     }
 
     /**

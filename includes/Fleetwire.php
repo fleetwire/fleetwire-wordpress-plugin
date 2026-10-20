@@ -63,6 +63,13 @@ class Fleetwire {
      * @var Patterns
      */
     public Patterns $patterns;
+
+    /**
+     * Site builder instance
+     *
+     * @var SiteBuilder
+     */
+    public SiteBuilder $site_builder;
     
     /**
      * Get plugin instance
@@ -126,6 +133,7 @@ class Fleetwire {
         $this->shortcodes = new Shortcodes();
         $this->blocks = new Blocks( $this->shortcodes );
         $this->patterns = new Patterns();
+        $this->site_builder = new SiteBuilder( $this->patterns );
     }
     
     /**

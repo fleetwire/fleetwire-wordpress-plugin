@@ -29,6 +29,7 @@ Fleetwire powers online reservations for rental operators of every size, includi
 
 ## Key Features:
 
+- **Build my rental site:** One click creates draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet — nothing is published or overwritten.
 - **Car rental patterns:** Drop in ready-made sections — hero with search, fleet grid, how it works, FAQ, requirements, contact, vehicle spotlight — from the "Fleetwire – Car Rental" pattern category. Works with any block theme.
 - **Fleetwire blocks:** Vehicles grid, Search, Vehicle Card, Book Button, Vehicle Gallery and Vehicle Details blocks, with live previews of your own fleet in the editor.
 - **Fleetwire embeds:** Add all listings, availability search, single listing cards, booking buttons, listing descriptions, titles, prices, and images with shortcodes.
@@ -42,7 +43,7 @@ Fleetwire powers online reservations for rental operators of every size, includi
 1. **Install the plugin:** Download, upload, and activate the plugin on your WordPress site.
 2. **Connect Fleetwire:** Paste your Fleetwire Company ID into the plugin settings and check the connection.
 3. **Load listings:** Use the listing picker to choose a vehicle and generate a shortcode.
-4. **Build your pages:** In the block editor, open the inserter's Patterns tab and pick from "Fleetwire – Car Rental", or add Fleetwire blocks. Shortcodes still work in any page, post, or compatible builder block.
+4. **Build your site:** Click **Build my rental site** on the Fleetwire settings page to create draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet. Or, in the block editor, open the inserter's Patterns tab and pick from "Fleetwire – Car Rental", or add Fleetwire blocks. Shortcodes still work in any page, post, or compatible builder block.
 5. **Optional host dashboard:** Add a scoped Fleetwire WordPress integration token to load private host dashboard data.
 
 
@@ -72,7 +73,7 @@ On upgrade, existing uploads/fleetwire-logs/fleetwire.log records are copied to 
 
 == Development Checks ==
 
-Run `php tests/blocks.php /path/to/wordpress` and `php tests/patterns.php /path/to/wordpress` against a local WordPress install with the plugin active to check block registration, block and shortcode markup parity, escaping and the editor listings endpoint. `php tests/playground/seed-playground.php /path/to/wordpress` builds a page showing every shortcode and option rendered live.
+Run `php tests/blocks.php /path/to/wordpress`, `php tests/patterns.php /path/to/wordpress` and `php tests/site-builder.php /path/to/wordpress` against a local WordPress install with the plugin active to check block registration, block and shortcode markup parity, escaping and the editor listings endpoint. `php tests/playground/seed-playground.php /path/to/wordpress` builds a page showing every shortcode and option rendered live.
 
 Run `python3 tests/security-regressions.py` with PHP, Bash, Subversion 1.9+ and svnadmin installed. The tests use dummy credentials, mock all release publication commands, and use only a local SVN fixture and a temporary localhost HTTP server. They never publish a release or contact GitHub/WordPress.org.
 

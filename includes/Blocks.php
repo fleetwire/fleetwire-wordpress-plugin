@@ -81,7 +81,7 @@ class Blocks {
             'fleetwire-blocks-editor',
             Config::get_asset_url( 'assets/blocks/editor.js' ),
             [ 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-api-fetch' ],
-            $this->asset_version( 'assets/blocks/editor.js' ),
+            Config::asset_version( 'assets/blocks/editor.js' ),
             true
         );
 
@@ -98,7 +98,7 @@ class Blocks {
             'fleetwire-blocks-editor',
             Config::get_asset_url( 'assets/blocks/editor.css' ),
             [],
-            $this->asset_version( 'assets/blocks/editor.css' )
+            Config::asset_version( 'assets/blocks/editor.css' )
         );
 
         foreach ( $this->renderers() as $slug => $renderer ) {
@@ -299,19 +299,6 @@ class Blocks {
      */
     private function wrap( string $html ) {
         return sprintf( '<div %s>%s</div>', get_block_wrapper_attributes(), $html );
-    }
-
-    /**
-     * Plugin version plus the file's modified time, so edited editor assets are
-     * never served from a stale browser cache.
-     *
-     * @param string $asset_path
-     * @return string
-     */
-    private function asset_version( string $asset_path ) {
-        $modified = @filemtime( Config::get_asset_path( $asset_path ) );
-
-        return $modified ? Config::VERSION . '.' . $modified : Config::VERSION;
     }
 
     /**

@@ -42,6 +42,8 @@ jQuery(document).ready(function ($) {
     initListingPicker();
     initConnectionStatus();
     initTooltips();
+    initSiteBuilder();
+    initSitePublisher();
 
     function initFormSubmission() {
         $('#fleetwire_form').on('submit', function (e) {
@@ -570,6 +572,152 @@ jQuery(document).ready(function ($) {
 
     function hideTooltip() {
         $('.fleetwire-tooltip').remove();
+    }
+
+    function initSiteBuilder() {
+        const $builder = $('.fleetwire-site-builder');
+        const $button = $builder.find('.fleetwire-build-site');
+        const $result = $builder.find('.fleetwire-site-builder-result');
+        const maxVehicles = 12;
+
+        $builder.on('change', 'input[name="fleetwire_build_listings[]"]', function () {
+            const $checked = $builder.find('input[name="fleetwire_build_listings[]"]:checked');
+            if ($checked.length > maxVehicles) {
+                $(this).prop('checked', false);
+                showToast('You can pick up to ' + maxVehicles + ' vehicles per run.', 'error');
+            }
+        });
+
+        $button.on('click', function () {
+            const listings = $builder.find('input[name="fleetwire_build_listings[]"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            $button.prop('disabled', true).addClass('updating-message');
+            $result.empty();
+
+            $.ajax({
+                url: fleetwireAdmin.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'fleetwire_build_site',
+                    fw_nonce: fleetwireAdmin.buildSiteNonce,
+                    listings: listings,
+                    pages: $builder.find('input[name="fleetwire_build_pages[]"]:checked:not(:disabled)').map(function () {
+                        return $(this).val();
+                    }).get(),
+                    front_page: $builder.find('.fleetwire-build-front-page').is(':checked') ? 1 : 0,
+                    menu: $builder.find('.fleetwire-build-menu').is(':checked') ? 1 : 0
+                },
+                success: function (result) {
+                    if (!result.success) {
+                        showToast((result.data && result.data.message) || fleetwireAdmin.strings.error, 'error');
+                        return;
+                    }
+                    renderSiteBuilderSummary($result, result.data);
+                    $builder.find('input[name="fleetwire_build_listings[]"]:checked').prop('checked', false).prop('disabled', true);
+                    $builder.find('input[name="fleetwire_build_pages[]"]:checked').prop('disabled', true);
+                    const created = (result.data.pages || []).concat(result.data.vehicles || []).filter(function (page) {
+                        return page.post_status === 'draft';
+                    }).length;
+                    if (created) {
+                        $builder.find('.fleetwire-site-builder-publish').prop('hidden', false);
+                        $builder.find('.fleetwire-publish-site').attr('data-count', created);
+                    }
+                    $button.html('<span class="dashicons dashicons-admin-page"></span> Update vehicle pages');
+                    showToast('Draft pages are ready.', 'success');
+                },
+                error: function () {
+                    showToast(fleetwireAdmin.strings.error, 'error');
+                },
+                complete: function () {
+                    $button.prop('disabled', false).removeClass('updating-message');
+                }
+            });
+        });
+    }
+
+    function initSitePublisher() {
+        const $builder = $('.fleetwire-site-builder');
+        const $button = $builder.find('.fleetwire-publish-site');
+
+        $button.on('click', function () {
+            const count = parseInt($button.attr('data-count'), 10) || 0;
+            const question = 'Publish ' + (count ? count + ' ' : '') + 'draft pages to your live site? Visitors will see them right away.';
+            if (!window.confirm(question)) {
+                return;
+            }
+
+            $button.prop('disabled', true).addClass('updating-message');
+
+            $.ajax({
+                url: fleetwireAdmin.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'fleetwire_publish_site',
+                    fw_nonce: fleetwireAdmin.publishSiteNonce
+                },
+                success: function (result) {
+                    if (!result.success) {
+                        showToast((result.data && result.data.message) || fleetwireAdmin.strings.error, 'error');
+                        return;
+                    }
+                    const $result = $builder.find('.fleetwire-site-builder-result').empty();
+                    renderSiteBuilderSummary($result, { pages: result.data.published });
+                    $builder.find('.fleetwire-site-builder-publish').prop('hidden', true);
+                    showToast(result.data.published.length + ' pages published.', 'success');
+                },
+                error: function () {
+                    showToast(fleetwireAdmin.strings.error, 'error');
+                },
+                complete: function () {
+                    $button.prop('disabled', false).removeClass('updating-message');
+                }
+            });
+        });
+    }
+
+    function renderSiteBuilderSummary($result, summary) {
+        const $list = $('<ul class="fleetwire-site-builder-summary"></ul>');
+        const pages = (summary.pages || []).concat(summary.vehicles || []);
+
+        pages.forEach(function (page) {
+            const statuses = {
+                created: 'Created draft',
+                kept: 'Already built',
+                existing: 'Using your existing page',
+                published: 'Published'
+            };
+            const status = statuses[page.status] || page.status;
+            const $item = $('<li></li>');
+            $item.append($('<strong></strong>').text(page.title));
+            $item.append(document.createTextNode(' — ' + status + ' '));
+            $item.append($('<a target="_blank" rel="noopener"></a>').attr('href', page.edit_url).text('Edit'));
+            $item.append(document.createTextNode(' · '));
+            $item.append($('<a target="_blank" rel="noopener"></a>').attr('href', page.preview_url).text('Preview'));
+            $list.append($item);
+        });
+
+        $result.append($list);
+
+        if (summary.front_page === 'pending') {
+            $result.append($('<p></p>').text('Home becomes your front page as soon as you publish it.'));
+        } else if (summary.front_page === 'set') {
+            $result.append($('<p></p>').text('Home is now your front page.'));
+        }
+
+        if (summary.menu) {
+            $result.append($('<p></p>').text(summary.menu));
+        }
+
+        if (summary.home_preview_url) {
+            $result.append(
+                $('<a class="button button-secondary" target="_blank" rel="noopener"></a>')
+                    .attr('href', summary.home_preview_url)
+                    .append('<span class="dashicons dashicons-visibility"></span> ')
+                    .append(document.createTextNode('Preview home page'))
+            );
+        }
     }
 
     function showToast(message, type = 'info') {

@@ -209,10 +209,145 @@
         </div>
     </div>
 
+    <?php
+    $fleetwire_builder = \Fleetwire\Fleetwire::get_instance()->site_builder;
+    $fleetwire_builder_state = $fleetwire_builder->state();
+    $fleetwire_built_pages = array_filter( array_map( [ $fleetwire_builder, 'existing_page' ], $fleetwire_builder_state['pages'] ) );
+    $fleetwire_vehicle_pages = array_filter( array_map( [ $fleetwire_builder, 'existing_page' ], $fleetwire_builder_state['vehicles'] ) );
+    $fleetwire_bookable = \Fleetwire\Config::is_configured() ? \Fleetwire\Listings::bookable() : [];
+    $fleetwire_checked = 0;
+    $fleetwire_plan = $fleetwire_builder->plan();
+    $fleetwire_default_pages = $fleetwire_builder->default_page_keys();
+    $fleetwire_drafts = $fleetwire_builder->draft_count();
+    ?>
+    <div class="card fleetwire-card fleetwire-site-builder">
+        <h2><?php esc_html_e( '2. Build your rental website', 'fleetwire' ); ?></h2>
+        <p class="fw-admin-subtitle">
+            <?php esc_html_e( 'Create draft pages from your fleet: Home, Our Fleet, FAQ, Contact and a page for each vehicle you pick. Nothing is published or overwritten — review the drafts, edit the text, then publish.', 'fleetwire' ); ?>
+        </p>
+        <hr/>
+        <?php if ( ! \Fleetwire\Config::is_configured() ) : ?>
+            <p><?php esc_html_e( 'Connect your Fleetwire account above first.', 'fleetwire' ); ?></p>
+        <?php else : ?>
+            <?php if ( $fleetwire_built_pages ) : ?>
+                <p class="fleetwire-site-builder-existing">
+                    <?php esc_html_e( 'Pages built earlier:', 'fleetwire' ); ?>
+                    <?php foreach ( array_merge( $fleetwire_built_pages, $fleetwire_vehicle_pages ) as $fleetwire_page ) : ?>
+                        <a href="<?php echo esc_url( get_edit_post_link( $fleetwire_page->ID ) ); ?>"><?php echo esc_html( get_the_title( $fleetwire_page ) ); ?></a>
+                    <?php endforeach; ?>
+                </p>
+            <?php endif; ?>
+
+            <h3><?php esc_html_e( 'Pages', 'fleetwire' ); ?></h3>
+            <ul class="fleetwire-site-builder-pages">
+                <?php foreach ( [ 'home', 'fleet', 'faq', 'contact' ] as $fleetwire_key ) :
+                    $fleetwire_core = $fleetwire_plan[ $fleetwire_key ];
+                    $fleetwire_taken = $fleetwire_core['taken_by'];
+                    ?>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="fleetwire_build_pages[]"
+                                   value="<?php echo esc_attr( $fleetwire_key ); ?>"
+                                <?php checked( $fleetwire_core['ours'] || in_array( $fleetwire_key, $fleetwire_default_pages, true ) ); ?>
+                                <?php disabled( (bool) $fleetwire_core['ours'] ); ?>/>
+                            <?php echo esc_html( $fleetwire_core['title'] ); ?>
+                        </label>
+                        <?php if ( $fleetwire_core['ours'] ) : ?>
+                            <span class="description"><?php esc_html_e( '(built)', 'fleetwire' ); ?></span>
+                        <?php elseif ( $fleetwire_taken && $fleetwire_key === 'home' ) : ?>
+                            <span class="description">
+                                <?php
+                                echo esc_html(
+                                    (int) get_option( 'page_on_front' ) === $fleetwire_taken->ID
+                                        /* translators: %s: page title */
+                                        ? sprintf( __( 'Your current front page, "%s", stays live until you publish the new Home.', 'fleetwire' ), get_the_title( $fleetwire_taken ) )
+                                        /* translators: %s: page title */
+                                        : sprintf( __( 'You already have a "%s" page. It stays as it is; the new Home gets its own address.', 'fleetwire' ), get_the_title( $fleetwire_taken ) )
+                                );
+                                ?>
+                            </span>
+                        <?php elseif ( $fleetwire_taken ) : ?>
+                            <span class="description">
+                                <?php
+                                /* translators: 1: page title, 2: page path such as /faq/ */
+                                echo esc_html( sprintf( __( 'You already have "%1$s" at %2$s, so it is used instead. Tick to create ours as well.', 'fleetwire' ), get_the_title( $fleetwire_taken ), wp_make_link_relative( get_permalink( $fleetwire_taken ) ) ) );
+                                ?>
+                            </span>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+
+            <h3><?php esc_html_e( 'Vehicle pages', 'fleetwire' ); ?></h3>
+            <?php if ( empty( $fleetwire_bookable ) ) : ?>
+                <p><?php esc_html_e( 'Your vehicles could not be loaded. Check the connection above, then reload this page.', 'fleetwire' ); ?></p>
+            <?php else : ?>
+                <p class="description">
+                    <?php
+                    /* translators: %d: maximum number of vehicle pages */
+                    echo esc_html( sprintf( __( 'Pick up to %d vehicles per run.', 'fleetwire' ), \Fleetwire\SiteBuilder::MAX_VEHICLE_PAGES ) );
+                    ?>
+                </p>
+                <ul class="fleetwire-site-builder-vehicles">
+                    <?php foreach ( $fleetwire_bookable as $fleetwire_listing ) :
+                        $fleetwire_has_page = isset( $fleetwire_vehicle_pages[ $fleetwire_listing['id'] ] );
+                        $fleetwire_check = ! $fleetwire_has_page && $fleetwire_checked < \Fleetwire\SiteBuilder::MAX_VEHICLE_PAGES;
+                        $fleetwire_checked += $fleetwire_check ? 1 : 0;
+                        ?>
+                        <li>
+                            <label>
+                                <input type="checkbox" name="fleetwire_build_listings[]"
+                                       value="<?php echo esc_attr( $fleetwire_listing['id'] ); ?>"
+                                    <?php checked( $fleetwire_check ); ?>
+                                    <?php disabled( $fleetwire_has_page ); ?>/>
+                                <?php echo esc_html( $fleetwire_listing['name'] ); ?>
+                                <?php if ( $fleetwire_has_page ) : ?>
+                                    <span class="description"><?php esc_html_e( '(page exists)', 'fleetwire' ); ?></span>
+                                <?php endif; ?>
+                            </label>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+
+            <h3><?php esc_html_e( 'Options', 'fleetwire' ); ?></h3>
+            <p>
+                <label>
+                    <input type="checkbox" class="fleetwire-build-front-page"/>
+                    <?php esc_html_e( 'Use Home as my front page once I publish it', 'fleetwire' ); ?>
+                </label>
+            </p>
+            <p>
+                <label>
+                    <input type="checkbox" class="fleetwire-build-menu"/>
+                    <?php esc_html_e( 'Add Home, Our Fleet, FAQ and Contact to my site menu (links appear as each page is published)', 'fleetwire' ); ?>
+                </label>
+            </p>
+            <p class="submit">
+                <button type="button" class="button button-primary fleetwire-build-site">
+                    <span class="dashicons dashicons-admin-page"></span>
+                    <?php echo $fleetwire_built_pages ? esc_html__( 'Update vehicle pages', 'fleetwire' ) : esc_html__( 'Build my rental site', 'fleetwire' ); ?>
+                </button>
+            </p>
+            <div class="fleetwire-site-builder-result" aria-live="polite"></div>
+            <div class="fleetwire-site-builder-publish"<?php echo $fleetwire_drafts ? '' : ' hidden'; ?>>
+                <hr/>
+                <p>
+                    <?php esc_html_e( 'Happy with the drafts? Publish them all at once — or publish pages one by one from the editor.', 'fleetwire' ); ?>
+                </p>
+                <button type="button" class="button button-secondary fleetwire-publish-site"
+                        data-count="<?php echo esc_attr( $fleetwire_drafts ); ?>">
+                    <span class="dashicons dashicons-yes-alt"></span>
+                    <?php esc_html_e( 'Publish all draft pages', 'fleetwire' ); ?>
+                </button>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <div class="card fleetwire-card fleetwire-dashboard-section">
         <div class="fleetwire-dashboard-header">
             <div>
-                <h2><?php esc_html_e( "2. Host dashboard", 'fleetwire' ); ?></h2>
+                <h2><?php esc_html_e( "3. Host dashboard", 'fleetwire' ); ?></h2>
                 <p class="fw-admin-subtitle">
                     <?php esc_html_e( 'Review private host data from Fleetwire without leaving WordPress. This requires the scoped WordPress integration token.', 'fleetwire' ); ?>
                 </p>
@@ -254,7 +389,7 @@
     </div>
 
     <div class="card fleetwire-card fleetwire-shortcode-section">
-        <h2><?php esc_html_e( "3. Add your products", 'fleetwire' ); ?></h2>
+        <h2><?php esc_html_e( "4. Add your products", 'fleetwire' ); ?></h2>
         <p class="fw-admin-subtitle">
             <?php esc_html_e( 'Copy a supported shortcode into any page or post. The ID attribute is your Fleetwire listing ID, such as l_ABCDEFG.', 'fleetwire' ); ?>
         </p>
@@ -349,7 +484,7 @@
     </div>
 
     <div class="card fleetwire-card">
-        <h2><?php esc_html_e( "4. Customize your online store", 'fleetwire' ); ?></h2>
+        <h2><?php esc_html_e( "5. Customize your online store", 'fleetwire' ); ?></h2>
         <p class="fw-admin-subtitle"><?php esc_html_e( "Configure branding, rental periods, opening hours, online payments and more.", 'fleetwire' ); ?></p>
         <hr/>
         <a href="https://tenant.fleetwire.io/settings/online-reservations" target="_blank"
