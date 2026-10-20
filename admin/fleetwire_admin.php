@@ -268,6 +268,7 @@ $fleetwire_review_url = 'https://wordpress.org/support/plugin/fleetwire-fleet-ma
                 <h2><?php esc_html_e( 'Build your rental website', 'fleetwire-fleet-management' ); ?></h2>
                 <p class="fw-admin-subtitle">
                     <?php esc_html_e( 'Create draft pages from your fleet: Home, Our Fleet, FAQ, Contact and a page for each vehicle you pick. Nothing is published or overwritten — review the drafts, edit the text, then publish.', 'fleetwire-fleet-management' ); ?>
+                    <a href="https://help.fleetwire.io/en/article/build-your-rental-website-with-wordpress-ka7gkd/" target="_blank" rel="noopener"><?php esc_html_e( 'Step-by-step guide', 'fleetwire-fleet-management' ); ?> &rarr;</a>
                 </p>
                 <hr/>
                 <?php if ( ! \Fleetwire\Config::is_configured() ) : ?>
@@ -640,6 +641,7 @@ $fleetwire_review_url = 'https://wordpress.org/support/plugin/fleetwire-fleet-ma
         <div class="fw-card">
             <h2><?php esc_html_e( 'Need help?', 'fleetwire-fleet-management' ); ?></h2>
             <p><?php esc_html_e( 'Guides for setup, embeds and your online store.', 'fleetwire-fleet-management' ); ?></p>
+            <p><a href="https://help.fleetwire.io/en/article/build-your-rental-website-with-wordpress-ka7gkd/" target="_blank" rel="noopener"><?php esc_html_e( 'Build your rental website', 'fleetwire-fleet-management' ); ?> &rarr;</a></p>
             <a href="https://help.fleetwire.io/en/" target="_blank" rel="noopener"><?php esc_html_e( 'Visit the help center', 'fleetwire-fleet-management' ); ?> &rarr;</a>
         </div>
     </aside>

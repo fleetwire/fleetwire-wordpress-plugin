@@ -64,6 +64,8 @@ Renters book through Fleetwire's secure hosted checkout, with real-time availabi
 4. Under **Build your rental website**, choose your pages and vehicles and click **Build my rental site**. Or add Fleetwire blocks and patterns to any page from the block editor.
 5. Optional: create a WordPress integration token in Fleetwire and paste it into the plugin settings to see the host dashboard.
 
+A step-by-step guide with screenshots is in the Fleetwire help center: [Build your rental website with the Fleetwire WordPress plugin](https://help.fleetwire.io/en/article/build-your-rental-website-with-wordpress-ka7gkd/).
+
 == External services ==
 
 This plugin connects your site to [Fleetwire](https://fleetwire.io/), the rental platform that stores your vehicles and handles bookings. A Fleetwire account is required.
