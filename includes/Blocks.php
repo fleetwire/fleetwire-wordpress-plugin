@@ -96,6 +96,13 @@ class Blocks {
         );
 
         wp_register_style(
+            'fleetwire-blocks',
+            Config::get_asset_url( 'assets/blocks/style.css' ),
+            [],
+            Config::asset_version( 'assets/blocks/style.css' )
+        );
+
+        wp_register_style(
             'fleetwire-blocks-editor',
             Config::get_asset_url( 'assets/blocks/editor.css' ),
             [],
@@ -279,7 +286,7 @@ class Blocks {
         };
 
         $html = '<h3 class="fleetwire-details__title">' . $field( 'span', 'fleetwire-listing-title' ) . '</h3>';
-        $html .= '<p class="fleetwire-details__price">' . $field( 'span', 'fleetwire-listing-price' ) . '</p>';
+        $html .= '<p class="fleetwire-details__price">' . $field( 'span', 'fleetwire-listing-price', $this->price_period_label( $id ) ) . '</p>';
         $html .= '<p class="fleetwire-details__specs">'
             . $field( 'span', 'fleetwire-listing-seats', [ 'prepend-label' => ' ' . __( 'seats', 'fleetwire' ) ] )
             . ' · '
@@ -292,6 +299,24 @@ class Blocks {
         }
 
         return $this->wrap( $html );
+    }
+
+    /**
+     * " / day" style label for a listing's price, from the cached listing. The embed
+     * prints only the amount, so without this a price reads "$219" with no period.
+     *
+     * @param string $listing_id
+     * @return array Data attributes for the price element.
+     */
+    private function price_period_label( string $listing_id ) {
+        foreach ( Listings::cached() as $listing ) {
+            if ( ( $listing['id'] ?? '' ) === $listing_id && ! empty( $listing['price_period'] ) ) {
+                // composeLabeledText renders prepend-label after the value.
+                return [ 'prepend-label' => ' / ' . $listing['price_period'] ];
+            }
+        }
+
+        return [];
     }
 
     /**

@@ -32,7 +32,7 @@ Six blocks in a **Fleetwire** category, with previews of your real vehicles righ
 
 = Ready-made car rental patterns =
 
-Ten sections in the **Fleetwire – Car Rental** pattern category: hero with date search, fleet grid, how renting works, why book direct, rental FAQ, rental requirements, book-now banner, contact and hours, vehicle spotlight and three featured vehicles. Patterns use core blocks, so they pick up your theme's fonts and colors, and work with block themes like Twenty Twenty-Five as well as classic themes.
+Twelve sections in the **Fleetwire – Car Rental** pattern category: hero with date search, trust bar, fleet grid, how renting works, why book direct, renter reviews, rental FAQ, rental requirements, book-now banner, contact and hours, a vehicle page with a booking card, and three featured vehicles. Patterns use core blocks, so they pick up your theme's fonts and colors, and work with block themes like Twenty Twenty-Five as well as classic themes.
 
 = Booking handled by Fleetwire =
 
@@ -116,14 +116,14 @@ Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, t
 3. Build my rental site: pick pages and vehicles and get draft pages in one click.
 4. Car rental patterns in the block editor's Patterns tab.
 5. Fleetwire blocks with previews of your real vehicles and a vehicle picker.
-6. A vehicle page with photo gallery, details and a book button.
+6. A vehicle page with photo gallery and a booking card: price per day, specs and a book button.
 7. The Fleetwire dashboard: setup progress, your connection and the next step.
 
 == Changelog ==
 = 1.1.0 =
 * New: Build my rental site — creates draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet, reuses pages you already have, and can publish them all at once.
 * New: six Fleetwire blocks (Vehicles, Search, Vehicle Card, Book Button, Vehicle Gallery, Vehicle Details) with editor previews of your real vehicles.
-* New: ten car rental block patterns in the "Fleetwire – Car Rental" category.
+* New: twelve car rental block patterns in the "Fleetwire – Car Rental" category, including a vehicle page with a booking card, a trust bar and renter reviews.
 * New: vehicle photo gallery with thumbnails.
 * New: redesigned Fleetwire admin with a dashboard, setup progress and separate Build site, Shortcodes and Settings sections. Once you are connected, settings stay out of the way.
 * New: pickups and returns load automatically when an integration token is set, and the shortcode builder loads your vehicles when opened.
@@ -230,7 +230,7 @@ Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, t
 == Upgrade Notice ==
 
 = 1.1.0 =
-Adds Build my rental site, Fleetwire blocks and car rental patterns. Requires WordPress 6.3 or later. Existing shortcodes keep working.
+Adds Build my rental site, Fleetwire blocks, car rental patterns and a redesigned admin. Requires WordPress 6.3 or later. Existing shortcodes keep working.
 
 = 1.0.24 =
 Security update for diagnostic log storage and release tooling. Existing upload logs migrate to private storage when writable. If migration fails, remove the old public log and configure FLEETWIRE_LOG_DIR; see Diagnostic Logs above.

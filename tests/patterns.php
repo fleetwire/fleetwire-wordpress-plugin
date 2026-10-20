@@ -82,7 +82,7 @@ function register_with_cache( $listings ): array {
     return $registered;
 }
 
-$fleet_patterns = [ 'hero-search', 'fleet-grid', 'how-it-works', 'why-book-direct', 'faq', 'requirements', 'cta-band', 'contact' ];
+$fleet_patterns = [ 'hero-search', 'fleet-grid', 'how-it-works', 'why-book-direct', 'trust-bar', 'reviews', 'faq', 'requirements', 'cta-band', 'contact' ];
 
 try {
     // No cache: fleet-wide patterns only, gradient hero.

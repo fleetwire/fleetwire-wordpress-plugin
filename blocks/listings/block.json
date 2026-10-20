@@ -59,5 +59,6 @@
             "showPrice": true
         },
         "viewportWidth": 720
-    }
+    },
+    "style": "fleetwire-blocks"
 }

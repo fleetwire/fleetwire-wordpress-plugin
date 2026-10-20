@@ -137,7 +137,7 @@ class SiteBuilder {
             'home'    => [
                 'title'    => __( 'Home', 'fleetwire' ),
                 'slug'     => 'home',
-                'sections' => [ 'hero-search', 'fleet-grid', 'how-it-works', 'why-book-direct', 'cta-band' ],
+                'sections' => [ 'hero-search', 'trust-bar', 'fleet-grid', 'how-it-works', 'why-book-direct', 'cta-band' ],
             ],
             'faq'     => [
                 'title'    => __( 'FAQ', 'fleetwire' ),
@@ -289,7 +289,7 @@ class SiteBuilder {
             $page = $this->create_page(
                 $listings[ $listing_id ]['name'],
                 sanitize_title( $listings[ $listing_id ]['name'] ),
-                [ 'vehicle-spotlight', 'requirements', 'cta-band' ],
+                [ 'vehicle-spotlight', 'trust-bar', 'requirements', 'cta-band' ],
                 $tokens
             );
             if ( is_wp_error( $page ) ) {
@@ -633,6 +633,12 @@ class SiteBuilder {
         ] );
         $navigation = $navigation[0] ?? null;
         $content = $navigation ? $navigation->post_content : '';
+
+        if ( str_contains( $content, '<!-- wp:page-list' ) ) {
+            // A page list already links every published page; appending would only duplicate them.
+            /* translators: %s: navigation menu name */
+            return sprintf( __( 'The "%s" navigation menu lists all pages automatically, so the pages appear there once published.', 'fleetwire' ), $navigation->post_title );
+        }
 
         $links = '';
         foreach ( $pages as $page ) {

@@ -1,0 +1,58 @@
+/* Fleetwire blocks — front end. Loaded only on pages that use a Fleetwire block.
+   Everything inherits the theme's fonts and colors; this only adds structure. */
+
+.wp-block-fleetwire-listing-details .fleetwire-details__title {
+    margin: 0 0 4px;
+}
+
+.wp-block-fleetwire-listing-details .fleetwire-details__price {
+    margin: 0 0 12px;
+    font-size: 1.75em;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.wp-block-fleetwire-listing-details .fleetwire-details__specs {
+    margin: 0 0 16px;
+    opacity: 0.75;
+}
+
+.wp-block-fleetwire-listing-details .fleetwire-listing-description {
+    line-height: 1.6;
+}
+
+/* Booking card (vehicle spotlight pattern): a framed panel with a full-width button. */
+.fleetwire-booking-card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.fleetwire-booking-card .wp-block-fleetwire-book-button .fw-cta {
+    display: block;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 1.05em;
+    text-align: center;
+}
+
+.fleetwire-booking-card .fleetwire-booking-card__perks {
+    margin-top: 16px;
+    padding-left: 0;
+    list-style: none;
+    font-size: 0.9em;
+}
+
+.fleetwire-booking-card .fleetwire-booking-card__perks li {
+    margin: 0 0 6px;
+    padding-left: 24px;
+    background: no-repeat left 3px / 16px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%2300bd8e'/%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.wp-block-fleetwire-listing-gallery .fw-gallery__main {
+    border-radius: 16px;
+}
+
+.fleetwire-booking-card .fleetwire-listing-button-wrapper {
+    display: block;
+}

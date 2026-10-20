@@ -29,5 +29,6 @@
     "example": {
         "attributes": {},
         "viewportWidth": 600
-    }
+    },
+    "style": "fleetwire-blocks"
 }

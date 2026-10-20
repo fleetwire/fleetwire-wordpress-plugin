@@ -623,7 +623,7 @@ $fleetwire_review_url = 'https://wordpress.org/support/plugin/fleetwire-fleet-ma
                 <ul class="fw-checklist">
                     <li><?php esc_html_e( 'Build my rental site in one click', 'fleetwire' ); ?></li>
                     <li><?php esc_html_e( 'Six Fleetwire blocks with live previews', 'fleetwire' ); ?></li>
-                    <li><?php esc_html_e( 'Ten car rental patterns', 'fleetwire' ); ?></li>
+                    <li><?php esc_html_e( 'Twelve car rental patterns', 'fleetwire' ); ?></li>
                 </ul>
             </div>
         <?php endif; ?>

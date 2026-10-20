@@ -46,5 +46,6 @@
             "descriptionLength": 160
         },
         "viewportWidth": 480
-    }
+    },
+    "style": "fleetwire-blocks"
 }

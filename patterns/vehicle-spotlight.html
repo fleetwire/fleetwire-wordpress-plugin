@@ -1,13 +1,35 @@
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60","left":"var:preset|spacing|40","right":"var:preset|spacing|40"}}},"layout":{"type":"constrained","contentSize":"760px","wideSize":"1200px"}} -->
-<div class="wp-block-group alignfull" style="padding-top:var(--wp--preset--spacing--60);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--60);padding-left:var(--wp--preset--spacing--40)"><!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
-<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"width":"55%"} -->
-<div class="wp-block-column" style="flex-basis:55%"><!-- wp:fleetwire/listing-gallery {"listingId":"{{LISTING_1}}"} /--></div>
+<div class="wp-block-group alignfull" style="padding-top:var(--wp--preset--spacing--60);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--60);padding-left:var(--wp--preset--spacing--40)"><!-- wp:group {"align":"wide","layout":{"type":"default"}} -->
+<div class="wp-block-group alignwide"><!-- wp:paragraph -->
+<p><a href="{{FLEET_URL}}">← All vehicles</a></p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:columns {"align":"wide","style":{"spacing":{"blockGap":{"left":"var:preset|spacing|50"}}}} -->
+<div class="wp-block-columns alignwide"><!-- wp:column {"width":"58%"} -->
+<div class="wp-block-column" style="flex-basis:58%"><!-- wp:fleetwire/listing-gallery {"listingId":"{{LISTING_1}}"} /--></div>
 <!-- /wp:column -->
 
-<!-- wp:column {"width":"45%"} -->
-<div class="wp-block-column" style="flex-basis:45%"><!-- wp:fleetwire/listing-details {"listingId":"{{LISTING_1}}","descriptionLength":280} /-->
+<!-- wp:column {"width":"42%"} -->
+<div class="wp-block-column" style="flex-basis:42%"><!-- wp:group {"className":"fleetwire-booking-card","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","bottom":"var:preset|spacing|40","left":"var:preset|spacing|40","right":"var:preset|spacing|40"}}},"layout":{"type":"default"}} -->
+<div class="wp-block-group fleetwire-booking-card" style="padding-top:var(--wp--preset--spacing--40);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40);padding-left:var(--wp--preset--spacing--40)"><!-- wp:fleetwire/listing-details {"listingId":"{{LISTING_1}}","descriptionLength":240} /-->
 
-<!-- wp:fleetwire/book-button {"listingId":"{{LISTING_1}}"} /--></div>
+<!-- wp:fleetwire/book-button {"listingId":"{{LISTING_1}}","label":"Book this vehicle"} /-->
+
+<!-- wp:list {"className":"fleetwire-booking-card__perks"} -->
+<ul class="wp-block-list fleetwire-booking-card__perks"><!-- wp:list-item -->
+<li>Free cancellation up to 48 hours before pickup</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Secure online checkout</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Pickup, or delivery to your door</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list --></div>
+<!-- /wp:group --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns --></div>
 <!-- /wp:group -->

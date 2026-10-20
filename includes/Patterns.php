@@ -72,6 +72,16 @@ class Patterns {
                 'description' => __( 'Reasons to book on your site instead of a marketplace.', 'fleetwire' ),
                 'keywords'    => [ 'benefits', 'direct booking', 'trust' ],
             ],
+            'trust-bar'       => [
+                'title'       => __( 'Why renters book with you', 'fleetwire' ),
+                'description' => __( 'A band of four reasons to book: confirmation, cancellation, delivery and support.', 'fleetwire' ),
+                'keywords'    => [ 'trust', 'benefits', 'features', 'reasons' ],
+            ],
+            'reviews'         => [
+                'title'       => __( 'Renter reviews', 'fleetwire' ),
+                'description' => __( 'Three review cards with sample quotes. Replace them with reviews from your renters.', 'fleetwire' ),
+                'keywords'    => [ 'reviews', 'testimonials', 'quotes', 'ratings' ],
+            ],
             'faq'             => [
                 'title'       => __( 'Rental FAQ', 'fleetwire' ),
                 'description' => __( 'Deposit, age, insurance, mileage, delivery and cancellation questions.', 'fleetwire' ),

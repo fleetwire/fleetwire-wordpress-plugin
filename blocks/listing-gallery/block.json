@@ -40,5 +40,6 @@
             "isPreview": true
         },
         "viewportWidth": 480
-    }
+    },
+    "style": "fleetwire-blocks"
 }
