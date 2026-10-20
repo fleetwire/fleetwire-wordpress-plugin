@@ -253,11 +253,10 @@ cp $ROOT_PATH$TEMP_GITHUB_REPO/assets/screenshot-* $ROOT_PATH$TEMP_GITHUB_REPO/a
 svn add --force * --auto-props --parents --depth infinity -q
 
 # DO THE REMOVE ALL DELETED FILES UNIX COMMAND
-MISSING_PATHS=$( svn status | sed -e '/^!/!d' -e 's/^!//' )
-
-# iterate over filepaths
-for MISSING_PATH in $MISSING_PATHS; do
-    svn rm --force "$MISSING_PATH"
+# One path per line, so names with spaces survive; the trailing @ stops svn reading
+# an @ inside a filename as a peg revision.
+svn status | sed -n 's/^![[:space:]]*//p' | while IFS= read -r MISSING_PATH; do
+    svn rm --force -- "${MISSING_PATH}@"
 done
 
 # COPY TRUNK TO TAGS/$VERSION
