@@ -97,8 +97,26 @@ try {
     check( ! in_array( 'faq', $defaults, true ) && ! in_array( 'fleet', $defaults, true ), 'taken FAQ and Our Fleet are not created by default' );
     check( in_array( 'home', $defaults, true ), 'Home is created by default even when /home/ is taken' );
 
+    // Only WordPress's bare automatic page list counts as replaceable.
+    check( SiteBuilder::is_bare_page_list( '<!-- wp:page-list /-->' ) && SiteBuilder::is_bare_page_list( "\n<!-- wp:page-list /-->\n" ), 'a bare page list is recognized' );
+    check( ! SiteBuilder::is_bare_page_list( '<!-- wp:page-list {"parentPageID":2} /-->' ), 'a configured page list is not bare' );
+    check( ! SiteBuilder::is_bare_page_list( '<!-- wp:page-list /--><!-- wp:navigation-link {"label":"Rates","url":"/rates/","kind":"custom"} /-->' ), 'a page list with extra links is not bare' );
+    check( ! SiteBuilder::is_bare_page_list( '' ), 'an empty menu is not a page list' );
+
+    // A block-theme menu the host customised beyond the page list is left alone.
+    $custom_navigation = null;
+    $custom_content = '<!-- wp:page-list /-->' . "\n" . '<!-- wp:navigation-link {"label":"Rates","url":"/rates/","kind":"custom"} /-->';
+    if ( wp_is_block_theme() ) {
+        $custom_navigation = wp_insert_post( [ 'post_type' => 'wp_navigation', 'post_status' => 'publish', 'post_title' => 'Builder Test Custom', 'post_content' => $custom_content ] );
+    }
+
     $summary = $builder->build( [], false, true );
     $track( $summary );
+    if ( $custom_navigation ) {
+        check( get_post( $custom_navigation )->post_content === $custom_content, 'a customised page-list menu is not touched' );
+        check( str_contains( $summary['menu'], 'lists all pages automatically' ), 'the summary says the customised menu already lists the pages' );
+        wp_delete_post( $custom_navigation, true );
+    }
     $statuses = array_column( $summary['pages'], 'status', 'title' );
     check( ( $statuses[ get_the_title( $plan['faq']['taken_by'] ) ] ?? '' ) === 'existing', 'the site FAQ is reused, not duplicated' );
     check( ! isset( $builder->state()['pages']['faq'] ) && ! isset( $builder->state()['pages']['fleet'] ), 'no FAQ or Our Fleet page is created' );
@@ -114,6 +132,11 @@ try {
         wp_delete_post( (int) $page_id, true );
     }
     delete_option( SiteBuilder::OPTION );
+
+    // On a fresh block theme the menu is WordPress's automatic page list, which would list every vehicle page.
+    $bare_navigation = wp_is_block_theme()
+        ? wp_insert_post( [ 'post_type' => 'wp_navigation', 'post_status' => 'publish', 'post_title' => 'Builder Test Navigation', 'post_content' => '<!-- wp:page-list /-->' ] )
+        : null;
 
     // First run.
     $summary = $builder->build( [ 'l_BT1', 'l_BT2', 'l_UNKNOWN', 'l_"><script>' ], true, true, $all_pages );
@@ -131,6 +154,22 @@ try {
         check( ! str_contains( $page->post_content, '{{' ), "page $page_id has no unreplaced tokens" );
         $names = wp_list_pluck( parse_blocks( $page->post_content ), 'blockName' );
         check( count( array_filter( $names ) ) > 0 && ! in_array( 'core/freeform', $names, true ), "page $page_id is made of blocks" );
+    }
+
+    // Home and vehicle pages open with their own hero or booking card, so the theme's title is hidden where it can be.
+    $no_title = array_key_exists( SiteBuilder::NO_TITLE_TEMPLATE, wp_get_theme()->get_page_templates( null, 'page' ) );
+    foreach ( $state['pages'] + $state['vehicles'] as $key => $page_id ) {
+        $template = get_post_meta( $page_id, '_wp_page_template', true );
+        $wants_no_title = $no_title && ( $key === 'home' || str_starts_with( (string) $key, 'l_' ) );
+        check( $wants_no_title ? $template === SiteBuilder::NO_TITLE_TEMPLATE : $template !== SiteBuilder::NO_TITLE_TEMPLATE, "page $key " . ( $wants_no_title ? 'uses' : 'keeps the theme\'s title in' ) . ' its template' );
+    }
+
+    if ( $bare_navigation ) {
+        $content = get_post( $bare_navigation )->post_content;
+        check( ! str_contains( $content, 'wp:page-list' ), 'the bare page-list menu is replaced' );
+        $linked = preg_match_all( '/"id":(\d+)/', $content, $m ) ? array_map( 'intval', $m[1] ) : [];
+        check( $linked === [ $state['pages']['home'], $state['pages']['fleet'], $state['pages']['faq'], $state['pages']['contact'] ], 'the replaced menu links Home, Our Fleet, FAQ and Contact, in order, and no vehicle pages' );
+        check( str_contains( $summary['menu'], 'listed every page automatically' ), 'the summary explains the page list was replaced' );
     }
 
     $home = get_post( $state['pages']['home'] );
@@ -240,6 +279,10 @@ try {
     }
     foreach ( get_posts( [ 'post_type' => 'wp_navigation', 'post_status' => 'any', 'numberposts' => -1 ] ) as $navigation ) {
         if ( array_key_exists( $navigation->ID, $backup['navigation'] ) ) {
+            if ( $navigation->post_content === $backup['navigation'][ $navigation->ID ] ) {
+                // Re-saving unchanged content would still leave a revision behind.
+                continue;
+            }
             wp_update_post( [ 'ID' => $navigation->ID, 'post_content' => $backup['navigation'][ $navigation->ID ] ] );
         } else {
             wp_delete_post( $navigation->ID, true );

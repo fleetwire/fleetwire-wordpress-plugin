@@ -29,14 +29,14 @@ if [ "${1-}" = "--help" ] || [ "${1-}" = "-h" ]; then
   echo "This script releases a WordPress plugin from GitHub to WordPress.org SVN."
   echo "\nRequirements:"
   echo "  - .env file with required variables (see script comments)"
-  echo "  - git, svn (1.9+), curl, grep, sed, xargs installed"
+  echo "  - git, svn (1.9+), gh (GitHub CLI), awk, grep, sed, xargs installed"
   echo "\nFlags:"
   echo "  --help, -h   Show this help message and exit."
   exit 0
 fi
 
 # Check for required tools
-for cmd in git svn curl grep sed xargs; do
+for cmd in git svn gh awk grep sed xargs; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Error: $cmd is not installed." >&2
     exit 1
@@ -71,6 +71,7 @@ done
 # ----- ADD THESE TO A '.env' FILE -----
 
 # THE GITHUB ACCESS TOKEN, GENERATE ONE AT: https://github.com/settings/tokens
+# Used to clone the repo and, through gh, to create the GitHub release.
 GITHUB_ACCESS_TOKEN=$(read_var GITHUB_ACCESS_TOKEN .env)
 
 # The slug of your WordPress.org plugin
@@ -247,6 +248,8 @@ rm -f trunk/assets/screenshot-* trunk/assets/banner-* trunk/assets/icon-*
 # COPY LISTING IMAGES TO SVN ASSETS (WordPress.org reads only screenshots, banners and icons there)
 mkdir -p assets
 find assets -type f ! -name 'screenshot-*' ! -name 'banner-*' ! -name 'icon-*' -delete
+# A mistyped banner name (722 for 772) that WordPress.org never reads.
+rm -f assets/banner-722x250.png
 cp $ROOT_PATH$TEMP_GITHUB_REPO/assets/screenshot-* $ROOT_PATH$TEMP_GITHUB_REPO/assets/banner-* $ROOT_PATH$TEMP_GITHUB_REPO/assets/icon-* assets/ 2>/dev/null || true
 
 # DO THE ADD ALL NOT KNOWN FILES UNIX COMMAND
@@ -273,15 +276,16 @@ echo ""
 read -p "PRESS [ENTER] TO COMMIT RELEASE "${VERSION}" TO WORDPRESS.ORG AND GITHUB"
 echo ""
 
-# Extract changelog for a given version from readme.txt
+# Extract changelog for a given version from the released readme.txt
 extract_changelog() {
   local version="$1"
   local changelog
   changelog=$(awk -v ver="= ${version} =" '
-    $0 ~ ver {flag=1; next}
+    $0 == ver {flag=1; next}
     /^= [0-9]+\.[0-9]+\.[0-9]+ =/ && flag {exit}
+    /^== / && flag {exit}
     flag {print}
-  ' ../readme.txt | sed '/^$/d')
+  ' trunk/readme.txt | sed '/^$/d')
   if [ -z "$changelog" ]; then
     echo "Release of version $version"
   else
@@ -289,16 +293,23 @@ extract_changelog() {
   fi
 }
 
-# CREATE THE GITHUB RELEASE
-CHANGELOG_BODY=$(extract_changelog "$VERSION")
-API_JSON=$(printf '{ "tag_name": "%s","target_commitish": "%s","name": "%s", "body": "%s", "draft": false, "prerelease": false }' "$VERSION" "$BRANCH" "$VERSION" "$CHANGELOG_BODY")
-RESULT=$(curl --data "${API_JSON}" https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/releases?access_token=${GITHUB_ACCESS_TOKEN})
-
 # DEPLOY
 echo ""
 echo "Committing to WordPress.org...this may take a while..."
 assert_svn_target "."
 svn commit -m "Release "${VERSION}", see readme.txt for the changelog." --username "$SVN_USERNAME" --password "$SVN_PASSWORD" || { echo "Unable to commit."; exit 1; }
+
+# CREATE THE GITHUB RELEASE (after WordPress.org, so a GitHub hiccup never blocks the real release)
+NOTES_FILE=$(mktemp)
+extract_changelog "$VERSION" > "$NOTES_FILE"
+echo "Creating GitHub release ${VERSION}"
+GH_TOKEN="$GITHUB_ACCESS_TOKEN" gh release create "$VERSION" \
+  --repo "${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}" \
+  --target "$BRANCH" \
+  --title "$VERSION" \
+  --notes-file "$NOTES_FILE" \
+  || echo "Warning: GitHub release failed. WordPress.org is released; create it with: gh release create ${VERSION} --repo ${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME} --target ${BRANCH}" >&2
+rm -f "$NOTES_FILE"
 
 # REMOVE THE TEMP DIRS
 echo "CLEANING UP"

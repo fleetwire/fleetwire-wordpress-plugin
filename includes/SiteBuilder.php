@@ -47,6 +47,15 @@ class SiteBuilder {
     const PENDING_MENU_ITEM_META = '_fleetwire_pending_menu_item';
 
     /**
+     * Page template that hides the page title, used for Home and vehicle pages when
+     * the theme has it (Twenty Twenty-Five does).
+     *
+     * @since 1.1.1
+     * @var string
+     */
+    const NO_TITLE_TEMPLATE = 'page-no-title';
+
+    /**
      * @var Patterns
      */
     private $patterns;
@@ -251,7 +260,7 @@ class SiteBuilder {
                 $summary['pages'][] = $this->describe( $page, 'kept' );
             } elseif ( in_array( $key, $page_keys, true ) ) {
                 $tokens = $this->patterns->tokens( array_values( $listings ), $fleet_url );
-                $page = $this->create_page( $definition['title'], $definition['slug'], $definition['sections'], $tokens );
+                $page = $this->create_page( $definition['title'], $definition['slug'], $definition['sections'], $tokens, $key === 'home' );
                 if ( is_wp_error( $page ) ) {
                     return $page;
                 }
@@ -288,7 +297,8 @@ class SiteBuilder {
                 $listings[ $listing_id ]['name'],
                 sanitize_title( $listings[ $listing_id ]['name'] ),
                 [ 'vehicle-spotlight', 'trust-bar', 'requirements', 'cta-band' ],
-                $tokens
+                $tokens,
+                true
             );
             if ( is_wp_error( $page ) ) {
                 return $page;
@@ -470,9 +480,10 @@ class SiteBuilder {
      * @param string   $slug
      * @param string[] $sections Pattern files, in order.
      * @param array    $tokens
+     * @param bool     $hide_title The page opens with its own heading (a hero or booking card).
      * @return \WP_Post|\WP_Error
      */
-    private function create_page( string $title, string $slug, array $sections, array $tokens ) {
+    private function create_page( string $title, string $slug, array $sections, array $tokens, bool $hide_title = false ) {
         $blocks = [];
         foreach ( $sections as $section ) {
             $markup = $this->patterns->content( $this->patterns->file_for( $section, $tokens ), $tokens );
@@ -483,15 +494,33 @@ class SiteBuilder {
             $blocks[] = trim( $markup );
         }
 
-        $page_id = wp_insert_post( [
+        $page = [
             'post_type'    => 'page',
             'post_status'  => 'draft',
             'post_title'   => $title,
             'post_name'    => $slug,
             'post_content' => implode( "\n\n", $blocks ),
-        ], true );
+        ];
+        if ( $hide_title && $this->theme_has_page_template( self::NO_TITLE_TEMPLATE ) ) {
+            // Otherwise block themes like Twenty Twenty-Five print "Home" above the hero.
+            $page['page_template'] = self::NO_TITLE_TEMPLATE;
+        }
+
+        $page_id = wp_insert_post( $page, true );
 
         return is_wp_error( $page_id ) ? $page_id : get_post( $page_id );
+    }
+
+    /**
+     * Whether the active theme offers this page template (a theme.json custom template
+     * on block themes).
+     *
+     * @since 1.1.1
+     * @param string $template
+     * @return bool
+     */
+    private function theme_has_page_template( string $template ) {
+        return array_key_exists( $template, wp_get_theme()->get_page_templates( null, 'page' ) );
     }
 
     /**
@@ -640,7 +669,12 @@ class SiteBuilder {
         $navigation = $navigation[0] ?? null;
         $content = $navigation ? $navigation->post_content : '';
 
-        if ( str_contains( $content, '<!-- wp:page-list' ) ) {
+        // WordPress's fallback menu is a bare page list, which would list every vehicle
+        // page; nobody chose it, so the core pages replace it. A menu the host edited stays.
+        $replaced_page_list = $navigation && self::is_bare_page_list( $content );
+        if ( $replaced_page_list ) {
+            $content = '';
+        } elseif ( str_contains( $content, '<!-- wp:page-list' ) ) {
             // A page list already links every published page; appending would only duplicate them.
             /* translators: %s: navigation menu name */
             return sprintf( __( 'The "%s" navigation menu lists all pages automatically, so the pages appear there once published.', 'fleetwire-fleet-management' ), $navigation->post_title );
@@ -675,7 +709,25 @@ class SiteBuilder {
             ] );
         }
 
+        if ( $replaced_page_list ) {
+            $titles = array_map( 'get_the_title', array_values( $pages ) );
+            /* translators: 1: navigation menu name, 2: list of page titles */
+            return sprintf( __( 'The "%1$s" navigation menu listed every page automatically, vehicle pages included, so it now links %2$s instead. Links appear as you publish each page, and you can change the menu in Appearance > Editor > Navigation.', 'fleetwire-fleet-management' ), $name, wp_sprintf_l( '%l', $titles ) );
+        }
+
         /* translators: %s: navigation menu name */
         return sprintf( __( 'Added to the "%s" navigation menu. Links appear as you publish each page.', 'fleetwire-fleet-management' ), $name );
+    }
+
+    /**
+     * Whether navigation content is only WordPress's automatic page list, as on a
+     * fresh block theme, with nothing the host added or configured.
+     *
+     * @since 1.1.1
+     * @param string $content wp_navigation post content.
+     * @return bool
+     */
+    public static function is_bare_page_list( string $content ) {
+        return (bool) preg_match( '#^\s*<!-- wp:page-list\s*/-->\s*$#', $content );
     }
 }

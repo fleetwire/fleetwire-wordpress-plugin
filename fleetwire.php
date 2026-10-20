@@ -4,7 +4,7 @@
  * Plugin Name: Fleetwire – Car Rental Booking & Website Builder
  * Description: Build a car rental website in minutes: one-click starter pages, car rental blocks and patterns, live availability search and online booking powered by your Fleetwire account.
  * Author: Fleetwire, LLC
- * Version: 1.1.0
+ * Version: 1.1.1
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * License: GPLv2 or later

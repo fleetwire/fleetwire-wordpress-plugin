@@ -4,7 +4,7 @@ Tags: car rental, rent a car, rental booking, vehicle rental, booking calendar
 Requires at least: 6.3
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,18 +75,6 @@ This plugin connects your site to [Fleetwire](https://fleetwire.io/), the rental
 
 Fleetwire [terms of service](https://fleetwire.io/terms/) and [privacy policy](https://fleetwire.io/privacy-policy/). jsDelivr [privacy policy](https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net).
 
-== Diagnostic Logs ==
-
-Fleetwire keeps diagnostic files outside the WordPress web roots in a site-specific system temporary directory. Unix directory/file permissions are restricted to the PHP worker. System cleanup may remove temporary logs. For persistent storage, define FLEETWIRE_LOG_DIR in wp-config.php as an absolute private directory outside all web-served paths, writable only by the PHP worker.
-
-On upgrade, existing uploads/fleetwire-logs/fleetwire.log records are copied to private storage before the public file is emptied and removed. If storage or migration is unavailable, Fleetwire reports the problem through the host-managed PHP error log; remove any remaining legacy upload log from public access and configure private storage. Keep the host's PHP error-log destination private as well. Logging level filters and the log-file, size and clear helpers remain available; the file helper returns an empty string when private storage cannot be used.
-
-== Development Checks ==
-
-Run `php tests/blocks.php /path/to/wordpress`, `php tests/patterns.php /path/to/wordpress` and `php tests/site-builder.php /path/to/wordpress` against a local WordPress install with the plugin active to check block registration, block and shortcode markup parity, escaping and the editor listings endpoint. `php tests/playground/seed-playground.php /path/to/wordpress` builds a page showing every shortcode and option rendered live.
-
-Run `python3 tests/security-regressions.py` with PHP, Bash, Subversion 1.9+ and svnadmin installed. The tests use dummy credentials, mock all release publication commands, and use only a local SVN fixture and a temporary localhost HTTP server. They never publish a release or contact GitHub/WordPress.org.
-
 == Frequently Asked Questions ==
 
 = Does this plugin require a Fleetwire subscription? =
@@ -110,6 +98,9 @@ Visitors browse vehicles and check availability on your WordPress pages, then co
 = Does it work for RV, trailer or equipment rentals? =
 Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, trailers and equipment.
 
+= Where are diagnostic logs kept? =
+In a private system temporary directory outside your web root. To keep them somewhere permanent, define `FLEETWIRE_LOG_DIR` in wp-config.php as an absolute path outside every web-served directory, writable only by PHP.
+
 == Screenshots ==
 
 1. A rental home page built by the plugin: hero with trip date search and your fleet.
@@ -121,6 +112,11 @@ Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, t
 7. The Fleetwire dashboard: setup progress, your connection and the next step.
 
 == Changelog ==
+= 1.1.1 =
+* Improved: on block themes like Twenty Twenty-Five, Build my rental site uses the theme's no-title template for Home and vehicle pages, so "Home" or the vehicle name no longer prints above the hero and booking card.
+* Improved: when your block theme's menu is still WordPress's automatic page list, Add to my site menu replaces it with Home, Our Fleet, FAQ and Contact instead of listing every vehicle page. Menus you have edited are left alone.
+* Moved developer notes out of the plugin readme.
+
 = 1.1.0 =
 * New: Build my rental site — creates draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet, reuses pages you already have, and can publish them all at once.
 * New: seven Fleetwire blocks (Vehicles, Search, Vehicle Card, Book Button, Vehicle Gallery, Vehicle Details, Vehicle Availability) with editor previews of your real vehicles.
@@ -234,11 +230,14 @@ Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, t
 
 == Upgrade Notice ==
 
+= 1.1.1 =
+Cleaner pages from Build my rental site on block themes: no duplicate page title above the hero, and a short menu instead of every vehicle page.
+
 = 1.1.0 =
 Adds Build my rental site, Fleetwire blocks, car rental patterns and a redesigned admin. Requires WordPress 6.3 or later. Existing shortcodes keep working.
 
 = 1.0.24 =
-Security update for diagnostic log storage and release tooling. Existing upload logs migrate to private storage when writable. If migration fails, remove the old public log and configure FLEETWIRE_LOG_DIR; see Diagnostic Logs above.
+Security update for diagnostic log storage and release tooling. Existing upload logs migrate to private storage when writable. If migration fails, remove the old public log and configure FLEETWIRE_LOG_DIR; see the diagnostic logs FAQ.
 
 = 1.0.22 =
 Adds Fleetwire admin connection tools, listing picker, and host dashboard. No shortcode changes are required for existing supported embeds.

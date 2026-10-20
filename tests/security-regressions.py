@@ -19,10 +19,18 @@ MOCK = r'''#!/usr/bin/env python3
 import json, os, pathlib, sys
 name = pathlib.Path(sys.argv[0]).name
 args = sys.argv[1:]
+record = [name] + args
+if name == "gh" and "--notes-file" in args:
+    # The notes file is temporary; keep its contents and the token handoff for the assertions.
+    record.append({"notes": pathlib.Path(args[args.index("--notes-file") + 1]).read_text(),
+                   "token": os.environ.get("GH_TOKEN") == "sentinel-github-secret"})
+if name == "svn" and args and args[0] == "commit":
+    # The working copy is removed after the release; keep what /assets held at commit time.
+    record.append({"assets": sorted(p.name for p in pathlib.Path("assets").glob("*"))})
 with open(os.environ["MOCK_CALLS"], "a") as out:
-    out.write(json.dumps([name] + args) + "\n")
-if name in ("clear", "curl"):
-    sys.exit(0)
+    out.write(json.dumps(record) + "\n")
+if name in ("clear", "curl", "gh"):
+    sys.exit(int(os.environ.get("MOCK_GH_FAIL", "0")) if name == "gh" else 0)
 if name == "less":
     sys.stdin.read()
 elif name == "git" and args and args[0] == "clone":
@@ -30,6 +38,7 @@ elif name == "git" and args and args[0] == "clone":
     (dest / ".git").mkdir(parents=True)
     (dest / "assets").mkdir()
     (dest / "plugin.php").write_text("<?php // fixture\n")
+    (dest / "readme.txt").write_text(pathlib.Path(os.environ["MOCK_README"]).read_text())
 elif name == "svn":
     if args[0] == "info":
         if os.environ.get("MOCK_INFO_FAIL"):
@@ -49,7 +58,7 @@ elif name == "svn":
 '''
 
 class ReleaseSecurity(unittest.TestCase):
-    def run_release(self, dry=False, reused=True, url=None, child=None, info_fail=False):
+    def run_release(self, dry=False, reused=True, url=None, child=None, info_fail=False, gh_fail=False, svn_assets=(), version="1.2.3"):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             shutil.copy2(REPO / "release.sh", root / "release.sh")
@@ -62,7 +71,7 @@ class ReleaseSecurity(unittest.TestCase):
             )
             bin_dir = root / "bin"
             bin_dir.mkdir()
-            for name in ("svn", "git", "curl", "clear", "less"):
+            for name in ("svn", "git", "gh", "curl", "clear", "less"):
                 executable = bin_dir / name
                 executable.write_text(MOCK)
                 executable.chmod(0o755)
@@ -74,16 +83,20 @@ class ReleaseSecurity(unittest.TestCase):
             if reused:
                 for child_dir in (".svn", "trunk", "assets", "tags"):
                     (root / "fixture-plugin-svn" / child_dir).mkdir(parents=True, exist_ok=True)
+                for asset in svn_assets:
+                    (root / "fixture-plugin-svn" / "assets" / asset).write_text("fixture")
             env = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ["PATH"],
-                       MOCK_CALLS=str(calls_file),
+                       MOCK_CALLS=str(calls_file), MOCK_README=str(root / "readme.txt"),
                        MOCK_SVN_URL=url or "https://plugins.svn.wordpress.org/fixture-plugin")
             if child:
                 env["MOCK_CHILD_URL"] = child
             if info_fail:
                 env["MOCK_INFO_FAIL"] = "1"
+            if gh_fail:
+                env["MOCK_GH_FAIL"] = "1"
             command = ["bash", str(root / "release.sh")] + (["--dry-run"] if dry else [])
             result = subprocess.run(command, cwd=root, env=env,
-                                    input="1.2.3\n" + "\n" * 30,
+                                    input=version + "\n" + "\n" * 30,
                                     text=True, capture_output=True)
             calls = [json.loads(line) for line in calls_file.read_text().splitlines()]
             preserved = (old_git / "keep.txt").exists()
@@ -95,7 +108,7 @@ class ReleaseSecurity(unittest.TestCase):
         self.assertNotIn("sentinel-svn-secret", result.stdout + result.stderr)
         self.assertIn("https://github.com/fixture-owner/fixture-repo.git", result.stdout)
         self.assertTrue(preserved, "preview removed existing release files")
-        self.assertFalse(any(c[0] in ("svn", "git", "curl") for c in calls))
+        self.assertFalse(any(c[0] in ("svn", "git", "gh", "curl") for c in calls))
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_fresh_checkout_is_https_without_externals(self):
@@ -113,6 +126,38 @@ class ReleaseSecurity(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(any(c[:2] == ["svn", "commit"] for c in calls))
         self.assertGreaterEqual(sum(c[:2] == ["svn", "info"] for c in calls), 6)
+
+    def test_github_release_uses_gh_with_the_changelog(self):
+        version = REPO.joinpath("readme.txt").read_text().split("Stable tag: ", 1)[1].split()[0]
+        # Release the current readme's version so the notes come from its changelog.
+        result, calls, _ = self.run_release(version=version)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(any(c[0] == "curl" for c in calls), "the retired ?access_token= API call is back")
+        self.assertNotIn("access_token", REPO.joinpath("release.sh").read_text())
+        release = next(c for c in calls if c[:3] == ["gh", "release", "create"])
+        self.assertEqual(release[3], version)
+        self.assertIn("fixture-owner/fixture-repo", release)
+        self.assertEqual(release[release.index("--target") + 1], "main")
+        notes = release[-1]
+        self.assertTrue(notes["token"], "gh did not get the token from .env")
+        self.assertTrue(notes["notes"].startswith("* "), notes["notes"])
+        self.assertNotIn("= ", notes["notes"], "notes ran into the next version or section")
+        self.assertNotIn("sentinel-github-secret", result.stdout + result.stderr)
+        # WordPress.org goes first so a GitHub failure cannot block it.
+        commit_at = next(i for i, c in enumerate(calls) if c[:2] == ["svn", "commit"])
+        self.assertLess(commit_at, calls.index(release))
+
+    def test_github_failure_does_not_fail_the_release(self):
+        result, calls, _ = self.run_release(gh_fail=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("GitHub release failed", result.stderr)
+        self.assertTrue(any(c[:2] == ["svn", "commit"] for c in calls))
+
+    def test_stray_banner_pruned_from_svn_assets(self):
+        result, calls, _ = self.run_release(svn_assets=("banner-722x250.png", "banner-772x250.jpg", "notes.txt"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        commit = next(c for c in calls if c[:2] == ["svn", "commit"])
+        self.assertEqual(commit[-1]["assets"], ["banner-772x250.jpg"])
 
     def test_unsafe_root_rejected_before_network_mutations(self):
         for url in (
