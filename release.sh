@@ -200,6 +200,7 @@ rm -Rf .git
 rm -Rf .github
 rm -Rf .wordpress-org
 rm -Rf tests
+rm -Rf docs
 rm -Rf apigen
 rm -f .gitattributes
 rm -f .gitignore

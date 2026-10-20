@@ -228,7 +228,9 @@ class Vehicle_Reviews_Shortcode extends Unsupported_Shortcode {
 class Vehicle_Image_Gallery_Shortcode extends Shortcode_Base {
     
     protected $tag = 'fleetwire_listing_image_gallery';
-    protected $css_class = 'fleetwire-listing-image';
+    // Both classes: fleetwire.js renders a gallery into `fleetwire-listing-gallery`;
+    // scripts that predate it still show the first photo via `fleetwire-listing-image`.
+    protected $css_class = 'fleetwire-listing-image fleetwire-listing-gallery';
     protected $defaults = [
         'id' => null,
     ];
