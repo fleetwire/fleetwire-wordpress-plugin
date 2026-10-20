@@ -65,6 +65,7 @@ check( in_array( 'fleetwire', $categories, true ), 'Fleetwire block category exi
 // Parity with shortcodes
 check( inner( render_fleetwire_block( 'listings', [ 'limit' => 3, 'showPrice' => false ] ) ) === do_shortcode( '[fleetwire_list limit="3" showprice="false"]' ), 'listings block matches [fleetwire_list limit showprice]' );
 check( inner( render_fleetwire_block( 'listings', [ 'limit' => 0, 'perPage' => 4 ] ) ) === do_shortcode( '[fleetwire_list per="4"]' ), 'listings block with paging matches [fleetwire_list per]' );
+check( inner( render_fleetwire_block( 'listings', [ 'limit' => 0, 'showFilters' => true, 'sort' => 'price_desc' ] ) ) === do_shortcode( '[fleetwire_list filters="true" sort="price_desc"]' ), 'listings block with filters matches [fleetwire_list filters sort]' );
 check( inner( render_fleetwire_block( 'search' ) ) === do_shortcode( '[fleetwire_search]' ), 'search block matches [fleetwire_search]' );
 check( inner( render_fleetwire_block( 'listing-card', [ 'listingId' => 'l_ABC' ] ) ) === do_shortcode( '[fleetwire_listing_card id="l_ABC"]' ), 'card block matches [fleetwire_listing_card]' );
 check( inner( render_fleetwire_block( 'listing-gallery', [ 'listingId' => 'l_ABC' ] ) ) === do_shortcode( '[fleetwire_listing_image_gallery id="l_ABC"]' ), 'gallery block matches the gallery shortcode' );
@@ -74,6 +75,13 @@ check( inner( render_fleetwire_block( 'book-button', [ 'listingId' => 'l_ABC', '
 // Behavior
 check( str_contains( render_fleetwire_block( 'listings', [ 'limit' => 6, 'showPrice' => true ] ), 'data-limit="6"' ), 'listings block emits the limit' );
 check( ! str_contains( render_fleetwire_block( 'listings', [ 'limit' => 6, 'showPrice' => true ] ), 'showprice' ), 'prices on: no showprice attribute' );
+$default_listings = render_fleetwire_block( 'listings', [ 'limit' => 6, 'showPrice' => true, 'showFilters' => false, 'sort' => 'order' ] );
+check( ! str_contains( $default_listings, 'data-filters' ) && ! str_contains( $default_listings, 'data-sort' ), 'filters off and host order: no filters or sort attribute' );
+check( str_contains( render_fleetwire_block( 'listings', [ 'showFilters' => true ] ), 'data-filters="true"' ), 'listings block emits the filter bar switch' );
+check( str_contains( render_fleetwire_block( 'listings', [ 'sort' => 'price_asc' ] ), 'data-sort="price_asc"' ), 'listings block emits a price sort' );
+check( ! str_contains( render_fleetwire_block( 'listings', [ 'sort' => 'name" onmouseover="x' ] ), 'data-sort' ), 'listings block drops a sort the API does not know' );
+$listings_type = WP_Block_Type_Registry::get_instance()->get_registered( 'fleetwire/listings' );
+check( $listings_type && ( $listings_type->attributes['showFilters']['default'] ?? null ) === false && ( $listings_type->attributes['sort']['default'] ?? null ) === 'order', 'listings block defaults keep filters off and the host order' );
 check( ! str_contains( render_fleetwire_block( 'book-button', [ 'listingId' => 'l_ABC', 'showPrice' => false ] ), 'data-show-price' ), 'button without price omits data-show-price (fleetwire.js checks presence)' );
 check( str_contains( render_fleetwire_block( 'listing-gallery', [ 'listingId' => 'l_ABC' ] ), 'fleetwire-listing-gallery' ), 'gallery block carries the gallery class' );
 foreach ( [ 'listing-card', 'book-button', 'listing-gallery', 'listing-details', 'listing-calendar' ] as $slug ) {

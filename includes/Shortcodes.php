@@ -273,6 +273,9 @@ class Vehicle_Calendar_Shortcode extends Shortcode_Base {
 /**
  * Fleetwire list shortcode
  * 
+ * `filters="true"` adds a renter filter bar (vehicle type, seats, price, sort);
+ * `sort` sets the starting order: `price_asc`, `price_desc`, or the host order.
+ *
  * @since 1.0.21
  */
 class List_Shortcode extends Shortcode_Base {
@@ -286,7 +289,9 @@ class List_Shortcode extends Shortcode_Base {
         'limit' => null,
         'show-search' => null,
         'showprice' => null,
-        'search-key' => null
+        'search-key' => null,
+        'filters' => null,
+        'sort' => null
     ];
 }
 

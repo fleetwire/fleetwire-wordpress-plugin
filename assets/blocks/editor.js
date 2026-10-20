@@ -255,6 +255,23 @@
         } );
     }
 
+    /* Orders the Fleetwire list API accepts; "order" is the host's own arrangement. */
+    var SORT_OPTIONS = [
+        { label: __( 'Featured (your order)', 'fleetwire' ), value: 'order' },
+        { label: __( 'Price: low to high', 'fleetwire' ), value: 'price_asc' },
+        { label: __( 'Price: high to low', 'fleetwire' ), value: 'price_desc' },
+    ];
+
+    function sortLabel( value ) {
+        for ( var i = 0; i < SORT_OPTIONS.length; i++ ) {
+            if ( SORT_OPTIONS[ i ].value === value ) {
+                return SORT_OPTIONS[ i ].label;
+            }
+        }
+
+        return SORT_OPTIONS[ 0 ].label;
+    }
+
     /* ---------- Blocks ---------- */
 
     registerBlockType( 'fleetwire/listings', {
@@ -283,10 +300,37 @@
                         toggle( __( 'Show prices', 'fleetwire' ), attributes.showPrice, function ( showPrice ) {
                             setAttributes( { showPrice: showPrice } );
                         } )
+                    ),
+                    el( components.PanelBody, { title: __( 'Filters and sorting', 'fleetwire' ) },
+                        el( components.ToggleControl, {
+                            label: __( 'Let renters filter and sort', 'fleetwire' ),
+                            help: __( 'Adds vehicle type, seats, price and sort controls above the vehicles.', 'fleetwire' ),
+                            checked: !! attributes.showFilters,
+                            onChange: function ( showFilters ) {
+                                setAttributes( { showFilters: showFilters } );
+                            },
+                            __nextHasNoMarginBottom: true,
+                        } ),
+                        el( components.SelectControl, {
+                            label: __( 'Starting order', 'fleetwire' ),
+                            value: attributes.sort || 'order',
+                            options: SORT_OPTIONS,
+                            onChange: function ( sort ) {
+                                setAttributes( { sort: sort } );
+                            },
+                            __next40pxDefaultSize: true,
+                            __nextHasNoMarginBottom: true,
+                        } )
                     )
                 ),
                 el( 'div', blockProps,
                     settings.configured ? null : el( NotConfigured ),
+                    attributes.showFilters ? el( 'div', { className: 'fleetwire-preview-search fleetwire-preview-filters' },
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'All types', 'fleetwire' ) ),
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Any seats', 'fleetwire' ) ),
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Price', 'fleetwire' ) ),
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, sortLabel( attributes.sort ) )
+                    ) : null,
                     el( 'div', { className: 'fleetwire-preview-grid' },
                         shown.map( function ( listing, index ) {
                             return el( PreviewCard, { key: index, listing: listing, showPrice: attributes.showPrice } );

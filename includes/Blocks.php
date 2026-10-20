@@ -168,6 +168,8 @@ class Blocks {
             'limit'     => $this->positive_int( $attributes['limit'] ?? 0 ),
             'per'       => $this->positive_int( $attributes['perPage'] ?? 0 ),
             'showprice' => ! empty( $attributes['showPrice'] ) ? null : 'false',
+            'filters'   => ! empty( $attributes['showFilters'] ) ? 'true' : null,
+            'sort'      => in_array( $attributes['sort'] ?? '', [ 'price_asc', 'price_desc' ], true ) ? $attributes['sort'] : null,
         ] ) );
     }
 

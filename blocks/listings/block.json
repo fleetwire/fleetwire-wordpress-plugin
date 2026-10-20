@@ -26,6 +26,19 @@
         "showPrice": {
             "type": "boolean",
             "default": true
+        },
+        "showFilters": {
+            "type": "boolean",
+            "default": false
+        },
+        "sort": {
+            "type": "string",
+            "enum": [
+                "order",
+                "price_asc",
+                "price_desc"
+            ],
+            "default": "order"
         }
     },
     "supports": {
