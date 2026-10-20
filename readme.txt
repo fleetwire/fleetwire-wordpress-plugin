@@ -24,9 +24,10 @@ Whether you rent cars, trucks, vans, RVs, trailers or equipment, visitors browse
 
 = Car rental blocks =
 
-Six blocks in a **Fleetwire** category, with previews of your real vehicles right in the editor:
+Seven blocks in a **Fleetwire** category, with previews of your real vehicles right in the editor:
 
-* **Vehicles** — your bookable fleet as a responsive grid of cards, with a limit, paging and price toggle.
+* **Vehicles** — your bookable fleet as a responsive grid of cards, with a limit, paging, price toggle, and optional renter filters and sorting.
+* **Vehicle Availability** — a monthly calendar for one vehicle showing which days are free, with a button to book the picked dates.
 * **Search** — trip dates search that sends renters to available vehicles.
 * **Vehicle Card**, **Book Button**, **Vehicle Gallery** and **Vehicle Details** — pick a vehicle from a searchable list.
 
@@ -122,9 +123,11 @@ Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, t
 == Changelog ==
 = 1.1.0 =
 * New: Build my rental site — creates draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet, reuses pages you already have, and can publish them all at once.
-* New: six Fleetwire blocks (Vehicles, Search, Vehicle Card, Book Button, Vehicle Gallery, Vehicle Details) with editor previews of your real vehicles.
+* New: seven Fleetwire blocks (Vehicles, Search, Vehicle Card, Book Button, Vehicle Gallery, Vehicle Details, Vehicle Availability) with editor previews of your real vehicles.
 * New: twelve car rental block patterns in the "Fleetwire – Car Rental" category, including a vehicle page with a booking card, a trust bar and renter reviews.
 * New: vehicle photo gallery with thumbnails.
+* New: Vehicle Availability calendar block and `[fleetwire_listing_calendar]` shortcode: a monthly calendar for one vehicle that shows unavailable days and continues to booking with the picked dates.
+* New: renter filters (vehicle type, seats, price) and sorting for the Vehicles block and `[fleetwire_list]`, off by default.
 * New: redesigned Fleetwire admin with a dashboard, setup progress and separate Build site, Shortcodes and Settings sections. Once you are connected, settings stay out of the way.
 * New: pickups and returns load automatically when an integration token is set, and the shortcode builder loads your vehicles when opened.
 * Improved: the vehicle list respects limit, paging and price settings, shows only bookable vehicles in your fleet order, and lays out as a responsive grid.
