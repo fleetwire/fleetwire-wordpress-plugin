@@ -251,6 +251,26 @@ class Vehicle_Image_Shortcode extends Shortcode_Base {
 }
 
 /**
+ * Fleetwire vehicle availability calendar shortcode
+ *
+ * A month calendar for one vehicle with booked days greyed out; the renter picks
+ * dates and continues to booking. `months` forces one or two months side by side
+ * (otherwise it follows the container width); `button-text` relabels the button.
+ *
+ * @since 1.1.0
+ */
+class Vehicle_Calendar_Shortcode extends Shortcode_Base {
+
+    protected $tag = 'fleetwire_listing_calendar';
+    protected $css_class = 'fleetwire-listing-calendar';
+    protected $defaults = [
+        'id'          => null,
+        'months'      => null,
+        'button-text' => null,
+    ];
+}
+
+/**
  * Fleetwire list shortcode
  * 
  * @since 1.0.21
@@ -522,6 +542,7 @@ class Shortcodes {
             'fleetwire_listing_reviews' => new Vehicle_Reviews_Shortcode(),
             'fleetwire_listing_image_gallery' => new Vehicle_Image_Gallery_Shortcode(),
             'fleetwire_listing_image' => new Vehicle_Image_Shortcode(),
+            'fleetwire_listing_calendar' => new Vehicle_Calendar_Shortcode(),
             'fleetwire_listing_features' => new Vehicle_Features_Shortcode(),
             'fleetwire_datepicker' => new Datepicker_Shortcode(),
         ];

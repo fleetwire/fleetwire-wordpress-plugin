@@ -392,6 +392,89 @@
         },
     } );
 
+    /**
+     * Static month grid for the calendar preview: a few sample booked days, since
+     * real availability only loads through fleetwire.js on the published page.
+     */
+    function PreviewMonth( props ) {
+        var first = new Date();
+        first.setDate( 1 );
+        first.setMonth( first.getMonth() + props.offset );
+        var daysInMonth = new Date( first.getFullYear(), first.getMonth() + 1, 0 ).getDate();
+        var booked = [ 9, 10, 11, 22, 23 ];
+        var partial = [ 8, 12, 21, 24 ];
+        var cells = [];
+        var blank;
+
+        for ( blank = 0; blank < first.getDay(); blank++ ) {
+            cells.push( el( 'span', { key: 'blank-' + blank } ) );
+        }
+        for ( var day = 1; day <= daysInMonth; day++ ) {
+            var className = 'fleetwire-preview-calendar__day'
+                + ( booked.indexOf( day ) !== -1 ? ' is-booked' : '' )
+                + ( partial.indexOf( day ) !== -1 ? ' is-partial' : '' );
+            cells.push( el( 'span', { key: day, className: className }, day ) );
+        }
+
+        return el( 'div', { className: 'fleetwire-preview-calendar__month' },
+            el( 'strong', null, first.toLocaleDateString( undefined, { month: 'long', year: 'numeric' } ) ),
+            el( 'div', { className: 'fleetwire-preview-calendar__grid' }, cells )
+        );
+    }
+
+    registerBlockType( 'fleetwire/listing-calendar', {
+        edit: singleVehicleEdit( {
+            icon: 'calendar-alt',
+            label: __( 'Fleetwire Availability Calendar', 'fleetwire' ),
+            preview: function ( attributes, listing ) {
+                var months = attributes.months === 1 ? [ 0 ] : [ 0, 1 ];
+                return el( 'div', { className: 'fleetwire-preview-calendar' },
+                    el( 'p', { className: 'fleetwire-preview-calendar__title' }, listing.name ),
+                    el( 'div', { className: 'fleetwire-preview-calendar__months' },
+                        months.map( function ( offset ) {
+                            return el( PreviewMonth, { key: offset, offset: offset } );
+                        } )
+                    ),
+                    el( 'div', { className: 'fleetwire-preview-calendar__footer' },
+                        el( 'span', null, __( 'Booked days are greyed out.', 'fleetwire' ) ),
+                        el( 'span', { className: 'fleetwire-preview-button' }, attributes.buttonText || __( 'Book these dates', 'fleetwire' ) )
+                    )
+                );
+            },
+            controls: function ( attributes, setAttributes ) {
+                return el( Fragment, null,
+                    el( components.SelectControl, {
+                        label: __( 'Months shown', 'fleetwire' ),
+                        value: String( attributes.months || 0 ),
+                        options: [
+                            { value: '0', label: __( 'Fit to width', 'fleetwire' ) },
+                            { value: '1', label: __( 'One month', 'fleetwire' ) },
+                            { value: '2', label: __( 'Two months', 'fleetwire' ) },
+                        ],
+                        onChange: function ( months ) {
+                            setAttributes( { months: Number( months ) } );
+                        },
+                        __next40pxDefaultSize: true,
+                        __nextHasNoMarginBottom: true,
+                    } ),
+                    el( components.TextControl, {
+                        label: __( 'Button text', 'fleetwire' ),
+                        value: attributes.buttonText,
+                        placeholder: __( 'Book these dates', 'fleetwire' ),
+                        onChange: function ( buttonText ) {
+                            setAttributes( { buttonText: buttonText } );
+                        },
+                        __next40pxDefaultSize: true,
+                        __nextHasNoMarginBottom: true,
+                    } )
+                );
+            },
+        } ),
+        save: function () {
+            return null;
+        },
+    } );
+
     registerBlockType( 'fleetwire/listing-details', {
         edit: singleVehicleEdit( {
             icon: 'text-page',

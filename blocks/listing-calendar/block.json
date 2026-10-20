@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "fleetwire/listing-calendar",
+    "title": "Fleetwire Availability Calendar",
+    "category": "fleetwire",
+    "icon": "calendar-alt",
+    "description": "A month calendar for one vehicle. Booked days are greyed out; renters pick dates and continue to booking.",
+    "keywords": [
+        "availability",
+        "calendar",
+        "booking",
+        "dates",
+        "vehicle"
+    ],
+    "textdomain": "fleetwire",
+    "attributes": {
+        "listingId": {
+            "type": "string",
+            "default": ""
+        },
+        "months": {
+            "type": "number",
+            "default": 0
+        },
+        "buttonText": {
+            "type": "string",
+            "default": ""
+        },
+        "isPreview": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "supports": {
+        "html": false,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true
+        }
+    },
+    "editorScript": "fleetwire-blocks-editor",
+    "editorStyle": "fleetwire-blocks-editor",
+    "example": {
+        "attributes": {
+            "isPreview": true
+        },
+        "viewportWidth": 480
+    },
+    "style": "fleetwire-blocks"
+}

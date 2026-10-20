@@ -156,3 +156,61 @@
 .is-empty {
     min-height: 54px;
 }
+
+.fleetwire-preview-calendar {
+    border: 1px solid #dcdcde;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.fleetwire-preview-calendar__title {
+    margin: 0 0 12px;
+    font-weight: 600;
+}
+
+.fleetwire-preview-calendar__months {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.fleetwire-preview-calendar__month strong {
+    display: block;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.fleetwire-preview-calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.fleetwire-preview-calendar__day {
+    padding: 6px 0;
+    border-radius: 4px;
+}
+
+.fleetwire-preview-calendar__day.is-booked {
+    color: #a7aaad;
+    font-style: italic;
+    background-image: repeating-linear-gradient(135deg, transparent, #dcdcde 2px, transparent 2px, transparent 4px);
+}
+
+.fleetwire-preview-calendar__day.is-partial {
+    background-image: linear-gradient(135deg, transparent 50%, #e6f8f3 50%);
+}
+
+.fleetwire-preview-calendar__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #dcdcde;
+    font-size: 13px;
+}

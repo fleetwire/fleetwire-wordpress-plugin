@@ -53,7 +53,7 @@ function inner( string $html ): string {
 
 // Registration
 $registry = WP_Block_Type_Registry::get_instance();
-foreach ( [ 'listings', 'search', 'listing-card', 'book-button', 'listing-gallery', 'listing-details' ] as $slug ) {
+foreach ( [ 'listings', 'search', 'listing-card', 'book-button', 'listing-gallery', 'listing-details', 'listing-calendar' ] as $slug ) {
     $type = $registry->get_registered( 'fleetwire/' . $slug );
     check( $type !== null, "fleetwire/$slug is registered" );
     check( $type && $type->category === 'fleetwire', "fleetwire/$slug is in the Fleetwire category" );
@@ -68,6 +68,7 @@ check( inner( render_fleetwire_block( 'listings', [ 'limit' => 0, 'perPage' => 4
 check( inner( render_fleetwire_block( 'search' ) ) === do_shortcode( '[fleetwire_search]' ), 'search block matches [fleetwire_search]' );
 check( inner( render_fleetwire_block( 'listing-card', [ 'listingId' => 'l_ABC' ] ) ) === do_shortcode( '[fleetwire_listing_card id="l_ABC"]' ), 'card block matches [fleetwire_listing_card]' );
 check( inner( render_fleetwire_block( 'listing-gallery', [ 'listingId' => 'l_ABC' ] ) ) === do_shortcode( '[fleetwire_listing_image_gallery id="l_ABC"]' ), 'gallery block matches the gallery shortcode' );
+check( inner( render_fleetwire_block( 'listing-calendar', [ 'listingId' => 'l_ABC', 'months' => 2, 'buttonText' => 'Reserve' ] ) ) === do_shortcode( '[fleetwire_listing_calendar id="l_ABC" months="2" button-text="Reserve"]' ), 'calendar block matches [fleetwire_listing_calendar]' );
 check( inner( render_fleetwire_block( 'book-button', [ 'listingId' => 'l_ABC', 'label' => 'Reserve', 'showPrice' => true ] ) ) === do_shortcode( '[fleetwire_button id="l_ABC" custom-title="Reserve" show-price="true"]' ), 'button block matches [fleetwire_button]' );
 
 // Behavior
@@ -75,9 +76,13 @@ check( str_contains( render_fleetwire_block( 'listings', [ 'limit' => 6, 'showPr
 check( ! str_contains( render_fleetwire_block( 'listings', [ 'limit' => 6, 'showPrice' => true ] ), 'showprice' ), 'prices on: no showprice attribute' );
 check( ! str_contains( render_fleetwire_block( 'book-button', [ 'listingId' => 'l_ABC', 'showPrice' => false ] ), 'data-show-price' ), 'button without price omits data-show-price (fleetwire.js checks presence)' );
 check( str_contains( render_fleetwire_block( 'listing-gallery', [ 'listingId' => 'l_ABC' ] ), 'fleetwire-listing-gallery' ), 'gallery block carries the gallery class' );
-foreach ( [ 'listing-card', 'book-button', 'listing-gallery', 'listing-details' ] as $slug ) {
+foreach ( [ 'listing-card', 'book-button', 'listing-gallery', 'listing-details', 'listing-calendar' ] as $slug ) {
     check( render_fleetwire_block( $slug ) === '', "$slug renders nothing until a vehicle is picked" );
 }
+$calendar = render_fleetwire_block( 'listing-calendar', [ 'listingId' => 'l_ABC' ] );
+check( str_contains( $calendar, 'class="fleetwire-listing-calendar" data-id="l_ABC"' ), 'calendar block renders the calendar embed for the vehicle' );
+check( ! str_contains( $calendar, 'data-months' ) && ! str_contains( $calendar, 'data-button-text' ), 'calendar block omits unset options' );
+check( ! str_contains( render_fleetwire_block( 'listing-calendar', [ 'listingId' => 'l_ABC', 'months' => 6 ] ), 'data-months' ), 'calendar block ignores month counts the embed does not support' );
 $details = render_fleetwire_block( 'listing-details', [ 'listingId' => 'l_ABC', 'showDescription' => true, 'descriptionLength' => 120 ] );
 foreach ( [ 'fleetwire-listing-title', 'fleetwire-listing-price', 'fleetwire-listing-seats', 'fleetwire-listing-doors' ] as $class ) {
     check( str_contains( $details, $class . '" data-id="l_ABC"' ), "details block renders $class" );
@@ -92,6 +97,7 @@ foreach ( [
     'book-button'     => [ 'listingId' => 'l_ABC', 'label' => $hostile ],
     'listing-gallery' => [ 'listingId' => $hostile ],
     'listing-details' => [ 'listingId' => $hostile, 'showDescription' => true ],
+    'listing-calendar' => [ 'listingId' => $hostile, 'buttonText' => $hostile ],
 ] as $slug => $attributes ) {
     check( ! str_contains( render_fleetwire_block( $slug, $attributes ), '<script>' ), "$slug escapes hostile attributes" );
 }

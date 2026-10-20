@@ -66,7 +66,8 @@ class Blocks {
             'listing-card'    => [ $this, 'render_listing_card' ],
             'book-button'     => [ $this, 'render_book_button' ],
             'listing-gallery' => [ $this, 'render_listing_gallery' ],
-            'listing-details' => [ $this, 'render_listing_details' ],
+            'listing-details'  => [ $this, 'render_listing_details' ],
+            'listing-calendar' => [ $this, 'render_listing_calendar' ],
         ];
     }
 
@@ -228,6 +229,26 @@ class Blocks {
 
         return $this->wrap( $this->shortcode( 'fleetwire_listing_image_gallery', [
             'id' => $attributes['listingId'],
+        ] ) );
+    }
+
+    /**
+     * [fleetwire_listing_calendar]
+     *
+     * @param array $attributes
+     * @return string
+     */
+    public function render_listing_calendar( $attributes ) {
+        if ( empty( $attributes['listingId'] ) ) {
+            return '';
+        }
+
+        $months = $this->positive_int( $attributes['months'] ?? 0 );
+
+        return $this->wrap( $this->shortcode( 'fleetwire_listing_calendar', [
+            'id'          => $attributes['listingId'],
+            'months'      => $months <= 2 ? $months : 0,
+            'button-text' => $attributes['buttonText'] ?? '',
         ] ) );
     }
 
