@@ -55,7 +55,26 @@ The script is served live from `{slug}.fleetwire.io/tenant/v2/fleetwire.js`, so 
 behavior change for any live page already passing those attributes; grep embed referrers or accept it (they asked for
 it).
 
+## Local test site
+
+`fw-wordpress.test` (Herd, `~/Sites/fw-wordpress`) has this repo symlinked as the plugin and the API environment set
+to local FrunkYea, so the front end loads `fleetwire.js`, the app bundle and the API from the local checkout
+(`Config::get_local_asset_base_url()`, added 2026-10-20). Pages: **/fleetwire-playground/** (every shortcode and option,
+rebuilt by `tests/playground/seed-playground.php`) and **/fleetwire-blocks-check/** (every block). The in-app browser
+pane blocks the cross-origin API calls; use your own browser or headless Chrome.
+
+**Found while testing:** list embeds stack one card per row. `.fw-listing-card { display: flex }` overrides the
+legacy `.fleetwire-listing-card { display: inline-block; width: 33% }` grid on the same element, and
+`UtilService.setWidth()` stamped inline widths. **Fixed and pushed 2026-10-20** (fleetwire 216a4d10c + bundle c1e006dfb):
+lists render in a `.fw-listing-grid` CSS grid.
+
 ## Phase 1 — Blocks
+
+**Built 2026-10-20 (uncommitted).** Six blocks — availability was dropped (same widget as search). `includes/Blocks.php`,
+`includes/Listings.php` (shared fetch + 12h transient, also used by the admin picker), `blocks/*/block.json`,
+`assets/blocks/editor.{js,css}`, REST route `fleetwire/v1/listings` (`edit_posts`). Tests: `tests/blocks.php`.
+Minimum WordPress raised to 6.1.
+
 
 The blocks are thin wrappers over existing shortcodes, written in plain JS (`wp.element.createElement`) with
 `block.json`, so no npm or build step is added to the plugin.

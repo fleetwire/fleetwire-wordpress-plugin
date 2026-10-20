@@ -83,12 +83,26 @@ class Assets {
             Logger::warning( 'Fleetwire client configuration not added - no company ID configured' );
             return;
         }
+        $options = [
+            'company'              => $company_id,
+            'storeProvider'        => 'wordpress',
+            'storeProviderVersion' => Config::VERSION,
+        ];
+
+        // A local Fleetwire checkout serves the loader, the app bundle and the API
+        // itself; without these overrides the loader would fetch them from fleetwire.io.
+        $local_base_url = Config::get_local_asset_base_url();
+        if ( $local_base_url ) {
+            $options['company'] = Config::get_api_company_id();
+            $options['apiURL'] = $local_base_url;
+            $options['clientLocationJS'] = [ $local_base_url . '/tenant/v2/tenant-app.js' ];
+            $options['clientLocationCSS'] = [
+                $local_base_url . '/tenant/v2/fleetwire.css',
+                $local_base_url . '/tenant/v2/fleetwire-cart.css',
+            ];
+        }
         ?>
-        <script>window.fleetwireOptions = {
-                company: '<?php echo esc_js( $company_id ); ?>',
-                storeProvider: 'wordpress',
-                storeProviderVersion: '<?php echo esc_js( Config::VERSION ); ?>'
-            };</script>
+        <script>window.fleetwireOptions = <?php echo wp_json_encode( $options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES ); ?>;</script>
         <?php
         
         Logger::debug( 'Fleetwire client configuration added', [

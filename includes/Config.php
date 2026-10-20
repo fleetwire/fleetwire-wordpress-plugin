@@ -55,7 +55,7 @@ class Config {
      * 
      * @var string
      */
-    const MIN_WP_VERSION = '5.0';
+    const MIN_WP_VERSION = '6.1';
     
     /**
      * Minimum PHP version required
@@ -158,7 +158,29 @@ class Config {
      *@since 1.0.21
      */
     public static function get_company_script_url( string $company_id ) {
+        $local_base_url = self::get_local_asset_base_url();
+        if ( $local_base_url ) {
+            return $local_base_url . '/tenant/v2/fleetwire.js';
+        }
+
         return sprintf( self::SCRIPT_URL_PATTERN, $company_id );
+    }
+
+    /**
+     * Base URL of a local Fleetwire checkout serving the embed assets and API.
+     *
+     * Only set when a local WordPress site (.test, localhost, …) has the API
+     * environment switched to "local"; live sites always use fleetwire.io.
+     *
+     * @since 1.1.0
+     * @return string|null
+     */
+    public static function get_local_asset_base_url() {
+        if ( ! self::is_local_wordpress_environment() || self::get_api_environment() !== 'local' ) {
+            return null;
+        }
+
+        return untrailingslashit( self::get_api_base_url() );
     }
 
     /**

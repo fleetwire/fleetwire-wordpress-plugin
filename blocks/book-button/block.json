@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "fleetwire/book-button",
+    "title": "Fleetwire Book Button",
+    "category": "fleetwire",
+    "icon": "cart",
+    "description": "A button that starts checkout for one vehicle.",
+    "keywords": [
+        "book",
+        "reserve",
+        "checkout",
+        "button"
+    ],
+    "textdomain": "fleetwire",
+    "attributes": {
+        "listingId": {
+            "type": "string",
+            "default": ""
+        },
+        "label": {
+            "type": "string",
+            "default": ""
+        },
+        "showPrice": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "supports": {
+        "html": false,
+        "spacing": {
+            "margin": true
+        }
+    },
+    "editorScript": "fleetwire-blocks-editor",
+    "editorStyle": "fleetwire-blocks-editor"
+}

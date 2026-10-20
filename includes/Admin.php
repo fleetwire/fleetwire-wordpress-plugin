@@ -338,44 +338,13 @@ class Admin {
             wp_send_json_error( [ 'message' => $validation['error'] ] );
         }
 
-        $company_id = Config::get_api_company_id();
-        $company_validation = Validator::validate_company_id( $company_id );
+        $listings = Listings::fetch( true );
 
-        if ( ! $company_validation['valid'] ) {
+        if ( is_wp_error( $listings ) ) {
             wp_send_json_error( [
-                'message' => $company_validation['error'],
+                'message' => $listings->get_error_message(),
             ] );
         }
-
-        $api_base_url = Config::get_api_base_url( $company_validation['value'] );
-        $response = wp_remote_get( add_query_arg( 'perPage', 100, $api_base_url . '/api/v1/products' ), [
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-            'sslverify' => Config::should_verify_api_ssl(),
-            'timeout' => 10,
-        ] );
-
-        if ( is_wp_error( $response ) ) {
-            Logger::log_api_error( 'products', $response->get_error_message(), [
-                'company_id' => $company_validation['value'],
-            ] );
-            wp_send_json_error( [
-                'message' => __( 'Could not load listings from Fleetwire.', 'fleetwire' ),
-            ] );
-        }
-
-        $status_code = wp_remote_retrieve_response_code( $response );
-        $body = json_decode( wp_remote_retrieve_body( $response ), true );
-
-        if ( $status_code < 200 || $status_code >= 300 || ! is_array( $body ) ) {
-            wp_send_json_error( [
-                'message' => __( 'Fleetwire returned an unexpected listings response.', 'fleetwire' ),
-            ] );
-        }
-
-        $items = is_array( $body['data'] ?? null ) ? $body['data'] : [];
-        $listings = array_values( array_filter( array_map( [ $this, 'normalize_listing_for_picker' ], $items ) ) );
 
         wp_send_json_success( [
             'message' => __( 'Listings loaded.', 'fleetwire' ),
@@ -450,38 +419,5 @@ class Admin {
             'message' => __( 'Dashboard loaded.', 'fleetwire' ),
             'dashboard' => $body,
         ] );
-    }
-
-    /**
-     * Normalize a Fleetwire listing for admin display.
-     *
-     * @param array $listing Listing payload.
-     *
-     * @return array|null
-     */
-    private function normalize_listing_for_picker( array $listing ) {
-        $listing_id = sanitize_text_field( $listing['l_id'] ?? '' );
-        if ( empty( $listing_id ) ) {
-            return null;
-        }
-
-        $image = '';
-        if ( ! empty( $listing['cover_photo'] ) && is_string( $listing['cover_photo'] ) ) {
-            $image = esc_url_raw( $listing['cover_photo'] );
-        } elseif ( ! empty( $listing['listing_images'][0]['optimized_path'] ) && is_string( $listing['listing_images'][0]['optimized_path'] ) ) {
-            $image = esc_url_raw( $listing['listing_images'][0]['optimized_path'] );
-        } elseif ( ! empty( $listing['listing_images'][0]['url'] ) && is_string( $listing['listing_images'][0]['url'] ) ) {
-            $image = esc_url_raw( $listing['listing_images'][0]['url'] );
-        }
-
-        return [
-            'id' => $listing_id,
-            'name' => sanitize_text_field( $listing['name'] ?? $listing['title'] ?? $listing_id ),
-            'active' => (bool) ( $listing['active'] ?? false ),
-            'approved' => (bool) ( $listing['approved'] ?? false ),
-            'paused' => (bool) ( $listing['paused'] ?? false ),
-            'price' => isset( $listing['pricing']['amount'] ) ? floatval( $listing['pricing']['amount'] ) : null,
-            'image' => $image,
-        ];
     }
 }

@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "fleetwire/search",
+    "title": "Fleetwire Search",
+    "category": "fleetwire",
+    "icon": "search",
+    "description": "Trip dates and location search that sends visitors to matching vehicles.",
+    "keywords": [
+        "dates",
+        "availability",
+        "booking",
+        "search"
+    ],
+    "textdomain": "fleetwire",
+    "attributes": {},
+    "supports": {
+        "html": false,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true
+        }
+    },
+    "editorScript": "fleetwire-blocks-editor",
+    "editorStyle": "fleetwire-blocks-editor"
+}

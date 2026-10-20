@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "fleetwire/listing-card",
+    "title": "Fleetwire Vehicle Card",
+    "category": "fleetwire",
+    "icon": "id-alt",
+    "description": "One vehicle as a card with photo, price and book button.",
+    "keywords": [
+        "vehicle",
+        "car",
+        "card",
+        "listing"
+    ],
+    "textdomain": "fleetwire",
+    "attributes": {
+        "listingId": {
+            "type": "string",
+            "default": ""
+        },
+        "showPrice": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "supports": {
+        "html": false,
+        "spacing": {
+            "margin": true
+        }
+    },
+    "editorScript": "fleetwire-blocks-editor",
+    "editorStyle": "fleetwire-blocks-editor"
+}

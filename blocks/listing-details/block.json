@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "fleetwire/listing-details",
+    "title": "Fleetwire Vehicle Details",
+    "category": "fleetwire",
+    "icon": "text-page",
+    "description": "Name, price, seats, doors and description of one vehicle.",
+    "keywords": [
+        "vehicle",
+        "details",
+        "specs",
+        "description"
+    ],
+    "textdomain": "fleetwire",
+    "attributes": {
+        "listingId": {
+            "type": "string",
+            "default": ""
+        },
+        "showDescription": {
+            "type": "boolean",
+            "default": true
+        },
+        "descriptionLength": {
+            "type": "integer",
+            "default": 0
+        }
+    },
+    "supports": {
+        "html": false,
+        "spacing": {
+            "margin": true
+        }
+    },
+    "editorScript": "fleetwire-blocks-editor",
+    "editorStyle": "fleetwire-blocks-editor"
+}

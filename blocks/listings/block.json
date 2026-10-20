@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "fleetwire/listings",
+    "title": "Fleetwire Vehicles",
+    "category": "fleetwire",
+    "icon": "grid-view",
+    "description": "Your bookable vehicles as a grid of cards.",
+    "keywords": [
+        "fleet",
+        "cars",
+        "rental",
+        "vehicles",
+        "list"
+    ],
+    "textdomain": "fleetwire",
+    "attributes": {
+        "limit": {
+            "type": "integer",
+            "default": 6
+        },
+        "perPage": {
+            "type": "integer",
+            "default": 0
+        },
+        "showPrice": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "supports": {
+        "html": false,
+        "align": [
+            "wide",
+            "full"
+        ],
+        "spacing": {
+            "margin": true
+        }
+    },
+    "editorScript": "fleetwire-blocks-editor",
+    "editorStyle": "fleetwire-blocks-editor"
+}

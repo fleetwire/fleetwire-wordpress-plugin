@@ -1,7 +1,7 @@
 === Fleetwire – Car Rental Booking & Fleet Management ===
 Contributors: fleetwire
 Tags: car rental, vehicle rental, rental booking, fleet management, booking calendar
-Requires at least: 5.0
+Requires at least: 6.1
 Requires PHP: 7.4
 Tested up to: 7.0
 Stable tag: 1.0.24
@@ -69,6 +69,8 @@ Fleetwire keeps diagnostic files outside the WordPress web roots in a site-speci
 On upgrade, existing uploads/fleetwire-logs/fleetwire.log records are copied to private storage before the public file is emptied and removed. If storage or migration is unavailable, Fleetwire reports the problem through the host-managed PHP error log; remove any remaining legacy upload log from public access and configure private storage. Keep the host's PHP error-log destination private as well. Logging level filters and the log-file, size and clear helpers remain available; the file helper returns an empty string when private storage cannot be used.
 
 == Development Checks ==
+
+Run `php tests/blocks.php /path/to/wordpress` against a local WordPress install with the plugin active to check block registration, block and shortcode markup parity, escaping and the editor listings endpoint. `php tests/playground/seed-playground.php /path/to/wordpress` builds a page showing every shortcode and option rendered live.
 
 Run `python3 tests/security-regressions.py` with PHP, Bash, Subversion 1.9+ and svnadmin installed. The tests use dummy credentials, mock all release publication commands, and use only a local SVN fixture and a temporary localhost HTTP server. They never publish a release or contact GitHub/WordPress.org.
 
