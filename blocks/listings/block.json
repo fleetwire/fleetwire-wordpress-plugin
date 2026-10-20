@@ -13,7 +13,7 @@
         "vehicles",
         "list"
     ],
-    "textdomain": "fleetwire",
+    "textdomain": "fleetwire-fleet-management",
     "attributes": {
         "limit": {
             "type": "integer",

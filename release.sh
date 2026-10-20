@@ -201,6 +201,7 @@ rm -Rf .github
 rm -Rf .wordpress-org
 rm -Rf tests
 rm -Rf docs
+rm -f release.sh
 rm -Rf apigen
 rm -f .gitattributes
 rm -f .gitignore

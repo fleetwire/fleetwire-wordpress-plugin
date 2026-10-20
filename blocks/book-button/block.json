@@ -12,7 +12,7 @@
         "checkout",
         "button"
     ],
-    "textdomain": "fleetwire",
+    "textdomain": "fleetwire-fleet-management",
     "attributes": {
         "listingId": {
             "type": "string",

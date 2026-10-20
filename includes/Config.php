@@ -34,7 +34,7 @@ class Config {
      * 
      * @var string
      */
-    const TEXT_DOMAIN = 'fleetwire';
+    const TEXT_DOMAIN = 'fleetwire-fleet-management';
     
     /**
      * Admin menu position

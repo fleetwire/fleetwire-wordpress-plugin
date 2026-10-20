@@ -79,7 +79,7 @@ class SiteBuilder {
         }
 
         if ( ! current_user_can( 'publish_pages' ) ) {
-            wp_send_json_error( [ 'message' => __( 'Insufficient permissions.', 'fleetwire' ) ] );
+            wp_send_json_error( [ 'message' => __( 'Insufficient permissions.', 'fleetwire-fleet-management' ) ] );
         }
 
         wp_send_json_success( [ 'published' => $this->publish_drafts() ] );
@@ -99,20 +99,18 @@ class SiteBuilder {
         }
 
         if ( ! current_user_can( 'edit_pages' ) ) {
-            wp_send_json_error( [ 'message' => __( 'Insufficient permissions.', 'fleetwire' ) ] );
+            wp_send_json_error( [ 'message' => __( 'Insufficient permissions.', 'fleetwire-fleet-management' ) ] );
         }
 
-        $listing_ids = array_map( 'sanitize_text_field', array_map( 'wp_unslash', (array) ( $_POST['listings'] ?? [] ) ) );
-        $page_keys = array_values( array_intersect(
-            array_map( 'sanitize_key', array_map( 'wp_unslash', (array) ( $_POST['pages'] ?? [] ) ) ),
-            array_keys( $this->core_pages() )
-        ) );
-        $summary = $this->build(
-            $listing_ids,
-            ! empty( $_POST['front_page'] ) && $_POST['front_page'] !== 'false',
-            ! empty( $_POST['menu'] ) && $_POST['menu'] !== 'false',
-            $page_keys
-        );
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- verified by Validator::validate_ajax_request() above.
+        $listing_ids = isset( $_POST['listings'] ) ? array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['listings'] ) ) : [];
+        $requested_pages = isset( $_POST['pages'] ) ? array_map( 'sanitize_key', wp_unslash( (array) $_POST['pages'] ) ) : [];
+        $set_front_page = isset( $_POST['front_page'] ) && rest_sanitize_boolean( sanitize_text_field( wp_unslash( $_POST['front_page'] ) ) );
+        $add_to_menu = isset( $_POST['menu'] ) && rest_sanitize_boolean( sanitize_text_field( wp_unslash( $_POST['menu'] ) ) );
+        // phpcs:enable
+
+        $page_keys = array_values( array_intersect( $requested_pages, array_keys( $this->core_pages() ) ) );
+        $summary = $this->build( $listing_ids, $set_front_page, $add_to_menu, $page_keys );
 
         if ( is_wp_error( $summary ) ) {
             wp_send_json_error( [ 'message' => $summary->get_error_message() ] );
@@ -130,22 +128,22 @@ class SiteBuilder {
     private function core_pages() {
         return [
             'fleet'   => [
-                'title'    => __( 'Our Fleet', 'fleetwire' ),
+                'title'    => __( 'Our Fleet', 'fleetwire-fleet-management' ),
                 'slug'     => 'fleet',
                 'sections' => [ 'fleet-page' ],
             ],
             'home'    => [
-                'title'    => __( 'Home', 'fleetwire' ),
+                'title'    => __( 'Home', 'fleetwire-fleet-management' ),
                 'slug'     => 'home',
                 'sections' => [ 'hero-search', 'trust-bar', 'fleet-grid', 'how-it-works', 'why-book-direct', 'cta-band' ],
             ],
             'faq'     => [
-                'title'    => __( 'FAQ', 'fleetwire' ),
+                'title'    => __( 'FAQ', 'fleetwire-fleet-management' ),
                 'slug'     => 'faq',
                 'sections' => [ 'faq', 'requirements' ],
             ],
             'contact' => [
-                'title'    => __( 'Contact', 'fleetwire' ),
+                'title'    => __( 'Contact', 'fleetwire-fleet-management' ),
                 'slug'     => 'contact',
                 'sections' => [ 'contact' ],
             ],
@@ -385,15 +383,21 @@ class SiteBuilder {
      * @return \WP_Post|null
      */
     private function page_with_slug( string $slug, int $exclude_id ) {
+        // Two at most: the site's page and possibly the builder's own, filtered out below.
         $pages = get_posts( [
-            'post_type'    => 'page',
-            'name'         => $slug,
-            'post_status'  => [ 'publish', 'private', 'future' ],
-            'numberposts'  => 1,
-            'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+            'post_type'   => 'page',
+            'name'        => $slug,
+            'post_status' => [ 'publish', 'private', 'future' ],
+            'numberposts' => 2,
         ] );
 
-        return $pages[0] ?? null;
+        foreach ( $pages as $page ) {
+            if ( $page->ID !== $exclude_id ) {
+                return $page;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -439,6 +443,7 @@ class SiteBuilder {
             'post_status' => 'draft',
             'numberposts' => -1,
             'fields'      => 'ids',
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- runs only when a page is published, over a handful of draft menu items.
             'meta_query'  => [
                 [ 'key' => self::PENDING_MENU_ITEM_META, 'value' => '1' ],
                 [ 'key' => '_menu_item_object_id', 'value' => (string) $post->ID ],
@@ -473,7 +478,7 @@ class SiteBuilder {
             $markup = $this->patterns->content( $this->patterns->file_for( $section, $tokens ), $tokens );
             if ( $markup === '' ) {
                 /* translators: %s: pattern name */
-                return new \WP_Error( 'fleetwire_pattern_missing', sprintf( __( 'Could not build the "%s" section.', 'fleetwire' ), $section ) );
+                return new \WP_Error( 'fleetwire_pattern_missing', sprintf( __( 'Could not build the "%s" section.', 'fleetwire-fleet-management' ), $section ) );
             }
             $blocks[] = trim( $markup );
         }
@@ -550,7 +555,7 @@ class SiteBuilder {
     private function add_to_classic_menu( array $pages ) {
         $locations = get_registered_nav_menus();
         if ( empty( $locations ) ) {
-            return __( 'Your theme has no menu locations, so the pages were not added to a menu.', 'fleetwire' );
+            return __( 'Your theme has no menu locations, so the pages were not added to a menu.', 'fleetwire-fleet-management' );
         }
 
         $location = array_key_first( $locations );
@@ -558,7 +563,7 @@ class SiteBuilder {
         $menu = ! empty( $assigned[ $location ] ) ? wp_get_nav_menu_object( $assigned[ $location ] ) : false;
 
         if ( ! $menu ) {
-            $name = __( 'Rental site', 'fleetwire' );
+            $name = __( 'Rental site', 'fleetwire-fleet-management' );
             $menu = wp_get_nav_menu_object( $name );
             $menu_id = $menu ? $menu->term_id : wp_create_nav_menu( $name );
             if ( is_wp_error( $menu_id ) ) {
@@ -589,7 +594,7 @@ class SiteBuilder {
         }
 
         /* translators: 1: menu name, 2: theme menu location */
-        return sprintf( __( 'Added to the "%1$s" menu (%2$s). Links appear as you publish each page.', 'fleetwire' ), $menu->name, $locations[ $location ] );
+        return sprintf( __( 'Added to the "%1$s" menu (%2$s). Links appear as you publish each page.', 'fleetwire-fleet-management' ), $menu->name, $locations[ $location ] );
     }
 
     /**
@@ -606,6 +611,7 @@ class SiteBuilder {
             'post_status' => [ 'publish', 'draft' ],
             'numberposts' => -1,
             'fields'      => 'ids',
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- one menu's items, only while building the menu.
             'tax_query'   => [
                 [ 'taxonomy' => 'nav_menu', 'field' => 'term_id', 'terms' => $menu_id ],
             ],
@@ -637,7 +643,7 @@ class SiteBuilder {
         if ( str_contains( $content, '<!-- wp:page-list' ) ) {
             // A page list already links every published page; appending would only duplicate them.
             /* translators: %s: navigation menu name */
-            return sprintf( __( 'The "%s" navigation menu lists all pages automatically, so the pages appear there once published.', 'fleetwire' ), $navigation->post_title );
+            return sprintf( __( 'The "%s" navigation menu lists all pages automatically, so the pages appear there once published.', 'fleetwire-fleet-management' ), $navigation->post_title );
         }
 
         $links = '';
@@ -660,7 +666,7 @@ class SiteBuilder {
             }
             $name = $navigation->post_title;
         } else {
-            $name = __( 'Navigation', 'fleetwire' );
+            $name = __( 'Navigation', 'fleetwire-fleet-management' );
             wp_insert_post( [
                 'post_type'    => 'wp_navigation',
                 'post_status'  => 'publish',
@@ -670,6 +676,6 @@ class SiteBuilder {
         }
 
         /* translators: %s: navigation menu name */
-        return sprintf( __( 'Added to the "%s" navigation menu. Links appear as you publish each page.', 'fleetwire' ), $name );
+        return sprintf( __( 'Added to the "%s" navigation menu. Links appear as you publish each page.', 'fleetwire-fleet-management' ), $name );
     }
 }

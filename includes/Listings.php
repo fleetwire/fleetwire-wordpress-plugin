@@ -78,7 +78,7 @@ class Listings {
             ] );
             set_transient( self::failure_key( $api_base_url ), 1, self::FAILURE_BACKOFF );
 
-            return new \WP_Error( 'fleetwire_api_error', __( 'Could not load listings from Fleetwire.', 'fleetwire' ) );
+            return new \WP_Error( 'fleetwire_api_error', __( 'Could not load listings from Fleetwire.', 'fleetwire-fleet-management' ) );
         }
 
         $status_code = wp_remote_retrieve_response_code( $response );
@@ -87,7 +87,7 @@ class Listings {
         if ( $status_code < 200 || $status_code >= 300 || ! is_array( $body ) ) {
             set_transient( self::failure_key( $api_base_url ), 1, self::FAILURE_BACKOFF );
 
-            return new \WP_Error( 'fleetwire_api_error', __( 'Fleetwire returned an unexpected listings response.', 'fleetwire' ) );
+            return new \WP_Error( 'fleetwire_api_error', __( 'Fleetwire returned an unexpected listings response.', 'fleetwire-fleet-management' ) );
         }
 
         $items = is_array( $body['data'] ?? null ) ? $body['data'] : [];

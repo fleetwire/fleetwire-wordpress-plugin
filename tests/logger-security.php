@@ -21,6 +21,8 @@ namespace {
     function current_time( $format ) { return '2026-10-08 12:00:00'; }
     function wp_json_encode( $value ) { return json_encode( $value ); }
     function get_current_user_id() { return 42; }
+    function wp_unslash( $value ) { return is_string( $value ) ? stripslashes( $value ) : $value; }
+    function sanitize_text_field( $value ) { return trim( strip_tags( (string) $value ) ); }
     function check( $condition, $message ) {
         if ( ! $condition ) { throw new \RuntimeException( $message ); }
     }

@@ -12,7 +12,7 @@
         "booking",
         "search"
     ],
-    "textdomain": "fleetwire",
+    "textdomain": "fleetwire-fleet-management",
     "attributes": {},
     "supports": {
         "html": false,

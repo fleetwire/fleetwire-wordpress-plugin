@@ -48,7 +48,7 @@
                 setListingsState( { listings: Array.isArray( listings ) ? listings : [], loading: false } );
             } )
             .catch( function ( error ) {
-                setListingsState( { loading: false, error: ( error && error.message ) || __( 'Could not load your vehicles.', 'fleetwire' ) } );
+                setListingsState( { loading: false, error: ( error && error.message ) || __( 'Could not load your vehicles.', 'fleetwire-fleet-management' ) } );
             } );
     }
 
@@ -76,12 +76,12 @@
      */
     var SAMPLE_LISTING = {
         id: '',
-        name: __( 'Sample vehicle', 'fleetwire' ),
+        name: __( 'Sample vehicle', 'fleetwire-fleet-management' ),
         price: 89,
         price_period: 'day',
         seats: 5,
         doors: 4,
-        description: __( 'Your vehicle description appears here: features, pickup details and anything renters should know.', 'fleetwire' ),
+        description: __( 'Your vehicle description appears here: features, pickup details and anything renters should know.', 'fleetwire-fleet-management' ),
         image: '',
         images: [],
     };
@@ -107,14 +107,14 @@
 
     function NotConfigured() {
         return el( components.Notice, { status: 'warning', isDismissible: false },
-            __( 'Connect your Fleetwire account to show your vehicles.', 'fleetwire' ) + ' ',
-            el( 'a', { href: settings.settingsUrl }, __( 'Open Fleetwire settings', 'fleetwire' ) )
+            __( 'Connect your Fleetwire account to show your vehicles.', 'fleetwire-fleet-management' ) + ' ',
+            el( 'a', { href: settings.settingsUrl }, __( 'Open Fleetwire settings', 'fleetwire-fleet-management' ) )
         );
     }
 
     function LiveSiteNote() {
         return el( 'p', { className: 'fleetwire-block-note' },
-            __( 'Preview. Live availability, pricing and booking load on your published page.', 'fleetwire' )
+            __( 'Preview. Live availability, pricing and booking load on your published page.', 'fleetwire-fleet-management' )
         );
     }
 
@@ -126,13 +126,13 @@
 
         return el( Fragment, null,
             el( components.ComboboxControl, {
-                label: __( 'Vehicle', 'fleetwire' ),
+                label: __( 'Vehicle', 'fleetwire-fleet-management' ),
                 value: props.value || null,
                 options: options,
                 onChange: function ( value ) {
                     props.onChange( value || '' );
                 },
-                help: state.loading ? __( 'Loading your vehicles…', 'fleetwire' ) : state.error,
+                help: state.loading ? __( 'Loading your vehicles…', 'fleetwire-fleet-management' ) : state.error,
                 __next40pxDefaultSize: true,
                 __nextHasNoMarginBottom: true,
             } ),
@@ -143,7 +143,7 @@
                 onClick: function () {
                     loadListings( true );
                 },
-            }, __( 'Refresh vehicle list', 'fleetwire' ) )
+            }, __( 'Refresh vehicle list', 'fleetwire-fleet-management' ) )
         );
     }
 
@@ -154,7 +154,7 @@
         return el( components.Placeholder, {
             icon: props.icon,
             label: props.label,
-            instructions: __( 'Choose which vehicle this block shows.', 'fleetwire' ),
+            instructions: __( 'Choose which vehicle this block shows.', 'fleetwire-fleet-management' ),
             className: 'fleetwire-block-placeholder',
         }, el( 'div', { className: 'fleetwire-block-placeholder__picker' }, el( ListingPicker, props ) ) );
     }
@@ -170,10 +170,10 @@
         return el( 'div', { className: 'fleetwire-preview-card' },
             el( Thumb, { className: 'fleetwire-preview-card__img', src: listing.image } ),
             el( 'div', { className: 'fleetwire-preview-card__body' },
-                el( 'strong', null, listing.name || __( 'Your vehicle', 'fleetwire' ) ),
+                el( 'strong', null, listing.name || __( 'Your vehicle', 'fleetwire-fleet-management' ) ),
                 el( 'div', { className: 'fleetwire-preview-card__footer' },
                     props.showPrice ? el( 'span', { className: 'fleetwire-preview-card__price' }, formatPrice( listing ) || '$—' ) : el( 'span' ),
-                    el( 'span', { className: 'fleetwire-preview-button' }, __( 'Book now', 'fleetwire' ) )
+                    el( 'span', { className: 'fleetwire-preview-button' }, __( 'Book now', 'fleetwire-fleet-management' ) )
                 )
             )
         );
@@ -214,14 +214,14 @@
                     options.preview( attributes, listing || { name: attributes.listingId } ),
                     ! listing && ! state.loading && state.listings.length
                         ? el( components.Notice, { status: 'warning', isDismissible: false },
-                            __( 'This vehicle is no longer bookable, so it will not show on your site.', 'fleetwire' ) )
+                            __( 'This vehicle is no longer bookable, so it will not show on your site.', 'fleetwire-fleet-management' ) )
                         : null
                 );
             }
 
             return el( Fragment, null,
                 el( InspectorControls, null,
-                    el( components.PanelBody, { title: __( 'Vehicle', 'fleetwire' ) },
+                    el( components.PanelBody, { title: __( 'Vehicle', 'fleetwire-fleet-management' ) },
                         settings.configured ? el( ListingPicker, pickerProps ) : el( NotConfigured ),
                         options.controls ? options.controls( attributes, setAttributes ) : null
                     )
@@ -257,9 +257,9 @@
 
     /* Orders the Fleetwire list API accepts; "order" is the host's own arrangement. */
     var SORT_OPTIONS = [
-        { label: __( 'Featured (your order)', 'fleetwire' ), value: 'order' },
-        { label: __( 'Price: low to high', 'fleetwire' ), value: 'price_asc' },
-        { label: __( 'Price: high to low', 'fleetwire' ), value: 'price_desc' },
+        { label: __( 'Featured (your order)', 'fleetwire-fleet-management' ), value: 'order' },
+        { label: __( 'Price: low to high', 'fleetwire-fleet-management' ), value: 'price_asc' },
+        { label: __( 'Price: high to low', 'fleetwire-fleet-management' ), value: 'price_desc' },
     ];
 
     function sortLabel( value ) {
@@ -288,23 +288,23 @@
 
             return el( Fragment, null,
                 el( InspectorControls, null,
-                    el( components.PanelBody, { title: __( 'Vehicles', 'fleetwire' ) },
-                        range( __( 'How many to show', 'fleetwire' ), attributes.limit, 0, 24, function ( limit ) {
+                    el( components.PanelBody, { title: __( 'Vehicles', 'fleetwire-fleet-management' ) },
+                        range( __( 'How many to show', 'fleetwire-fleet-management' ), attributes.limit, 0, 24, function ( limit ) {
                             setAttributes( { limit: limit } );
-                        }, __( '0 shows every bookable vehicle.', 'fleetwire' ) ),
+                        }, __( '0 shows every bookable vehicle.', 'fleetwire-fleet-management' ) ),
                         attributes.limit
                             ? null
-                            : range( __( 'Vehicles per page', 'fleetwire' ), attributes.perPage, 0, 24, function ( perPage ) {
+                            : range( __( 'Vehicles per page', 'fleetwire-fleet-management' ), attributes.perPage, 0, 24, function ( perPage ) {
                                 setAttributes( { perPage: perPage } );
-                            }, __( '0 shows them all on one page.', 'fleetwire' ) ),
-                        toggle( __( 'Show prices', 'fleetwire' ), attributes.showPrice, function ( showPrice ) {
+                            }, __( '0 shows them all on one page.', 'fleetwire-fleet-management' ) ),
+                        toggle( __( 'Show prices', 'fleetwire-fleet-management' ), attributes.showPrice, function ( showPrice ) {
                             setAttributes( { showPrice: showPrice } );
                         } )
                     ),
-                    el( components.PanelBody, { title: __( 'Filters and sorting', 'fleetwire' ) },
+                    el( components.PanelBody, { title: __( 'Filters and sorting', 'fleetwire-fleet-management' ) },
                         el( components.ToggleControl, {
-                            label: __( 'Let renters filter and sort', 'fleetwire' ),
-                            help: __( 'Adds vehicle type, seats, price and sort controls above the vehicles.', 'fleetwire' ),
+                            label: __( 'Let renters filter and sort', 'fleetwire-fleet-management' ),
+                            help: __( 'Adds vehicle type, seats, price and sort controls above the vehicles.', 'fleetwire-fleet-management' ),
                             checked: !! attributes.showFilters,
                             onChange: function ( showFilters ) {
                                 setAttributes( { showFilters: showFilters } );
@@ -312,7 +312,7 @@
                             __nextHasNoMarginBottom: true,
                         } ),
                         el( components.SelectControl, {
-                            label: __( 'Starting order', 'fleetwire' ),
+                            label: __( 'Starting order', 'fleetwire-fleet-management' ),
                             value: attributes.sort || 'order',
                             options: SORT_OPTIONS,
                             onChange: function ( sort ) {
@@ -326,9 +326,9 @@
                 el( 'div', blockProps,
                     settings.configured ? null : el( NotConfigured ),
                     attributes.showFilters ? el( 'div', { className: 'fleetwire-preview-search fleetwire-preview-filters' },
-                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'All types', 'fleetwire' ) ),
-                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Any seats', 'fleetwire' ) ),
-                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Price', 'fleetwire' ) ),
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'All types', 'fleetwire-fleet-management' ) ),
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Any seats', 'fleetwire-fleet-management' ) ),
+                        el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Price', 'fleetwire-fleet-management' ) ),
                         el( 'span', { className: 'fleetwire-preview-search__field' }, sortLabel( attributes.sort ) )
                     ) : null,
                     el( 'div', { className: 'fleetwire-preview-grid' },
@@ -350,9 +350,9 @@
             return el( 'div', useBlockProps(),
                 settings.configured ? null : el( NotConfigured ),
                 el( 'div', { className: 'fleetwire-preview-search' },
-                    el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Pick-up date', 'fleetwire' ) ),
-                    el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Return date', 'fleetwire' ) ),
-                    el( 'span', { className: 'fleetwire-preview-button' }, __( 'Search', 'fleetwire' ) )
+                    el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Pick-up date', 'fleetwire-fleet-management' ) ),
+                    el( 'span', { className: 'fleetwire-preview-search__field' }, __( 'Return date', 'fleetwire-fleet-management' ) ),
+                    el( 'span', { className: 'fleetwire-preview-button' }, __( 'Search', 'fleetwire-fleet-management' ) )
                 ),
                 el( LiveSiteNote )
             );
@@ -365,14 +365,14 @@
     registerBlockType( 'fleetwire/listing-card', {
         edit: singleVehicleEdit( {
             icon: 'id-alt',
-            label: __( 'Fleetwire Vehicle Card', 'fleetwire' ),
+            label: __( 'Fleetwire Vehicle Card', 'fleetwire-fleet-management' ),
             preview: function ( attributes, listing ) {
                 return el( 'div', { className: 'fleetwire-preview-single' },
                     el( PreviewCard, { listing: listing, showPrice: attributes.showPrice } )
                 );
             },
             controls: function ( attributes, setAttributes ) {
-                return toggle( __( 'Show price', 'fleetwire' ), attributes.showPrice, function ( showPrice ) {
+                return toggle( __( 'Show price', 'fleetwire-fleet-management' ), attributes.showPrice, function ( showPrice ) {
                     setAttributes( { showPrice: showPrice } );
                 } );
             },
@@ -385,25 +385,25 @@
     registerBlockType( 'fleetwire/book-button', {
         edit: singleVehicleEdit( {
             icon: 'cart',
-            label: __( 'Fleetwire Book Button', 'fleetwire' ),
+            label: __( 'Fleetwire Book Button', 'fleetwire-fleet-management' ),
             preview: function ( attributes, listing ) {
-                var label = attributes.label || __( 'Book Now', 'fleetwire' );
+                var label = attributes.label || __( 'Book Now', 'fleetwire-fleet-management' );
                 var price = attributes.showPrice ? formatPrice( listing ).split( '/' )[ 0 ] : '';
                 return el( 'span', { className: 'fleetwire-preview-button is-large' }, price ? label + ' - ' + price : label );
             },
             controls: function ( attributes, setAttributes ) {
                 return el( Fragment, null,
                     el( components.TextControl, {
-                        label: __( 'Button text', 'fleetwire' ),
+                        label: __( 'Button text', 'fleetwire-fleet-management' ),
                         value: attributes.label,
-                        placeholder: __( 'Book Now', 'fleetwire' ),
+                        placeholder: __( 'Book Now', 'fleetwire-fleet-management' ),
                         onChange: function ( label ) {
                             setAttributes( { label: label } );
                         },
                         __next40pxDefaultSize: true,
                         __nextHasNoMarginBottom: true,
                     } ),
-                    toggle( __( 'Show price on the button', 'fleetwire' ), attributes.showPrice, function ( showPrice ) {
+                    toggle( __( 'Show price on the button', 'fleetwire-fleet-management' ), attributes.showPrice, function ( showPrice ) {
                         setAttributes( { showPrice: showPrice } );
                     } )
                 );
@@ -417,7 +417,7 @@
     registerBlockType( 'fleetwire/listing-gallery', {
         edit: singleVehicleEdit( {
             icon: 'format-gallery',
-            label: __( 'Fleetwire Vehicle Gallery', 'fleetwire' ),
+            label: __( 'Fleetwire Vehicle Gallery', 'fleetwire-fleet-management' ),
             preview: function ( attributes, listing ) {
                 var images = ( listing.images && listing.images.length ) ? listing.images : [ listing.image ];
                 return el( 'div', { className: 'fleetwire-preview-gallery' },
@@ -469,7 +469,7 @@
     registerBlockType( 'fleetwire/listing-calendar', {
         edit: singleVehicleEdit( {
             icon: 'calendar-alt',
-            label: __( 'Fleetwire Availability Calendar', 'fleetwire' ),
+            label: __( 'Fleetwire Availability Calendar', 'fleetwire-fleet-management' ),
             preview: function ( attributes, listing ) {
                 var months = attributes.months === 1 ? [ 0 ] : [ 0, 1 ];
                 return el( 'div', { className: 'fleetwire-preview-calendar' },
@@ -480,20 +480,20 @@
                         } )
                     ),
                     el( 'div', { className: 'fleetwire-preview-calendar__footer' },
-                        el( 'span', null, __( 'Booked days are greyed out.', 'fleetwire' ) ),
-                        el( 'span', { className: 'fleetwire-preview-button' }, attributes.buttonText || __( 'Book these dates', 'fleetwire' ) )
+                        el( 'span', null, __( 'Booked days are greyed out.', 'fleetwire-fleet-management' ) ),
+                        el( 'span', { className: 'fleetwire-preview-button' }, attributes.buttonText || __( 'Book these dates', 'fleetwire-fleet-management' ) )
                     )
                 );
             },
             controls: function ( attributes, setAttributes ) {
                 return el( Fragment, null,
                     el( components.SelectControl, {
-                        label: __( 'Months shown', 'fleetwire' ),
+                        label: __( 'Months shown', 'fleetwire-fleet-management' ),
                         value: String( attributes.months || 0 ),
                         options: [
-                            { value: '0', label: __( 'Fit to width', 'fleetwire' ) },
-                            { value: '1', label: __( 'One month', 'fleetwire' ) },
-                            { value: '2', label: __( 'Two months', 'fleetwire' ) },
+                            { value: '0', label: __( 'Fit to width', 'fleetwire-fleet-management' ) },
+                            { value: '1', label: __( 'One month', 'fleetwire-fleet-management' ) },
+                            { value: '2', label: __( 'Two months', 'fleetwire-fleet-management' ) },
                         ],
                         onChange: function ( months ) {
                             setAttributes( { months: Number( months ) } );
@@ -502,9 +502,9 @@
                         __nextHasNoMarginBottom: true,
                     } ),
                     el( components.TextControl, {
-                        label: __( 'Button text', 'fleetwire' ),
+                        label: __( 'Button text', 'fleetwire-fleet-management' ),
                         value: attributes.buttonText,
-                        placeholder: __( 'Book these dates', 'fleetwire' ),
+                        placeholder: __( 'Book these dates', 'fleetwire-fleet-management' ),
                         onChange: function ( buttonText ) {
                             setAttributes( { buttonText: buttonText } );
                         },
@@ -522,15 +522,15 @@
     registerBlockType( 'fleetwire/listing-details', {
         edit: singleVehicleEdit( {
             icon: 'text-page',
-            label: __( 'Fleetwire Vehicle Details', 'fleetwire' ),
+            label: __( 'Fleetwire Vehicle Details', 'fleetwire-fleet-management' ),
             preview: function ( attributes, listing ) {
                 var description = listing.description || '';
                 if ( attributes.descriptionLength && description.length > attributes.descriptionLength ) {
                     description = description.slice( 0, attributes.descriptionLength - 1 ) + '…';
                 }
                 var specs = [
-                    listing.seats ? sprintf( __( '%d seats', 'fleetwire' ), listing.seats ) : null,
-                    listing.doors ? sprintf( __( '%d doors', 'fleetwire' ), listing.doors ) : null,
+                    listing.seats ? sprintf( __( '%d seats', 'fleetwire-fleet-management' ), listing.seats ) : null,
+                    listing.doors ? sprintf( __( '%d doors', 'fleetwire-fleet-management' ), listing.doors ) : null,
                 ].filter( Boolean ).join( ' · ' );
 
                 return el( 'div', { className: 'fleetwire-preview-details' },
@@ -542,13 +542,13 @@
             },
             controls: function ( attributes, setAttributes ) {
                 return el( Fragment, null,
-                    toggle( __( 'Show description', 'fleetwire' ), attributes.showDescription, function ( showDescription ) {
+                    toggle( __( 'Show description', 'fleetwire-fleet-management' ), attributes.showDescription, function ( showDescription ) {
                         setAttributes( { showDescription: showDescription } );
                     } ),
                     attributes.showDescription
-                        ? range( __( 'Description length', 'fleetwire' ), attributes.descriptionLength, 0, 600, function ( descriptionLength ) {
+                        ? range( __( 'Description length', 'fleetwire-fleet-management' ), attributes.descriptionLength, 0, 600, function ( descriptionLength ) {
                             setAttributes( { descriptionLength: descriptionLength } );
-                        }, __( 'Characters. 0 shows the full description.', 'fleetwire' ) )
+                        }, __( 'Characters. 0 shows the full description.', 'fleetwire-fleet-management' ) )
                         : null
                 );
             },

@@ -86,6 +86,8 @@ class Blocks {
             true
         );
 
+        wp_set_script_translations( 'fleetwire-blocks-editor', 'fleetwire-fleet-management' );
+
         wp_add_inline_script(
             'fleetwire-blocks-editor',
             'window.fleetwireBlocks = ' . wp_json_encode( [
@@ -127,7 +129,7 @@ class Blocks {
         return array_merge( [
             [
                 'slug'  => 'fleetwire',
-                'title' => __( 'Fleetwire', 'fleetwire' ),
+                'title' => __( 'Fleetwire', 'fleetwire-fleet-management' ),
                 'icon'  => null,
             ],
         ], $categories );
@@ -288,9 +290,9 @@ class Blocks {
         $html = '<h3 class="fleetwire-details__title">' . $field( 'span', 'fleetwire-listing-title' ) . '</h3>';
         $html .= '<p class="fleetwire-details__price">' . $field( 'span', 'fleetwire-listing-price', $this->price_period_label( $id ) ) . '</p>';
         $html .= '<p class="fleetwire-details__specs">'
-            . $field( 'span', 'fleetwire-listing-seats', [ 'prepend-label' => ' ' . __( 'seats', 'fleetwire' ) ] )
+            . $field( 'span', 'fleetwire-listing-seats', [ 'prepend-label' => ' ' . __( 'seats', 'fleetwire-fleet-management' ) ] )
             . ' · '
-            . $field( 'span', 'fleetwire-listing-doors', [ 'prepend-label' => ' ' . __( 'doors', 'fleetwire' ) ] )
+            . $field( 'span', 'fleetwire-listing-doors', [ 'prepend-label' => ' ' . __( 'doors', 'fleetwire-fleet-management' ) ] )
             . '</p>';
 
         if ( ! empty( $attributes['showDescription'] ) ) {

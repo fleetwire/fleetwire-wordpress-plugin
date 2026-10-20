@@ -57,8 +57,8 @@ class Admin {
      */
     public function add_options_page() {
         add_options_page( 
-            __( 'Fleetwire', 'fleetwire' ), 
-            __( 'Fleetwire', 'fleetwire' ), 
+            __( 'Fleetwire', 'fleetwire-fleet-management' ), 
+            __( 'Fleetwire', 'fleetwire-fleet-management' ), 
             'manage_options', 
             'Fleetwire', 
             [ $this, 'render_admin_page' ]
@@ -73,8 +73,8 @@ class Admin {
      */
     public function add_main_menu_page() {
         add_menu_page(
-            __( 'Fleetwire', 'fleetwire' ),                       // Page title
-            __( 'Fleetwire', 'fleetwire' ),                       // Menu title
+            __( 'Fleetwire', 'fleetwire-fleet-management' ),                       // Page title
+            __( 'Fleetwire', 'fleetwire-fleet-management' ),                       // Menu title
             'manage_options',                  // Capability
             'fleetwire',                       // Menu slug
             [ $this, 'render_admin_page' ],                 // Callback function
@@ -142,8 +142,8 @@ class Admin {
             'apiBaseUrl' => Config::get_api_base_url(),
             'hasIntegrationToken' => ! empty( Config::get_integration_token() ),
             'strings' => [
-                'error' => __('An error occurred. Please try again.', 'fleetwire'),
-                'success' => __('Options saved.', 'fleetwire')
+                'error' => __('An error occurred. Please try again.', 'fleetwire-fleet-management'),
+                'success' => __('Options saved.', 'fleetwire-fleet-management')
             ]
         ]);
     }
@@ -157,7 +157,7 @@ class Admin {
      */
     public function add_settings_link( array $links ) {
         $settings_link = '<a href="options-general.php?page=Fleetwire">' . 
-            esc_html__( 'Settings', 'fleetwire' ) . '</a>';
+            esc_html__( 'Settings', 'fleetwire-fleet-management' ) . '</a>';
         array_unshift( $links, $settings_link );
 
         return $links;
@@ -196,8 +196,9 @@ class Admin {
             wp_send_json_error( [ 'message' => $validation['error'] ] );
         }
         
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- verified by Validator::validate_ajax_request() above.
         // Validate company ID
-        $company_id = $_POST['fleetwire_company_name'] ?? '';
+        $company_id = isset( $_POST['fleetwire_company_name'] ) ? sanitize_text_field( wp_unslash( $_POST['fleetwire_company_name'] ) ) : '';
         $company_validation = Validator::validate_company_id( $company_id );
         
         if ( ! $company_validation['valid'] ) {
@@ -212,6 +213,7 @@ class Admin {
         $local_company_id = sanitize_text_field( wp_unslash( $_POST['fleetwire_local_company_id'] ?? '' ) );
         $api_base_url = sanitize_text_field( wp_unslash( $_POST['fleetwire_api_base_url'] ?? '' ) );
         $integration_token = sanitize_text_field( wp_unslash( $_POST['fleetwire_integration_token'] ?? '' ) );
+        // phpcs:enable
 
         if ( ! Config::is_local_wordpress_environment() ) {
             $api_environment = 'live';
@@ -222,19 +224,19 @@ class Admin {
 
         if ( $api_environment === 'local' && empty( $api_base_url ) ) {
             wp_send_json_error( [
-                'message' => __( 'Local Fleetwire API URL is required when Local is selected.', 'fleetwire' )
+                'message' => __( 'Local Fleetwire API URL is required when Local is selected.', 'fleetwire-fleet-management' )
             ] );
         }
 
         if ( $api_environment === 'local' && ! empty( $local_company_id ) && ! Config::is_valid_company_id( $local_company_id ) ) {
             wp_send_json_error( [
-                'message' => __( 'Invalid Local Company ID format. Please check your local Fleetwire Company ID.', 'fleetwire' )
+                'message' => __( 'Invalid Local Company ID format. Please check your local Fleetwire Company ID.', 'fleetwire-fleet-management' )
             ] );
         }
 
         if ( ! empty( $api_base_url ) && ! Validator::is_valid_url( $api_base_url ) ) {
             wp_send_json_error( [
-                'message' => __( 'Invalid Fleetwire API Base URL.', 'fleetwire' )
+                'message' => __( 'Invalid Fleetwire API Base URL.', 'fleetwire-fleet-management' )
             ] );
         }
 
@@ -257,7 +259,7 @@ class Admin {
         ] );
 
         wp_send_json_success( [
-            'message' => __( 'Options saved.', 'fleetwire' ),
+            'message' => __( 'Options saved.', 'fleetwire-fleet-management' ),
             'companyId' => $company_validation['value'],
             'apiCompanyId' => Config::get_api_company_id(),
             'storeUrl' => Config::get_company_store_url( $company_validation['value'] ),
@@ -306,7 +308,7 @@ class Admin {
                 'company_id' => $company_id,
             ] );
             wp_send_json_error( [
-                'message' => __( 'Could not reach Fleetwire. Check your site connection and try again.', 'fleetwire' ),
+                'message' => __( 'Could not reach Fleetwire. Check your site connection and try again.', 'fleetwire-fleet-management' ),
                 'status' => 'unreachable'
             ] );
         }
@@ -322,7 +324,7 @@ class Admin {
             ] );
 
             wp_send_json_success( [
-                'message' => __( 'Connected to Fleetwire.', 'fleetwire' ),
+                'message' => __( 'Connected to Fleetwire.', 'fleetwire-fleet-management' ),
                 'status' => 'connected',
                 'companyId' => $company_id,
                 'companyName' => $body['company']['name'] ?? '',
@@ -332,7 +334,7 @@ class Admin {
         }
 
         wp_send_json_error( [
-            'message' => __( 'Fleetwire could not find that Company ID.', 'fleetwire' ),
+            'message' => __( 'Fleetwire could not find that Company ID.', 'fleetwire-fleet-management' ),
             'status' => 'invalid'
         ] );
     }
@@ -359,7 +361,7 @@ class Admin {
         }
 
         wp_send_json_success( [
-            'message' => __( 'Listings loaded.', 'fleetwire' ),
+            'message' => __( 'Listings loaded.', 'fleetwire-fleet-management' ),
             'listings' => $listings,
         ] );
     }
@@ -390,7 +392,7 @@ class Admin {
 
         if ( empty( $integration_token ) ) {
             wp_send_json_error( [
-                'message' => __( 'Add a Fleetwire WordPress integration token before loading host dashboard data.', 'fleetwire' ),
+                'message' => __( 'Add a Fleetwire WordPress integration token before loading host dashboard data.', 'fleetwire-fleet-management' ),
             ] );
         }
 
@@ -408,7 +410,7 @@ class Admin {
                 'company_id' => $company_validation['value'],
             ] );
             wp_send_json_error( [
-                'message' => __( 'Could not load host dashboard data from Fleetwire.', 'fleetwire' ),
+                'message' => __( 'Could not load host dashboard data from Fleetwire.', 'fleetwire-fleet-management' ),
             ] );
         }
 
@@ -417,18 +419,18 @@ class Admin {
 
         if ( $status_code === 401 ) {
             wp_send_json_error( [
-                'message' => __( 'Fleetwire rejected the WordPress integration token.', 'fleetwire' ),
+                'message' => __( 'Fleetwire rejected the WordPress integration token.', 'fleetwire-fleet-management' ),
             ] );
         }
 
         if ( $status_code < 200 || $status_code >= 300 || ! is_array( $body ) ) {
             wp_send_json_error( [
-                'message' => __( 'Fleetwire returned an unexpected dashboard response.', 'fleetwire' ),
+                'message' => __( 'Fleetwire returned an unexpected dashboard response.', 'fleetwire-fleet-management' ),
             ] );
         }
 
         wp_send_json_success( [
-            'message' => __( 'Dashboard loaded.', 'fleetwire' ),
+            'message' => __( 'Dashboard loaded.', 'fleetwire-fleet-management' ),
             'dashboard' => $body,
         ] );
     }

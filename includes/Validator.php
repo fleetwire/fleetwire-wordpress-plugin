@@ -37,14 +37,14 @@ class Validator {
         ];
         
         if ( empty( $company_id ) ) {
-            $result['error'] = __( 'Company ID is required.', 'fleetwire' );
+            $result['error'] = __( 'Company ID is required.', 'fleetwire-fleet-management' );
             return $result;
         }
         
         $sanitized = sanitize_text_field( $company_id );
         
         if ( ! Config::is_valid_company_id( $sanitized ) ) {
-            $result['error'] = __( 'Invalid Company ID format. Please check your Company ID.', 'fleetwire' );
+            $result['error'] = __( 'Invalid Company ID format. Please check your Company ID.', 'fleetwire-fleet-management' );
             return $result;
         }
         
@@ -133,14 +133,15 @@ class Validator {
         
         // Check capability
         if ( ! self::validate_capability( $capability ) ) {
-            $result['error'] = __( 'Insufficient permissions.', 'fleetwire' );
+            $result['error'] = __( 'Insufficient permissions.', 'fleetwire-fleet-management' );
             return $result;
         }
         
         // Check nonce
-        $nonce = $_POST[ $nonce_field ] ?? '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- this reads the nonce in order to verify it.
+        $nonce = isset( $_POST[ $nonce_field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $nonce_field ] ) ) : '';
         if ( ! self::validate_nonce( $nonce, $action ) ) {
-            $result['error'] = __( 'Security check failed.', 'fleetwire' );
+            $result['error'] = __( 'Security check failed.', 'fleetwire-fleet-management' );
             return $result;
         }
         

@@ -53,53 +53,53 @@ class Patterns {
     private function fleet_patterns() {
         return [
             'hero-search'     => [
-                'title'       => __( 'Rental hero with search', 'fleetwire' ),
-                'description' => __( 'Full-width banner with a headline and trip date search.', 'fleetwire' ),
+                'title'       => __( 'Rental hero with search', 'fleetwire-fleet-management' ),
+                'description' => __( 'Full-width banner with a headline and trip date search.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'hero', 'banner', 'search', 'header' ],
             ],
             'fleet-grid'      => [
-                'title'       => __( 'Fleet grid', 'fleetwire' ),
-                'description' => __( 'Six of your vehicles as cards, with a link to the full fleet.', 'fleetwire' ),
+                'title'       => __( 'Fleet grid', 'fleetwire-fleet-management' ),
+                'description' => __( 'Six of your vehicles as cards, with a link to the full fleet.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'fleet', 'vehicles', 'cars', 'grid' ],
             ],
             'how-it-works'    => [
-                'title'       => __( 'How renting works', 'fleetwire' ),
-                'description' => __( 'Three steps from choosing a car to pickup.', 'fleetwire' ),
+                'title'       => __( 'How renting works', 'fleetwire-fleet-management' ),
+                'description' => __( 'Three steps from choosing a car to pickup.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'steps', 'process', 'how it works' ],
             ],
             'why-book-direct' => [
-                'title'       => __( 'Why book direct', 'fleetwire' ),
-                'description' => __( 'Reasons to book on your site instead of a marketplace.', 'fleetwire' ),
+                'title'       => __( 'Why book direct', 'fleetwire-fleet-management' ),
+                'description' => __( 'Reasons to book on your site instead of a marketplace.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'benefits', 'direct booking', 'trust' ],
             ],
             'trust-bar'       => [
-                'title'       => __( 'Why renters book with you', 'fleetwire' ),
-                'description' => __( 'A band of four reasons to book: confirmation, cancellation, delivery and support.', 'fleetwire' ),
+                'title'       => __( 'Why renters book with you', 'fleetwire-fleet-management' ),
+                'description' => __( 'A band of four reasons to book: confirmation, cancellation, delivery and support.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'trust', 'benefits', 'features', 'reasons' ],
             ],
             'reviews'         => [
-                'title'       => __( 'Renter reviews', 'fleetwire' ),
-                'description' => __( 'Three review cards with sample quotes. Replace them with reviews from your renters.', 'fleetwire' ),
+                'title'       => __( 'Renter reviews', 'fleetwire-fleet-management' ),
+                'description' => __( 'Three review cards with sample quotes. Replace them with reviews from your renters.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'reviews', 'testimonials', 'quotes', 'ratings' ],
             ],
             'faq'             => [
-                'title'       => __( 'Rental FAQ', 'fleetwire' ),
-                'description' => __( 'Deposit, age, insurance, mileage, delivery and cancellation questions.', 'fleetwire' ),
+                'title'       => __( 'Rental FAQ', 'fleetwire-fleet-management' ),
+                'description' => __( 'Deposit, age, insurance, mileage, delivery and cancellation questions.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'faq', 'questions', 'policies' ],
             ],
             'requirements'    => [
-                'title'       => __( 'Rental requirements', 'fleetwire' ),
-                'description' => __( 'License, age, deposit and insurance at a glance.', 'fleetwire' ),
+                'title'       => __( 'Rental requirements', 'fleetwire-fleet-management' ),
+                'description' => __( 'License, age, deposit and insurance at a glance.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'requirements', 'license', 'age', 'deposit' ],
             ],
             'cta-band'        => [
-                'title'       => __( 'Book now banner', 'fleetwire' ),
-                'description' => __( 'A dark call-to-action band linking to your fleet.', 'fleetwire' ),
+                'title'       => __( 'Book now banner', 'fleetwire-fleet-management' ),
+                'description' => __( 'A dark call-to-action band linking to your fleet.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'cta', 'call to action', 'banner' ],
             ],
             'contact'         => [
-                'title'       => __( 'Contact and hours', 'fleetwire' ),
-                'description' => __( 'Address, phone, email and opening hours.', 'fleetwire' ),
+                'title'       => __( 'Contact and hours', 'fleetwire-fleet-management' ),
+                'description' => __( 'Address, phone, email and opening hours.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'contact', 'hours', 'address', 'location' ],
             ],
         ];
@@ -117,8 +117,8 @@ class Patterns {
         }
 
         register_block_pattern_category( self::CATEGORY, [
-            'label'       => __( 'Fleetwire – Car Rental', 'fleetwire' ),
-            'description' => __( 'Sections for a car rental website, powered by your Fleetwire fleet.', 'fleetwire' ),
+            'label'       => __( 'Fleetwire – Car Rental', 'fleetwire-fleet-management' ),
+            'description' => __( 'Sections for a car rental website, powered by your Fleetwire fleet.', 'fleetwire-fleet-management' ),
         ] );
 
         $listings = Listings::bookable();
@@ -155,15 +155,15 @@ class Patterns {
 
         $this->register( 'vehicle-spotlight', [
             /* translators: %s: vehicle name */
-            'title'       => sprintf( __( 'Vehicle spotlight: %s', 'fleetwire' ), $by_photos[0]['name'] ),
-            'description' => __( 'Photo gallery beside the vehicle details and a book button.', 'fleetwire' ),
+            'title'       => sprintf( __( 'Vehicle spotlight: %s', 'fleetwire-fleet-management' ), $by_photos[0]['name'] ),
+            'description' => __( 'Photo gallery beside the vehicle details and a book button.', 'fleetwire-fleet-management' ),
             'keywords'    => [ 'vehicle', 'spotlight', 'gallery', 'details' ],
         ], 'vehicle-spotlight', $tokens + [ '{{LISTING_1}}' => $by_photos[0]['id'] ] );
 
         if ( count( $listings ) >= 3 ) {
             $this->register( 'featured-three', [
-                'title'       => __( 'Three featured vehicles', 'fleetwire' ),
-                'description' => __( 'Three of your vehicles side by side.', 'fleetwire' ),
+                'title'       => __( 'Three featured vehicles', 'fleetwire-fleet-management' ),
+                'description' => __( 'Three of your vehicles side by side.', 'fleetwire-fleet-management' ),
                 'keywords'    => [ 'featured', 'vehicles', 'cards' ],
             ], 'featured-three', $tokens + [
                 '{{LISTING_1}}' => $listings[0]['id'],

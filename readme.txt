@@ -133,6 +133,8 @@ Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, t
 * Improved: the vehicle list respects limit, paging and price settings, shows only bookable vehicles in your fleet order, and lays out as a responsive grid.
 * Improved: the date picker is no longer cut off inside cover blocks and page-builder sections.
 * Fixed: listing picker thumbnails.
+* Fixed: translations now load. The text domain matches the plugin slug (fleetwire-fleet-management), and the block editor strings are translatable.
+* Passes the WordPress.org Plugin Check with no errors or warnings.
 * Includes the 1.0.24 security changes below.
 * Requires WordPress 6.3 or later.
 

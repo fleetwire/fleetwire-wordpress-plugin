@@ -15,6 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/*
+ * Private log storage needs direct filesystem calls: it refuses symbolic links, sets
+ * 0700/0600 modes and locks files, which WP_Filesystem cannot express (and it may not be
+ * loaded this early). error_log() is the fallback channel when private storage is
+ * unavailable. tests/logger-security.php covers this behaviour.
+ */
+// phpcs:disable WordPress.WP.AlternativeFunctions, WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 /**
  * Fleetwire Logger Class
  * 
@@ -76,7 +84,8 @@ class Logger {
         if ( $resolved === false ) {
             return false;
         }
-        $roots = [ ABSPATH, $uploads, $_SERVER['DOCUMENT_ROOT'] ?? '' ];
+        $document_root = isset( $_SERVER['DOCUMENT_ROOT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['DOCUMENT_ROOT'] ) ) : '';
+        $roots = [ ABSPATH, $uploads, $document_root ];
         if ( defined( 'WP_CONTENT_DIR' ) ) {
             $roots[] = WP_CONTENT_DIR;
         }
@@ -312,7 +321,7 @@ class Logger {
         
         foreach ( $ip_keys as $key ) {
             if ( array_key_exists( $key, $_SERVER ) === true ) {
-                foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) {
+                foreach ( explode( ',', sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) ) ) as $ip ) {
                     $ip = trim( $ip );
                     
                     if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) {
@@ -363,3 +372,4 @@ class Logger {
         return 0;
     }
 }
+// phpcs:enable
