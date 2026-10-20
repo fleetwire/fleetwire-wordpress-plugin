@@ -25,6 +25,10 @@
         "descriptionLength": {
             "type": "integer",
             "default": 0
+        },
+        "isPreview": {
+            "type": "boolean",
+            "default": false
         }
     },
     "supports": {
@@ -34,5 +38,13 @@
         }
     },
     "editorScript": "fleetwire-blocks-editor",
-    "editorStyle": "fleetwire-blocks-editor"
+    "editorStyle": "fleetwire-blocks-editor",
+    "example": {
+        "attributes": {
+            "isPreview": true,
+            "showDescription": true,
+            "descriptionLength": 160
+        },
+        "viewportWidth": 480
+    }
 }

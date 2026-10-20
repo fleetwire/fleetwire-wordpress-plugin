@@ -25,5 +25,9 @@
         }
     },
     "editorScript": "fleetwire-blocks-editor",
-    "editorStyle": "fleetwire-blocks-editor"
+    "editorStyle": "fleetwire-blocks-editor",
+    "example": {
+        "attributes": {},
+        "viewportWidth": 600
+    }
 }

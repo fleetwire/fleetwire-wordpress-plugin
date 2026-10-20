@@ -17,6 +17,10 @@
         "listingId": {
             "type": "string",
             "default": ""
+        },
+        "isPreview": {
+            "type": "boolean",
+            "default": false
         }
     },
     "supports": {
@@ -30,5 +34,11 @@
         }
     },
     "editorScript": "fleetwire-blocks-editor",
-    "editorStyle": "fleetwire-blocks-editor"
+    "editorStyle": "fleetwire-blocks-editor",
+    "example": {
+        "attributes": {
+            "isPreview": true
+        },
+        "viewportWidth": 480
+    }
 }

@@ -71,6 +71,21 @@
         return state[ 0 ];
     }
 
+    /**
+     * Stand-in vehicle for inserter previews when the account has no cached listings.
+     */
+    var SAMPLE_LISTING = {
+        id: '',
+        name: __( 'Sample vehicle', 'fleetwire' ),
+        price: 89,
+        price_period: 'day',
+        seats: 5,
+        doors: 4,
+        description: __( 'Your vehicle description appears here: features, pickup details and anything renters should know.', 'fleetwire' ),
+        image: '',
+        images: [],
+    };
+
     function findListing( listings, id ) {
         for ( var i = 0; i < listings.length; i++ ) {
             if ( listings[ i ].id === id ) {
@@ -183,6 +198,11 @@
                 icon: options.icon,
                 label: options.label,
             };
+
+            // Inserter hover preview (block.json "example"): show the block, not the picker.
+            if ( attributes.isPreview ) {
+                return el( 'div', blockProps, options.preview( attributes, state.listings[ 0 ] || SAMPLE_LISTING ) );
+            }
 
             var body;
             if ( ! settings.configured ) {

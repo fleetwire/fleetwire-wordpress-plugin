@@ -25,6 +25,10 @@
         "showPrice": {
             "type": "boolean",
             "default": false
+        },
+        "isPreview": {
+            "type": "boolean",
+            "default": false
         }
     },
     "supports": {
@@ -34,5 +38,12 @@
         }
     },
     "editorScript": "fleetwire-blocks-editor",
-    "editorStyle": "fleetwire-blocks-editor"
+    "editorStyle": "fleetwire-blocks-editor",
+    "example": {
+        "attributes": {
+            "isPreview": true,
+            "showPrice": true
+        },
+        "viewportWidth": 480
+    }
 }

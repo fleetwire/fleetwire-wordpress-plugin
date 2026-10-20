@@ -39,5 +39,12 @@
         }
     },
     "editorScript": "fleetwire-blocks-editor",
-    "editorStyle": "fleetwire-blocks-editor"
+    "editorStyle": "fleetwire-blocks-editor",
+    "example": {
+        "attributes": {
+            "limit": 3,
+            "showPrice": true
+        },
+        "viewportWidth": 720
+    }
 }
