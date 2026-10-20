@@ -55,7 +55,7 @@ class Config {
      * 
      * @var string
      */
-    const MIN_WP_VERSION = '6.1';
+    const MIN_WP_VERSION = '6.3';
     
     /**
      * Minimum PHP version required

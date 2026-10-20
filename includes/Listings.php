@@ -32,6 +32,14 @@ class Listings {
     const CACHE_TTL = 12 * HOUR_IN_SECONDS;
 
     /**
+     * How long to wait before retrying after the API failed, so a down API does
+     * not slow every admin page load.
+     *
+     * @var int
+     */
+    const FAILURE_BACKOFF = 5 * MINUTE_IN_SECONDS;
+
+    /**
      * Fetch the company's listings, normalized for pickers.
      *
      * @since 1.1.0
@@ -68,6 +76,7 @@ class Listings {
             Logger::log_api_error( 'products', $response->get_error_message(), [
                 'company_id' => $company_validation['value'],
             ] );
+            set_transient( self::failure_key( $api_base_url ), 1, self::FAILURE_BACKOFF );
 
             return new \WP_Error( 'fleetwire_api_error', __( 'Could not load listings from Fleetwire.', 'fleetwire' ) );
         }
@@ -76,6 +85,8 @@ class Listings {
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
 
         if ( $status_code < 200 || $status_code >= 300 || ! is_array( $body ) ) {
+            set_transient( self::failure_key( $api_base_url ), 1, self::FAILURE_BACKOFF );
+
             return new \WP_Error( 'fleetwire_api_error', __( 'Fleetwire returned an unexpected listings response.', 'fleetwire' ) );
         }
 
@@ -97,6 +108,40 @@ class Listings {
         $cached = get_transient( self::cache_key( Config::get_api_base_url() ) );
 
         return is_array( $cached ) ? $cached : [];
+    }
+
+    /**
+     * Fill the cache when it is empty, unless the API failed recently.
+     *
+     * Runs on admin page loads so vehicle patterns are registered by the time the
+     * block editor asks for them.
+     *
+     * @since 1.1.0
+     * @return void
+     */
+    public static function warm() {
+        if ( ! Config::is_configured() || ! current_user_can( 'edit_posts' ) ) {
+            return;
+        }
+
+        $api_base_url = Config::get_api_base_url();
+        if ( self::cached() || get_transient( self::failure_key( $api_base_url ) ) ) {
+            return;
+        }
+
+        self::fetch();
+    }
+
+    /**
+     * Cached listings a customer can book: active, approved and not paused.
+     *
+     * @since 1.1.0
+     * @return array
+     */
+    public static function bookable() {
+        return array_values( array_filter( self::cached(), function ( $listing ) {
+            return ! empty( $listing['active'] ) && ! empty( $listing['approved'] ) && empty( $listing['paused'] );
+        } ) );
     }
 
     /**
@@ -152,5 +197,13 @@ class Listings {
      */
     private static function cache_key( string $api_base_url ) {
         return 'fleetwire_listings_' . md5( $api_base_url );
+    }
+
+    /**
+     * @param string $api_base_url
+     * @return string
+     */
+    private static function failure_key( string $api_base_url ) {
+        return 'fleetwire_listings_failed_' . md5( $api_base_url );
     }
 }

@@ -101,6 +101,18 @@ The blocks are thin wrappers over existing shortcodes, written in plain JS (`wp.
 
 ## Phase 2 — Patterns
 
+**Built 2026-10-20 (uncommitted).** 10 patterns in `patterns/*.html` registered by `includes/Patterns.php`; tests in
+`tests/patterns.php`. Changes from the plan below: Hero + availability merged into Hero + search (same widget); no
+bundled stock photos — the hero uses the host's own first fleet photo and falls back to a dark gradient; the contact
+pattern has no map; minimum WordPress raised to 6.3 for `core/details`. Markup was generated with `createBlock()` in
+the WordPress 7.0 editor and stores text alignment in the 6.3–6.9 attribute format (7.0 migrates it). The listings
+cache is warmed on `admin_init` (5-minute backoff when the API fails) so vehicle patterns exist when the editor opens.
+Sections set their own `contentSize` 760px / `wideSize` 1200px (fleet grid 960px → 3 columns) because classic themes
+like Hello Elementor define none and pull `.alignwide` out with `-80px` margins; buttons carry a top margin and no
+underline, small headings use the `medium` preset. Checked in Hello Elementor and Twenty Twenty-Five at 1600/1280/390px:
+no horizontal scroll. The hero's date calendar was clipped by the cover block's `overflow: hidden`; fleetwire-core's
+SearchWidget now moves easepick's wrapper to `<body>` (uncommitted).
+
 Register a pattern category named **"Fleetwire – Car Rental"**. Each pattern is a PHP file in `patterns/`, registered
 with `register_block_pattern`, using core blocks (group, cover, columns, heading, paragraph, buttons, details) plus the
 Fleetwire blocks. Copy is placeholder text written for car rental, editable in place.

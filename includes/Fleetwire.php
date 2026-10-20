@@ -56,6 +56,13 @@ class Fleetwire {
      * @var Blocks
      */
     public Blocks $blocks;
+
+    /**
+     * Patterns instance
+     *
+     * @var Patterns
+     */
+    public Patterns $patterns;
     
     /**
      * Get plugin instance
@@ -118,6 +125,7 @@ class Fleetwire {
         $this->assets = new Assets();
         $this->shortcodes = new Shortcodes();
         $this->blocks = new Blocks( $this->shortcodes );
+        $this->patterns = new Patterns();
     }
     
     /**
