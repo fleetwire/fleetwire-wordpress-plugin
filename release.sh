@@ -240,8 +240,13 @@ rm -Rf trunk/
 # COPY GIT DIR TO TRUNK
 cp -R $ROOT_PATH$TEMP_GITHUB_REPO trunk/
 
-# COPY ASSETS TO SVN ROOT
-cp -R $ROOT_PATH$TEMP_GITHUB_REPO/assets .
+# Listing images belong in SVN /assets only; keep them out of the plugin zip.
+rm -f trunk/assets/screenshot-* trunk/assets/banner-* trunk/assets/icon-*
+
+# COPY LISTING IMAGES TO SVN ASSETS (WordPress.org reads only screenshots, banners and icons there)
+mkdir -p assets
+find assets -type f ! -name 'screenshot-*' ! -name 'banner-*' ! -name 'icon-*' -delete
+cp $ROOT_PATH$TEMP_GITHUB_REPO/assets/screenshot-* $ROOT_PATH$TEMP_GITHUB_REPO/assets/banner-* $ROOT_PATH$TEMP_GITHUB_REPO/assets/icon-* assets/ 2>/dev/null || true
 
 # DO THE ADD ALL NOT KNOWN FILES UNIX COMMAND
 svn add --force * --auto-props --parents --depth infinity -q

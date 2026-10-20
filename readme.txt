@@ -1,69 +1,78 @@
-=== Fleetwire – Car Rental Booking & Fleet Management ===
+=== Fleetwire – Car Rental Booking & Website Builder ===
 Contributors: fleetwire
-Tags: car rental, vehicle rental, rental booking, fleet management, booking calendar
+Tags: car rental, rent a car, rental booking, vehicle rental, booking calendar
 Requires at least: 6.3
 Requires PHP: 7.4
-Tested up to: 7.0
-Stable tag: 1.0.24
+Tested up to: 7.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Build a car rental website in minutes: blocks and ready-made patterns for your fleet, availability search and online booking.
-
+Build a car rental website in minutes: one-click starter pages, car rental blocks and patterns, live availability search and online booking.
 
 == Description ==
 
-Fleetwire is a car rental booking plugin that connects WordPress to your Fleetwire rental business. Whether you rent cars, trucks, RVs, trailers, or equipment, visitors can browse your vehicle listings, check availability, and book online — right from your own pages.
+**Fleetwire turns WordPress into a car rental website.** Connect your Fleetwire account, click **Build my rental site**, and get draft Home, Our Fleet, FAQ, Contact and vehicle pages filled with your own fleet — photos, prices, live availability search and booking buttons included. Review the drafts, edit the text, and publish.
 
-Use the plugin settings page to connect your Fleetwire Company ID, verify the connection, load listings, and generate supported shortcodes without manually copying listing IDs. Hosts can also add a scoped Fleetwire WordPress integration token to view private dashboard data, including active listing counts, upcoming pickups, and upcoming returns.
+Whether you rent cars, trucks, vans, RVs, trailers or equipment, visitors browse your vehicles, pick dates and book on your own site instead of a marketplace.
 
-## Built for Car Rental and Vehicle Rental Businesses:
+= Build your rental website in one click =
 
-Fleetwire powers online reservations for rental operators of every size, including:
+* **Starter pages from your fleet:** Home, Our Fleet, FAQ, Contact and a page for each vehicle you pick, created as drafts. Nothing is published or overwritten, and pages you already have (like an existing FAQ) are reused instead of duplicated.
+* **Publish when you're ready:** publish pages one by one, or all at once with **Publish all draft pages**.
+* **Menu and front page:** optionally add the pages to your site menu and make the new Home your front page once you publish it.
 
-- **Car rental companies:** Run a branded car rental website with real-time availability and online booking.
-- **Independent hosts:** Take direct bookings for your rental fleet on your own site instead of relying only on marketplaces.
-- **Truck, van, and trailer rentals:** Rent out box trucks, cargo vans, trailers, and haulers with per-day pricing.
-- **RV and camper rentals:** Let travelers check dates and reserve motorhomes and campers online.
-- **Equipment rentals:** Manage bookings for tools, machines, and other rental inventory.
+= Car rental blocks =
 
-## Key Features:
+Six blocks in a **Fleetwire** category, with previews of your real vehicles right in the editor:
 
-- **Build my rental site:** One click creates draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet — nothing is published or overwritten.
-- **Car rental patterns:** Drop in ready-made sections — hero with search, fleet grid, how it works, FAQ, requirements, contact, vehicle spotlight — from the "Fleetwire – Car Rental" pattern category. Works with any block theme.
-- **Fleetwire blocks:** Vehicles grid, Search, Vehicle Card, Book Button, Vehicle Gallery and Vehicle Details blocks, with live previews of your own fleet in the editor.
-- **Fleetwire embeds:** Add all listings, availability search, single listing cards, booking buttons, listing descriptions, titles, prices, and images with shortcodes.
-- **Listing picker:** Load Fleetwire listings in WordPress admin and generate shortcodes for the selected vehicle.
-- **Connection status:** Verify that WordPress can reach the connected Fleetwire Company ID before publishing embeds.
-- **Host dashboard:** View active listings, upcoming pickups, and upcoming returns from WordPress when a scoped Fleetwire integration token is configured.
-- **Fleetwire checkout:** Send visitors into Fleetwire's hosted reservation flow with real-time inventory, availability, payment, and order management handled by Fleetwire.
+* **Vehicles** — your bookable fleet as a responsive grid of cards, with a limit, paging and price toggle.
+* **Search** — trip dates search that sends renters to available vehicles.
+* **Vehicle Card**, **Book Button**, **Vehicle Gallery** and **Vehicle Details** — pick a vehicle from a searchable list.
 
-## Getting Started:
+= Ready-made car rental patterns =
 
-1. **Install the plugin:** Download, upload, and activate the plugin on your WordPress site.
-2. **Connect Fleetwire:** Paste your Fleetwire Company ID into the plugin settings and check the connection.
-3. **Load listings:** Use the listing picker to choose a vehicle and generate a shortcode.
-4. **Build your site:** Click **Build my rental site** on the Fleetwire settings page to create draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet. Or, in the block editor, open the inserter's Patterns tab and pick from "Fleetwire – Car Rental", or add Fleetwire blocks. Shortcodes still work in any page, post, or compatible builder block.
-5. **Optional host dashboard:** Add a scoped Fleetwire WordPress integration token to load private host dashboard data.
+Ten sections in the **Fleetwire – Car Rental** pattern category: hero with date search, fleet grid, how renting works, why book direct, rental FAQ, rental requirements, book-now banner, contact and hours, vehicle spotlight and three featured vehicles. Patterns use core blocks, so they pick up your theme's fonts and colors, and work with block themes like Twenty Twenty-Five as well as classic themes.
 
+= Booking handled by Fleetwire =
+
+Renters book through Fleetwire's secure hosted checkout, with real-time availability, online payments and security deposits, rental agreements and order management in your Fleetwire dashboard. Your vehicles, prices and photos stay in sync automatically — update them once in Fleetwire and your site follows.
+
+= Built for rental businesses =
+
+* **Car rental companies:** a branded car rental website with real-time availability and online booking.
+* **Independent hosts:** take direct bookings instead of relying only on marketplaces.
+* **Truck, van and trailer rentals:** box trucks, cargo vans, trailers and haulers with per-day pricing.
+* **RV and camper rentals:** let travelers check dates and reserve motorhomes and campers online.
+* **Equipment rentals:** tools, machines and other rental inventory.
+
+= Also included =
+
+* **Shortcodes** for every embed (`[fleetwire_list]`, `[fleetwire_search]`, `[fleetwire_listing_card]`, `[fleetwire_button]` and more) for page builders and classic editors, with a shortcode builder in WordPress admin.
+* **Connection status** to confirm WordPress can reach your Fleetwire account.
+* **Fleetwire dashboard** in WordPress admin with setup progress, connection status, and your upcoming pickups and returns (with an optional read-only integration token).
+* **Translation ready.**
 
 > **Note:** A Fleetwire account is required. Visit [fleetwire.io](https://fleetwire.io/) to learn more or start your **free 14-day trial**.
 
 == Installation ==
 
-## Installation Guide:
+1. In WordPress, go to **Plugins > Add New**, search for **Fleetwire**, then install and activate it.
+2. In your Fleetwire dashboard, open **Settings > Online reservations > Installation > WordPress plugin** and copy your Company ID.
+3. In WordPress, open **Fleetwire** from the admin menu, paste your Company ID, save, and click **Check connection**.
+4. Under **Build your rental website**, choose your pages and vehicles and click **Build my rental site**. Or add Fleetwire blocks and patterns to any page from the block editor.
+5. Optional: create a WordPress integration token in Fleetwire and paste it into the plugin settings to see the host dashboard.
 
-1. **Fleetwire Setup:**
-   - Open your Fleetwire dashboard.
-   - Navigate to **Settings > Online reservations > Installation > WordPress plugin**.
-   - Copy your Fleetwire Company ID.
-   - If you want private host dashboard data in WordPress, generate a scoped WordPress integration token in Fleetwire.
-2. **WordPress Configuration:**
-   - In WordPress admin, open **Fleetwire** from the main menu.
-   - Paste your Company ID and save.
-   - Click **Check connection** to verify the Fleetwire API is reachable.
-   - Add your integration token if you want the host dashboard.
-   - Use **Load listings** to build shortcodes for your pages or posts.
+== External services ==
+
+This plugin connects your site to [Fleetwire](https://fleetwire.io/), the rental platform that stores your vehicles and handles bookings. A Fleetwire account is required.
+
+* **Fleetwire API** (`{your-company}.fleetwire.io`): in WordPress admin, the plugin requests your public vehicle list (names, photos, prices) to fill the vehicle picker, previews, patterns and starter pages, and checks the connection with your Company ID. If you add an integration token, it also requests your private dashboard summary. Your Company ID, and the token when set, are sent with these requests.
+* **Fleetwire embed script** (`{your-company}.fleetwire.io/tenant/v2/fleetwire.js`): loaded on your public pages to show vehicles, search and booking buttons. It requests your vehicles and company details from the Fleetwire API, and sends the page address and plugin version so Fleetwire can show where your embeds run. When a visitor books, they continue to Fleetwire's hosted checkout.
+* **Vehicle photos** are served from Fleetwire's image service (`media.fleetwire.io`).
+* **Date picker styles** are loaded from jsDelivr (`cdn.jsdelivr.net`) by the embed script.
+
+Fleetwire [terms of service](https://fleetwire.io/terms/) and [privacy policy](https://fleetwire.io/privacy-policy/). jsDelivr [privacy policy](https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net).
 
 == Diagnostic Logs ==
 
@@ -80,28 +89,50 @@ Run `python3 tests/security-regressions.py` with PHP, Bash, Subversion 1.9+ and 
 == Frequently Asked Questions ==
 
 = Does this plugin require a Fleetwire subscription? =
-Yes. Visit [fleetwire.io](https://fleetwire.io) to create an account or start a 14-day trial.
+Yes. Visit [fleetwire.io](https://fleetwire.io) to create an account or start a free 14-day trial.
 
-= Can I embed listings with a shortcode? =
-Yes. Use `[fleetwire_list]` for all listings or use the listing picker in WordPress admin to generate shortcodes for a single listing card, booking button, description, title, price, or image.
+= Will Build my rental site change my existing pages? =
+No. It only creates draft pages and never publishes or overwrites anything. If you already have a page at /faq/, /contact/ or /fleet/, it reuses yours instead of making a duplicate. Your current home page stays live until you publish the new Home.
 
-= Can I use this for my car rental business? =
-Yes. Fleetwire is built for car rental businesses. Connect your Fleetwire account and your WordPress site becomes a car rental booking website with live availability, online reservations, and payments handled through Fleetwire's hosted checkout.
+= Does it work with my theme? =
+The blocks and patterns use WordPress core blocks, so they take on your theme's fonts and colors. They work with block themes such as Twenty Twenty-Five and with classic themes. Shortcodes work in any theme and page builder.
 
-= Does it work for RV, trailer, or equipment rentals? =
-Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, trailers, and equipment. The same shortcodes and availability search work for every listing type in your Fleetwire account.
+= Do I need to know how to code? =
+No. Use Build my rental site, or add Fleetwire blocks and patterns from the block editor and pick your vehicles from a list.
+
+= Can I use shortcodes instead of blocks? =
+Yes. Every embed has a shortcode, and the Fleetwire settings page builds them for you: pick a vehicle and copy the shortcode into any page, post or page builder.
 
 = Do customers book directly on my website? =
-Visitors browse listings and check availability on your WordPress pages, then complete their reservation through Fleetwire's secure hosted checkout with real-time inventory, payment processing, and order management.
+Visitors browse vehicles and check availability on your WordPress pages, then complete their reservation in Fleetwire's secure hosted checkout, with real-time inventory, payment processing and order management.
+
+= Does it work for RV, trailer or equipment rentals? =
+Yes. Fleetwire supports any rental fleet — cars, trucks, vans, RVs, campers, trailers and equipment.
 
 == Screenshots ==
 
-1. Browse and book inventory online.
-2. Add listings easily with shortcodes.
-3. Display rental availability.
-4. Online payment and quote requests.
+1. A rental home page built by the plugin: hero with trip date search and your fleet.
+2. Live availability search with a date picker on your own site.
+3. Build my rental site: pick pages and vehicles and get draft pages in one click.
+4. Car rental patterns in the block editor's Patterns tab.
+5. Fleetwire blocks with previews of your real vehicles and a vehicle picker.
+6. A vehicle page with photo gallery, details and a book button.
+7. The Fleetwire dashboard: setup progress, your connection and the next step.
 
 == Changelog ==
+= 1.1.0 =
+* New: Build my rental site — creates draft Home, Our Fleet, FAQ, Contact and vehicle pages from your fleet, reuses pages you already have, and can publish them all at once.
+* New: six Fleetwire blocks (Vehicles, Search, Vehicle Card, Book Button, Vehicle Gallery, Vehicle Details) with editor previews of your real vehicles.
+* New: ten car rental block patterns in the "Fleetwire – Car Rental" category.
+* New: vehicle photo gallery with thumbnails.
+* New: redesigned Fleetwire admin with a dashboard, setup progress and separate Build site, Shortcodes and Settings sections. Once you are connected, settings stay out of the way.
+* New: pickups and returns load automatically when an integration token is set, and the shortcode builder loads your vehicles when opened.
+* Improved: the vehicle list respects limit, paging and price settings, shows only bookable vehicles in your fleet order, and lays out as a responsive grid.
+* Improved: the date picker is no longer cut off inside cover blocks and page-builder sections.
+* Fixed: listing picker thumbnails.
+* Includes the 1.0.24 security changes below.
+* Requires WordPress 6.3 or later.
+
 = 1.0.24 =
 * Moved diagnostic logs outside public web directories and added migration of existing upload logs to private storage.
 * Required HTTPS and validated SVN working-copy destinations before release updates and commits.
@@ -197,6 +228,9 @@ Visitors browse listings and check availability on your WordPress pages, then co
 
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds Build my rental site, Fleetwire blocks and car rental patterns. Requires WordPress 6.3 or later. Existing shortcodes keep working.
 
 = 1.0.24 =
 Security update for diagnostic log storage and release tooling. Existing upload logs migrate to private storage when writable. If migration fails, remove the old public log and configure FLEETWIRE_LOG_DIR; see Diagnostic Logs above.

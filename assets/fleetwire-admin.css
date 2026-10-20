@@ -603,3 +603,403 @@ input.fleetwire-loading::after {
   display: block;
   margin: 2px 0 6px 24px;
 }
+
+/* ------------------------------------------------------------------
+ * 1.1 admin layout: side navigation, panels, dashboard, aside
+ * ------------------------------------------------------------------ */
+.fw-admin {
+  --fw-accent: #00bd8e;
+  --fw-accent-dark: #009e74;
+  --fw-ink: #0b1f27;
+  --fw-muted: #5b6b73;
+  --fw-line: #e2e6e9;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: start;
+  margin: 20px 20px 24px 0;
+  color: var(--fw-ink);
+}
+
+.fw-card {
+  background: #fff;
+  border: 1px solid var(--fw-line);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(11, 31, 39, 0.04);
+  padding: 24px;
+  margin: 0 0 24px;
+}
+
+.fw-card h2 {
+  margin: 0 0 8px;
+  color: var(--fw-ink);
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.fw-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fw-card p {
+  color: var(--fw-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.fw-card .fw-admin-subtitle {
+  margin: 0;
+}
+
+.fw-card hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid var(--fw-line);
+}
+
+.fw-card .form-table th {
+  width: 170px;
+}
+
+/* Side navigation */
+.fw-sidenav {
+  position: sticky;
+  top: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fw-sidenav__logo {
+  display: block;
+  width: 150px;
+  height: auto;
+  margin: 4px 12px 20px;
+}
+
+.fw-sidenav__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--fw-ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.fw-sidenav__link .dashicons {
+  color: var(--fw-muted);
+}
+
+.fw-sidenav__link:hover,
+.fw-sidenav__link:focus {
+  background: #fff;
+  color: var(--fw-ink);
+}
+
+.fw-sidenav__link.is-active {
+  background: #fff;
+  border-color: var(--fw-accent);
+  box-shadow: 0 0 0 1px var(--fw-accent);
+}
+
+.fw-sidenav__link.is-active .dashicons {
+  color: var(--fw-accent-dark);
+}
+
+.fw-badge {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--fw-accent);
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.fw-sidenav__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 16px 12px 0;
+  color: var(--fw-muted);
+  font-size: 12px;
+}
+
+/* Panels */
+.fw-panel[hidden] {
+  display: none;
+}
+
+.fw-hello h2 {
+  font-size: 24px;
+}
+
+.fw-hello p {
+  max-width: 640px;
+  margin: 0;
+}
+
+.fw-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.fw-grid > .fw-card {
+  margin-bottom: 24px;
+}
+
+/* Setup steps */
+.fw-steps {
+  display: flex;
+  margin: 0 0 24px;
+  padding: 0 0 20px;
+  list-style: none;
+  border-bottom: 1px solid var(--fw-line);
+}
+
+.fw-steps__step {
+  position: relative;
+  flex: 1;
+  margin: 0;
+  text-align: center;
+}
+
+.fw-steps__step::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--fw-line);
+}
+
+.fw-steps__step:first-child::before {
+  display: none;
+}
+
+.fw-steps__step.is-done::before,
+.fw-steps__step.is-current::before {
+  background: var(--fw-accent);
+}
+
+.fw-steps__dot {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0 auto 8px;
+  border: 2px solid #c6ced3;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.fw-steps__step.is-done .fw-steps__dot {
+  border-color: var(--fw-accent);
+  background: var(--fw-accent);
+}
+
+.fw-steps__step.is-done .fw-steps__dot::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.fw-steps__step.is-current .fw-steps__dot {
+  border-color: var(--fw-accent);
+  box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 12px var(--fw-accent);
+}
+
+.fw-steps__label {
+  color: var(--fw-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fw-steps__step.is-current .fw-steps__label {
+  color: var(--fw-accent-dark);
+}
+
+.fw-checklist {
+  margin: 12px 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.fw-checklist li {
+  position: relative;
+  margin: 0 0 8px;
+  padding-left: 26px;
+  color: var(--fw-ink);
+}
+
+.fw-checklist li::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--fw-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+}
+
+.fw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0 0;
+}
+
+.fw-admin .button-primary {
+  border-color: var(--fw-accent-dark);
+  background: var(--fw-accent);
+  color: #fff;
+}
+
+.fw-admin .button-primary:hover,
+.fw-admin .button-primary:focus {
+  border-color: var(--fw-accent-dark);
+  background: var(--fw-accent-dark);
+  color: #fff;
+}
+
+/* Connection status */
+.fw-status__company {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.fw-status__company strong {
+  color: var(--fw-ink);
+  font-size: 15px;
+}
+
+.fw-status .fleetwire-connection-panel {
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.fw-status .fleetwire-connection-copy h3 {
+  display: none;
+}
+
+.fw-status .fleetwire-connection-actions {
+  justify-content: flex-start;
+}
+
+.fw-muted {
+  color: var(--fw-muted);
+}
+
+/* Aside */
+.fw-aside {
+  position: sticky;
+  top: 52px;
+}
+
+.fw-aside .fw-card {
+  padding: 20px;
+}
+
+.fw-review {
+  border-color: var(--fw-accent);
+}
+
+.fw-review__stars {
+  margin: 0 0 4px;
+  color: #f0b429 !important;
+  font-size: 20px !important;
+  letter-spacing: 2px;
+}
+
+/* Smaller screens */
+@media (max-width: 1360px) {
+  .fw-admin {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+
+  .fw-aside {
+    position: static;
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 960px) {
+  .fw-admin {
+    grid-template-columns: minmax(0, 1fr);
+    margin-right: 10px;
+  }
+
+  .fw-sidenav {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .fw-sidenav__logo,
+  .fw-sidenav__meta {
+    display: none;
+  }
+
+  .fw-aside {
+    grid-column: 1;
+  }
+
+  .fw-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.fw-status .fleetwire-connection-message {
+  margin: 0 0 12px;
+}
+
+.fw-status .fleetwire-connection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fw-status .fleetwire-connection-actions .button {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+  line-height: 28px;
+}
+
+.fw-status .fleetwire-connection-actions .dashicons {
+  font-size: 16px;
+  line-height: 28px;
+  width: 16px;
+  height: 16px;
+}
+
+.fleetwire-site-builder-existing {
+  margin: 0 0 16px;
+}

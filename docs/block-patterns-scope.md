@@ -209,3 +209,11 @@ Add a "Build my rental site" card to the plugin admin page, visible once the con
 | 4 — Live preview (app + plugin) | 1 day, later |
 
 Ship phases 1–2 as 1.1.0 and phase 3 as 1.2.0, so wordpress.org gets a visible update twice.
+
+## 1.1.0 release prep (2026-10-20)
+
+Version 1.1.0 everywhere; name "Fleetwire – Car Rental Booking & Website Builder"; tags swap fleet management for
+"rent a car"; readme rewritten with an External services section (Fleetwire API + embed script incl. page URL,
+media.fleetwire.io, jsDelivr CSS); Tested up to 7.1 (all suites pass on 7.1.3). Admin redesigned Yoast-style (side nav,
+dashboard with setup steps, settings tab). Seven screenshots from the local Pacific Coast EV Co demo tenant.
+`release.sh` keeps listing images out of trunk and only puts screenshots/banners/icons in SVN /assets.

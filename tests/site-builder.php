@@ -61,6 +61,7 @@ $backup = [
     'locations'     => get_theme_mod( 'nav_menu_locations' ),
     'menus'         => wp_list_pluck( wp_get_nav_menus(), 'term_id' ),
     'navigation'    => wp_list_pluck( get_posts( [ 'post_type' => 'wp_navigation', 'post_status' => 'any', 'numberposts' => -1 ] ), 'post_content', 'ID' ),
+    'menu_items'    => get_posts( [ 'post_type' => 'nav_menu_item', 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids' ] ),
 ];
 
 $fixtures = array_map( 'fixture_listing', array_map( function ( $n ) {
@@ -156,7 +157,7 @@ try {
         wp_set_current_user( 0 );
         $html = wp_nav_menu( [ 'menu' => $menu_id, 'echo' => false, 'fallback_cb' => false ] );
         wp_set_current_user( $admin[0]->ID );
-        check( ! str_contains( (string) $html, 'page_id=' . $home->ID ) && ! str_contains( (string) $html, '>Home<' ), 'draft pages are hidden from the live menu' );
+        check( ! str_contains( (string) $html, 'page_id=' . $home->ID ) && ! str_contains( (string) $html, 'page_id=' . $fleet->ID ), 'draft pages are hidden from the live menu' );
     }
 
     // Publishing Home applies the front page.
@@ -165,7 +166,7 @@ try {
         wp_set_current_user( 0 );
         $html = wp_nav_menu( [ 'menu' => $menu_id, 'echo' => false, 'fallback_cb' => false ] );
         wp_set_current_user( $admin[0]->ID );
-        check( str_contains( (string) $html, '>Home<' ) && ! str_contains( (string) $html, '>Our Fleet<' ), 'publishing Home adds only Home to the live menu' );
+        check( str_contains( (string) $html, get_permalink( $home ) ) && ! str_contains( (string) $html, 'page_id=' . $fleet->ID ), 'publishing Home adds only Home to the live menu' );
     }
     check( get_option( 'show_on_front' ) === 'page' && (int) get_option( 'page_on_front' ) === $home->ID, 'publishing Home makes it the front page' );
     check( ! $builder->state()['front_page_pending'], 'the pending front page is cleared' );
@@ -174,7 +175,8 @@ try {
         $navigation = get_posts( [ 'post_type' => 'wp_navigation', 'post_status' => 'publish', 'numberposts' => 1, 'orderby' => 'date', 'order' => 'DESC' ] )[0] ?? null;
         check( $navigation && str_contains( $navigation->post_content, '"id":' . $fleet->ID ), 'core pages are in the navigation menu' );
         $html = do_blocks( $navigation->post_content );
-        check( str_contains( $html, '>Home<' ) && ! str_contains( $html, '>Our Fleet<' ), 'navigation shows published Home but not the Our Fleet draft' );
+        // Match by address, not label: the site's own navigation may already link a published "Our Fleet".
+        check( str_contains( $html, wp_make_link_relative( get_permalink( $home ) ) ) && ! str_contains( $html, '"' . $fleet_sample . '"' ), 'navigation shows published Home but not the Our Fleet draft' );
     }
 
     // Second run: no duplicates, only new vehicles.
@@ -214,7 +216,7 @@ try {
         $html = wp_nav_menu( [ 'menu' => $menu_id, 'echo' => false, 'fallback_cb' => false ] );
         wp_set_current_user( $admin[0]->ID );
         // Contact's menu item was held back as a draft in the first run (Our Fleet was trashed and rebuilt without the menu option).
-        check( str_contains( (string) $html, '>Contact<' ), 'publishing all brings the held-back menu links live' );
+        check( str_contains( (string) $html, get_permalink( $builder->state()['pages']['contact'] ) ), 'publishing all brings the held-back menu links live' );
     }
 } finally {
     foreach ( $fixture_pages as $fixture_page ) {
@@ -225,17 +227,15 @@ try {
         wp_delete_post( (int) $page_id, true );
     }
 
+    // Exact: remove every menu item the run added (including links to the site's own reused pages), then any new menu.
+    foreach ( get_posts( [ 'post_type' => 'nav_menu_item', 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids' ] ) as $item_id ) {
+        if ( ! in_array( $item_id, $backup['menu_items'], true ) ) {
+            wp_delete_post( $item_id, true );
+        }
+    }
     foreach ( wp_get_nav_menus() as $menu ) {
         if ( ! in_array( $menu->term_id, $backup['menus'], true ) ) {
             wp_delete_nav_menu( $menu->term_id );
-            continue;
-        }
-        $items = get_posts( [ 'post_type' => 'nav_menu_item', 'post_status' => [ 'publish', 'draft' ], 'numberposts' => -1, 'tax_query' => [ [ 'taxonomy' => 'nav_menu', 'field' => 'term_id', 'terms' => $menu->term_id ] ] ] );
-        foreach ( $items as $item ) {
-            $object_id = (int) get_post_meta( $item->ID, '_menu_item_object_id', true );
-            if ( isset( $created_ids[ $object_id ] ) || ( get_post_meta( $item->ID, '_menu_item_type', true ) === 'post_type' && ! get_post( $object_id ) ) ) {
-                wp_delete_post( $item->ID, true );
-            }
         }
     }
     foreach ( get_posts( [ 'post_type' => 'wp_navigation', 'post_status' => 'any', 'numberposts' => -1 ] ) as $navigation ) {

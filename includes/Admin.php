@@ -238,6 +238,10 @@ class Admin {
             ] );
         }
 
+        if ( $company_validation['value'] !== Config::get_company_id() ) {
+            // A new account has not been verified yet.
+            Config::delete_option( 'connected_company' );
+        }
         $updated_company = Config::update_option( 'company_name', $company_validation['value'] );
         $updated_local_company = Config::update_option( 'local_company_id', $local_company_id );
         $updated_environment = Config::update_option( 'api_environment', $api_environment );
@@ -311,6 +315,12 @@ class Admin {
         $body = json_decode( wp_remote_retrieve_body( $response ), true );
 
         if ( $status_code >= 200 && $status_code < 300 && ! empty( $body['company'] ) ) {
+            Config::update_option( 'connected_company', [
+                'id'          => $company_id,
+                'name'        => sanitize_text_field( $body['company']['name'] ?? '' ),
+                'verified_at' => time(),
+            ] );
+
             wp_send_json_success( [
                 'message' => __( 'Connected to Fleetwire.', 'fleetwire' ),
                 'status' => 'connected',

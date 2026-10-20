@@ -35,6 +35,7 @@ jQuery(document).ready(function ($) {
     var fleetwireListings = [];
     var generatedShortcode = '';
 
+    initPanels();
     initFormSubmission();
     initCopyToClipboard();
     initApiEnvironment();
@@ -44,6 +45,7 @@ jQuery(document).ready(function ($) {
     initTooltips();
     initSiteBuilder();
     initSitePublisher();
+    $(document).trigger('fleetwire:panel', [$('.fw-sidenav__link.is-active').data('fw-panel-link')]);
 
     function initFormSubmission() {
         $('#fleetwire_form').on('submit', function (e) {
@@ -91,6 +93,12 @@ jQuery(document).ready(function ($) {
                         fleetwireAdmin.hasIntegrationToken = !!result.data.hasIntegrationToken;
                         updatePreviewLink(result.data.storeUrl || '');
                         showToast(result.data.message || fleetwireAdmin.strings.success, 'success');
+                        if ($('.fw-admin').data('default-panel') === 'settings') {
+                            // First connection: reload so the dashboard, builder and vehicles appear.
+                            window.location.hash = '#dashboard';
+                            window.location.reload();
+                            return;
+                        }
                         verifyConnection(companyUuid);
                         return;
                     }
@@ -152,6 +160,11 @@ jQuery(document).ready(function ($) {
     }
 
     function initDashboard() {
+        // The pickups card only renders when a token is saved, so load it straight away.
+        if ($loadDashboardButton.length && fleetwireAdmin.hasIntegrationToken) {
+            loadDashboard();
+        }
+
         $loadDashboardButton.on('click', function () {
             loadDashboard();
         });
@@ -222,7 +235,7 @@ jQuery(document).ready(function ($) {
         items.forEach(function (booking) {
             const listing = booking.listing_name || booking.listing_id || 'Listing';
             const dates = formatBookingDates(booking);
-            const status = booking.status ? ' - ' + booking.status : '';
+            const status = booking.status ? ' · ' + String(booking.status).replace(/_/g, ' ') : '';
             $list.append($('<li></li>').text(listing + (dates ? ' - ' + dates : '') + status));
         });
     }
@@ -281,6 +294,12 @@ jQuery(document).ready(function ($) {
     }
 
     function initListingPicker() {
+        $(document).on('fleetwire:panel', function (event, name) {
+            if (name === 'shortcodes' && !fleetwireListings.length && !$loadListingsButton.prop('disabled')) {
+                loadListings();
+            }
+        });
+
         $buttonTitleField.hide();
         $descriptionLengthField.hide();
 
@@ -506,8 +525,14 @@ jQuery(document).ready(function ($) {
             },
             success: function (result) {
                 if (result.success) {
-                    const companyName = result.data.companyName ? ' ' + result.data.companyName : '';
-                    setConnectionStatus('connected', 'Connected to Fleetwire.' + companyName);
+                    setConnectionStatus('connected', 'Connected to Fleetwire.');
+                    if (result.data.companyName) {
+                        const $company = $('.fw-status__company');
+                        if (!$company.find('strong').length) {
+                            $company.prepend($('<strong></strong>'));
+                        }
+                        $company.find('strong').text(result.data.companyName);
+                    }
                     updatePreviewLink(result.data.storeUrl || '');
                     return;
                 }
@@ -572,6 +597,38 @@ jQuery(document).ready(function ($) {
 
     function hideTooltip() {
         $('.fleetwire-tooltip').remove();
+    }
+
+    function initPanels() {
+        const $admin = $('.fw-admin');
+        const $panels = $admin.find('[data-fw-panel]');
+
+        function show(name) {
+            if (!$panels.filter('[data-fw-panel="' + name + '"]').length) {
+                name = $admin.data('default-panel') || 'dashboard';
+            }
+            $panels.each(function () {
+                this.hidden = $(this).data('fw-panel') !== name;
+            });
+            $admin.find('.fw-sidenav__link')
+                .removeClass('is-active').removeAttr('aria-current')
+                .filter('[data-fw-panel-link="' + name + '"]').addClass('is-active').attr('aria-current', 'page');
+            $(document).trigger('fleetwire:panel', [name]);
+        }
+
+        $admin.on('click', '[data-fw-panel-link]', function (e) {
+            const name = $(this).data('fw-panel-link');
+            e.preventDefault();
+            history.replaceState(null, '', '#' + name);
+            show(name);
+            window.scrollTo(0, 0);
+        });
+
+        $(window).on('hashchange', function () {
+            show(window.location.hash.slice(1));
+        });
+
+        show(window.location.hash.slice(1));
     }
 
     function initSiteBuilder() {
